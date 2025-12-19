@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Levantine Verb",
+  "type": "object",
+  "required": ["id", "verb", "classification", "conjugations"],
+  "properties": {
+    "id": { "type": "integer", "minimum": 1 },
+    "verb": {
+      "type": "object",
+      "required": ["arabic", "translit", "english"],
+      "properties": {
+        "arabic": { "type": "string" },
+        "translit": { "type": "string" },
+        "english": { "type": "string" }
+      }
+    },
+    "classification": {
+      "type": "object",
+      "required": ["measure", "type", "root"],
+      "properties": {
+        "measure": { "type": "string", "enum": ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "Iq", "IIq"] },
+        "type": { "type": "string" },
+        "root": { "type": "string" }
+      }
+    },
+    "conjugations": {
+      "type": "object",
+      "required": ["perfect", "imperfect", "bi_imperfect", "imperative"],
+      "properties": {
+        "perfect": { "$ref": "#/$defs/conjugationSet" },
+        "imperfect": { "$ref": "#/$defs/conjugationSet" },
+        "bi_imperfect": { "$ref": "#/$defs/conjugationSet" },
+        "imperative": { "$ref": "#/$defs/imperativeSet" }
+      }
+    },
+    "bedde": { "type": "object" },
+    "active_participle": { "type": "object" },
+    "notes": { "type": "array", "items": { "type": "string" } },
+    "examples": { "type": "array" }
+  },
+  "$defs": {
+    "conjugationSet": {
+      "type": "object",
+      "required": ["forms"],
+      "properties": {
+        "label": { "type": "string" },
+        "usage": { "type": "string" },
+        "forms": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/personForm" },
+          "minItems": 8,
+          "maxItems": 8
+        }
+      }
+    },
+    "imperativeSet": {
+      "type": "object",
+      "required": ["forms"],
+      "properties": {
+        "label": { "type": "string" },
+        "forms": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/personForm" },
+          "minItems": 3,
+          "maxItems": 3
+        }
+      }
+    },
+    "personForm": {
+      "type": "object",
+      "required": ["person", "arabic", "translit", "english"],
+      "properties": {
+        "person": { "type": "string", "enum": ["ana", "nihna", "inta", "inti", "intu", "huwwe", "hiyye", "hinne"] },
+        "arabic": { "type": "string" },
+        "translit": { "type": "string" },
+        "english": { "type": "string" }
+      }
+    }
+  }
+}

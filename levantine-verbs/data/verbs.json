@@ -1,0 +1,229 @@
+[
+{
+  "id": 1,
+  "verb": {
+    "arabic": "Ø¥Ø¬Ø§",
+    "translit": "Ã­ja",
+    "english": "to come"
+  },
+  "classification": {
+    "measure": "I",
+    "type": "irregular defective",
+    "root": "Ø¬-ÙŠ-Ø¡"
+  },
+  "negation": {
+    "particle": "Ù…Ø§",
+    "translit": "ma",
+    "position": "before verb or particle",
+    "examples": {
+      "perfect": "Ù…Ø§ Ø¬ÙŠØª (ma jÄ«t) - I didn't come",
+      "bi_imperfect": "Ù…Ø§ Ø¨ÙØ¬ÙŠ (ma bÃ­ji) - I don't come",
+      "future": "Ù…Ø§ Ø±Ø­ Ø¥Ø¬ÙŠ (ma raá¸¥ Ã­ji) - I won't come"
+    }
+  },
+  "conjugations": {
+    "perfect": {
+      "label": "Past",
+      "usage": "Completed actions",
+      "forms": [
+        { "person": "ana", "arabic": "Ø¬ÙŠØª", "translit": "jÄ«t", "english": "I came" },
+        { "person": "nihna", "arabic": "Ø¬ÙŠÙ†Ø§", "translit": "jÄ«na", "english": "we came" },
+        { "person": "inta", "arabic": "Ø¬ÙŠØª", "translit": "jÄ«t", "english": "you (m) came" },
+        { "person": "inti", "arabic": "Ø¬ÙŠØªÙŠ", "translit": "jÄ«ti", "english": "you (f) came" },
+        { "person": "intu", "arabic": "Ø¬ÙŠØªÙˆØ§", "translit": "jÄ«tu", "english": "you (pl) came" },
+        { "person": "huwwe", "arabic": "Ø¥Ø¬Ø§", "translit": "Ã­ja", "english": "he came" },
+        { "person": "hiyye", "arabic": "Ø¥Ø¬ÙØª", "translit": "Ã­jit", "english": "she came" },
+        { "person": "hinne", "arabic": "Ø¥Ø¬ÙˆØ§", "translit": "Ã­ju", "english": "they came" }
+      ]
+    },
+    "imperfect": {
+      "label": "Subjunctive/Base",
+      "usage": "Used with particles (bedde, raá¸¥, 3am, la-, etc.)",
+      "forms": [
+        { "person": "ana", "arabic": "Ø¥Ø¬ÙŠ", "translit": "Ã­ji", "english": "I come" },
+        { "person": "nihna", "arabic": "Ù†ÙØ¬ÙŠ", "translit": "nÃ­ji", "english": "we come" },
+        { "person": "inta", "arabic": "ØªÙØ¬ÙŠ", "translit": "tÃ­ji", "english": "you (m) come" },
+        { "person": "inti", "arabic": "ØªÙØ¬ÙŠ", "translit": "tÃ­ji", "english": "you (f) come" },
+        { "person": "intu", "arabic": "ØªÙØ¬ÙˆØ§", "translit": "tÃ­ju", "english": "you (pl) come" },
+        { "person": "huwwe", "arabic": "ÙŠÙØ¬ÙŠ", "translit": "yÃ­ji", "english": "he comes" },
+        { "person": "hiyye", "arabic": "ØªÙØ¬ÙŠ", "translit": "tÃ­ji", "english": "she comes" },
+        { "person": "hinne", "arabic": "ÙŠÙØ¬ÙˆØ§", "translit": "yÃ­ju", "english": "they come" }
+      ],
+      "constructions": {
+        "ra7": {
+          "label": "Future (going to)",
+          "particle_arabic": "Ø±Ø­",
+          "particle_translit": "raá¸¥",
+          "conjugates": false,
+          "example": {
+            "arabic": "Ø±Ø­ Ø¥Ø¬ÙŠ",
+            "translit": "raá¸¥ Ã­ji",
+            "english": "I will come / I'm going to come"
+          }
+        },
+        "3am": {
+          "label": "Progressive (currently doing)",
+          "particle_arabic": "Ø¹Ù…",
+          "particle_translit": "3am",
+          "conjugates": false,
+          "note": "Emphasizes ongoing ACTION, not state. Can imply 'lately/these days'.",
+          "example": {
+            "arabic": "Ø¹Ù… Ø¥Ø¬ÙŠ",
+            "translit": "3am Ã­ji",
+            "english": "I am coming (in the act of)"
+          }
+        }
+      }
+    },
+    "bi_imperfect": {
+      "label": "Habitual Present",
+      "usage": "Regular/habitual actions, general truths",
+      "forms": [
+        { "person": "ana", "arabic": "Ø¨ÙØ¬ÙŠ", "translit": "bÃ­ji", "english": "I come (habitually)" },
+        { "person": "nihna", "arabic": "Ù…Ù’Ù†ÙØ¬ÙŠ", "translit": "mnÃ­ji", "english": "we come" },
+        { "person": "inta", "arabic": "Ø¨Ù’ØªÙØ¬ÙŠ", "translit": "btÃ­ji", "english": "you (m) come" },
+        { "person": "inti", "arabic": "Ø¨Ù’ØªÙØ¬ÙŠ", "translit": "btÃ­ji", "english": "you (f) come" },
+        { "person": "intu", "arabic": "Ø¨Ù’ØªÙØ¬ÙˆØ§", "translit": "btÃ­ju", "english": "you (pl) come" },
+        { "person": "huwwe", "arabic": "Ø¨Ù’ÙŠÙØ¬ÙŠ", "translit": "byÃ­ji", "english": "he comes" },
+        { "person": "hiyye", "arabic": "Ø¨Ù’ØªÙØ¬ÙŠ", "translit": "btÃ­ji", "english": "she comes" },
+        { "person": "hinne", "arabic": "Ø¨Ù’ÙŠÙØ¬ÙˆØ§", "translit": "byÃ­ju", "english": "they come" }
+      ]
+    },
+    "imperative": {
+      "label": "Command",
+      "usage": "Direct commands",
+      "note": "IRREGULAR - uses ØªØ¹Ø§ (unrelated to verb stem)",
+      "forms": [
+        { "person": "inta", "arabic": "ØªÙŽØ¹Ø§", "translit": "tÃ¡3a", "english": "come! (m)" },
+        { "person": "inti", "arabic": "ØªÙŽØ¹ÙŠ", "translit": "tÃ¡3i", "english": "come! (f)" },
+        { "person": "intu", "arabic": "ØªÙŽØ¹ÙˆØ§", "translit": "tÃ¡3u", "english": "come! (pl)" }
+      ]
+    }
+  },
+  "bedde": {
+    "label": "Want to (verb)",
+    "usage": "Expresses desire/want + imperfect verb",
+    "note": "bedde conjugates by person, verb stays in imperfect",
+    "forms": [
+      { "person": "ana", "particle_arabic": "Ø¨Ø¯Ù‘ÙŠ", "particle_translit": "bÃ©ddi", "full_arabic": "Ø¨Ø¯Ù‘ÙŠ Ø¥Ø¬ÙŠ", "full_translit": "bÃ©ddi Ã­ji", "english": "I want to come" },
+      { "person": "nihna", "particle_arabic": "Ø¨Ø¯Ù‘Ù†Ø§", "particle_translit": "bÃ©ddna", "full_arabic": "Ø¨Ø¯Ù‘Ù†Ø§ Ù†ÙØ¬ÙŠ", "full_translit": "bÃ©ddna nÃ­ji", "english": "we want to come" },
+      { "person": "inta", "particle_arabic": "Ø¨Ø¯Ù‘Ùƒ", "particle_translit": "bÃ©ddak", "full_arabic": "Ø¨Ø¯Ù‘Ùƒ ØªÙØ¬ÙŠ", "full_translit": "bÃ©ddak tÃ­ji", "english": "you (m) want to come" },
+      { "person": "inti", "particle_arabic": "Ø¨Ø¯ÙÙ‘Ùƒ", "particle_translit": "bÃ©ddik", "full_arabic": "Ø¨Ø¯ÙÙ‘Ùƒ ØªÙØ¬ÙŠ", "full_translit": "bÃ©ddik tÃ­ji", "english": "you (f) want to come" },
+      { "person": "intu", "particle_arabic": "Ø¨Ø¯Ù‘ÙƒÙ†", "particle_translit": "bÃ©ddkon", "full_arabic": "Ø¨Ø¯Ù‘ÙƒÙ† ØªÙØ¬ÙˆØ§", "full_translit": "bÃ©ddkon tÃ­ju", "english": "you (pl) want to come" },
+      { "person": "huwwe", "particle_arabic": "Ø¨Ø¯Ù‘Ùˆ", "particle_translit": "bÃ©ddo", "full_arabic": "Ø¨Ø¯Ù‘Ùˆ ÙŠÙØ¬ÙŠ", "full_translit": "bÃ©ddo yÃ­ji", "english": "he wants to come" },
+      { "person": "hiyye", "particle_arabic": "Ø¨Ø¯Ù‘Ø§", "particle_translit": "bÃ©dda", "full_arabic": "Ø¨Ø¯Ù‘Ø§ ØªÙØ¬ÙŠ", "full_translit": "bÃ©dda tÃ­ji", "english": "she wants to come" },
+      { "person": "hinne", "particle_arabic": "Ø¨Ø¯Ù‘Ù†", "particle_translit": "bÃ©ddon", "full_arabic": "Ø¨Ø¯Ù‘Ù† ÙŠÙØ¬ÙˆØ§", "full_translit": "bÃ©ddon yÃ­ju", "english": "they want to come" }
+    ],
+    "negative": {
+      "formation": "Ù…Ø§ + bedde conjugation + imperfect verb",
+      "forms": [
+        { "person": "ana", "arabic": "Ù…Ø§ Ø¨Ø¯Ù‘ÙŠ Ø¥Ø¬ÙŠ", "translit": "ma bÃ©ddi Ã­ji", "english": "I don't want to come" },
+        { "person": "nihna", "arabic": "Ù…Ø§ Ø¨Ø¯Ù‘Ù†Ø§ Ù†ÙØ¬ÙŠ", "translit": "ma bÃ©ddna nÃ­ji", "english": "we don't want to come" },
+        { "person": "inta", "arabic": "Ù…Ø§ Ø¨Ø¯Ù‘Ùƒ ØªÙØ¬ÙŠ", "translit": "ma bÃ©ddak tÃ­ji", "english": "you (m) don't want to come" },
+        { "person": "inti", "arabic": "Ù…Ø§ Ø¨Ø¯ÙÙ‘Ùƒ ØªÙØ¬ÙŠ", "translit": "ma bÃ©ddik tÃ­ji", "english": "you (f) don't want to come" },
+        { "person": "intu", "arabic": "Ù…Ø§ Ø¨Ø¯Ù‘ÙƒÙ† ØªÙØ¬ÙˆØ§", "translit": "ma bÃ©ddkon tÃ­ju", "english": "you (pl) don't want to come" },
+        { "person": "huwwe", "arabic": "Ù…Ø§ Ø¨Ø¯Ù‘Ùˆ ÙŠÙØ¬ÙŠ", "translit": "ma bÃ©ddo yÃ­ji", "english": "he doesn't want to come" },
+        { "person": "hiyye", "arabic": "Ù…Ø§ Ø¨Ø¯Ù‘Ø§ ØªÙØ¬ÙŠ", "translit": "ma bÃ©dda tÃ­ji", "english": "she doesn't want to come" },
+        { "person": "hinne", "arabic": "Ù…Ø§ Ø¨Ø¯Ù‘Ù† ÙŠÙØ¬ÙˆØ§", "translit": "ma bÃ©ddon yÃ­ju", "english": "they don't want to come" }
+      ]
+    }
+  },
+  "active_participle": {
+    "label": "Active Participle",
+    "usage": {
+      "primary": "Describes current STATE or status, decision made, ongoing relevance",
+      "vs_3am": {
+        "summary": "Participle = state/status; 3am + verb = action in progress",
+        "key_differences": [
+          "Participle: implies decision made, current state",
+          "3am: emphasizes the physical/literal act happening now",
+          "3am can mean 'lately/these days' for habits"
+        ],
+        "comparison_example": {
+          "context": "Someone asks 'Are you leaving?'",
+          "participle": {
+            "arabic": "Ù„Ø§ØŒ Ù†Ø­Ù†Ø§ Ø¨Ø§Ù‚ÙŠÙŠÙ†",
+            "translit": "la, niá¸¥na bÄ“Ê”yÄ«n",
+            "english": "No, we are staying (our status: remaining)"
+          },
+          "3am_verb": {
+            "arabic": "Ù„Ø§ØŒ Ø¹Ù… Ù†ÙØ¨Ù‚Ù‰ Ø´ÙˆÙŠ",
+            "translit": "la, 3am nÃ­bÊ”a Å¡way",
+            "english": "No, we are staying a little longer (action)"
+          }
+        }
+      }
+    },
+    "forms": {
+      "masculine": {
+        "arabic": "Ø¬Ø§ÙŠ",
+        "translit": "jÄ“y",
+        "english": "coming (m)",
+        "alt_pronunciation": { "arabic": "Ø¬Ø§ÙŠÙŠ", "translit": "jÄ“yi" },
+        "example": {
+          "arabic": "Ù‡Ùˆ Ø¬Ø§ÙŠ Ø¨Ø§Ù„Ø³ÙŠØ§Ø±Ø©",
+          "translit": "huwwe jÄ“y b-is-sayyÄra",
+          "english": "He is coming by car"
+        }
+      },
+      "feminine": {
+        "arabic": "Ø¬Ø§ÙŠÙØ©",
+        "translit": "jÄ“yi",
+        "english": "coming (f)",
+        "example": {
+          "arabic": "Ù‡ÙŠ Ø¬Ø§ÙŠØ© Ø¨ÙƒØ±Ø§",
+          "translit": "hiyye jÄ“yi bÃºkra",
+          "english": "She is coming tomorrow"
+        }
+      },
+      "plural": {
+        "arabic": "Ø¬Ø§ÙŠÙŠÙ†",
+        "translit": "jÄ“yÄ«n",
+        "english": "coming (pl)",
+        "example": {
+          "arabic": "Ø§Ù„Ø¶ÙŠÙˆÙ Ø¬Ø§ÙŠÙŠÙ† Ø§Ù„Ø³Ø§Ø¹Ø© Ø³Ø¨Ø¹Ø©",
+          "translit": "iá¸-á¸yÅ«f jÄ“yÄ«n is-sÄ“3a sÃ¡b3a",
+          "english": "The guests are coming at 7"
+        }
+      }
+    }
+  },
+  "notes": [
+    "Only third-person perfect forms begin with Ø¥ i-",
+    "Positive imperative (ØªØ¹Ø§) is completely unrelated to verb stem",
+    "Masculine participle also commonly pronounced Ø¬Ø§ÙŠÙŠ jÄ“yi"
+  ],
+  "examples": [
+    {
+      "arabic": "Ø¬ÙŠØª Ù„Ø¹ÙÙ†Ù’Ø¯Ùƒ ÙˆØ¯Ù‚Ù‘ÙŠØª Ø§Ù„Ø¨Ø§Ø¨ØŒ Ù…Ø§ Ø­ÙŽØ¯Ø§ ÙÙ’ØªÙŽØ­",
+      "translit": "jÄ«t la3Ã­ndak wa-daÊ”Ê”Ä“t il-bÄ“b, ma á¸¥ada fÃ¡taá¸¥",
+      "english": "I came to your house and knocked on the door, but no one answered",
+      "tense": "perfect"
+    },
+    {
+      "arabic": "Ù„Ù…Ù‘Ø§ ØªÙŠØ¬ÙŠ Ù…Ù† Ø§Ù„Ø³Ù‘ÙˆÙ‚ Ø¯Ù‚Ù‘ÙŠÙ„ÙŠ",
+      "translit": "lÃ¡mma tÃ­ji min is-sÅ«Ê” daÊ”Ê”Ã­li",
+      "english": "When you get back from shopping, call me",
+      "tense": "imperfect"
+    },
+    {
+      "arabic": "Ø¨Ù’ØªÙØ¬ÙŠ Ù„Ø¹ÙÙ†Ù’Ø¯ÙŠ Ø§Ù„Ø´ÙŽÙ‘ØºÙ‘Ø§Ù„Ø© Ù…Ø±Ù‘Ø© Ø¨Ø§Ù„Ø´ÙŽÙ‘Ù‡Ø±",
+      "translit": "btÃ­ji la3Ã­ndi iÅ¡-Å¡aÄ¡Ä¡Ä“li mÃ¡rra b-iÅ¡-Å¡Ã¡hir",
+      "english": "The cleaning lady comes to my house once a month",
+      "tense": "bi_imperfect"
+    },
+    {
+      "arabic": "Ø£ÙŠÙ’Ù…ØªÙ‰ Ø¬Ø§ÙŠÙŠÙ†ØŸ",
+      "translit": "Ê”aymta jÄ“yÄ«n?",
+      "english": "When are you coming?",
+      "tense": "active_participle"
+    },
+    {
+      "arabic": "ØªØ¹ÙˆØ§ Ø¹ÙŽ Ø¨ÙÙƒÙ’Ø±Ø§ Ø§Ù„ØµÙÙ‘Ø¨Ù’Ø­ØŒ Ù…Ù’Ù†ÙÙÙ’Ø·Ø± Ø³ÙŽÙˆØ§",
+      "translit": "tÃ¡3u 3a bÃºkra iá¹£-á¹£Ãºbá¸¥, mnÃ­fá¹­ir sÃ¡wa",
+      "english": "Come tomorrow morning and we'll have breakfast together",
+      "tense": "imperative"
+    }
+  ]
+}
+]
