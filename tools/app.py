@@ -189,116 +189,112 @@ def page_quiz():
         run_quiz()
 
 # Verb-specific sentence templates with natural collocations
+# Tense markers: bi_imperfect = كل يوم (every day), perfect = مبارح (yesterday)
 # Format: verb_arabic -> {tense -> [(ar_template, en_template), ...]}
 VERB_TEMPLATES = {
     "إجا": {  # to come
         "bi_imperfect": [
-            ("_____ عالبيت كل يوم", "_____ home every day"),
-            ("_____ لعندي بكرا؟", "_____ to my place tomorrow?"),
-            ("_____ عالشغل بالباص", "_____ to work by bus"),
+            ("_____ عالبيت كل يوم", "_____ come home every day"),
+            ("_____ عالشغل كل يوم", "_____ come to work every day"),
+            ("_____ لعندي كل أسبوع", "_____ come to my place every week"),
         ],
         "perfect": [
-            ("_____ عالبيت مبارح", "_____ home yesterday"),
-            ("_____ لعندي الصبح", "_____ to my place this morning"),
+            ("_____ عالبيت مبارح", "_____ came home yesterday"),
+            ("_____ لعندي مبارح", "_____ came to my place yesterday"),
         ],
     },
     "أخَذ": {  # to take
         "bi_imperfect": [
-            ("_____ الباص كل يوم", "_____ the bus every day"),
-            ("_____ الدوا كل صبح", "_____ medicine every morning"),
-            ("_____ قهوة بالصبح", "_____ coffee in the morning"),
+            ("_____ الباص كل يوم", "_____ take the bus every day"),
+            ("_____ الدوا كل يوم", "_____ take medicine every day"),
+            ("_____ قهوة كل صبح", "_____ have coffee every morning"),
         ],
         "perfect": [
-            ("_____ الباص مبارح", "_____ the bus yesterday"),
-            ("_____ الكتاب من المكتبة", "_____ the book from the library"),
+            ("_____ الباص مبارح", "_____ took the bus yesterday"),
+            ("_____ الكتاب مبارح", "_____ took the book yesterday"),
         ],
     },
     "أعْلَن": {  # to announce
         "bi_imperfect": [
-            ("_____ الخبر بكرا", "_____ the news tomorrow"),
-            ("_____ النتيجة قريباً", "_____ the result soon"),
+            ("_____ الأخبار كل يوم", "_____ announce news every day"),
+            ("_____ النتائج كل أسبوع", "_____ announce results every week"),
         ],
         "perfect": [
-            ("_____ الخبر مبارح", "_____ the news yesterday"),
-            ("_____ خطوبتن", "_____ their engagement"),
+            ("_____ الخبر مبارح", "_____ announced the news yesterday"),
+            ("_____ خطوبتن مبارح", "_____ announced their engagement yesterday"),
         ],
     },
     "أكَل": {  # to eat
         "bi_imperfect": [
-            ("_____ الفطور كل صبح", "_____ breakfast every morning"),
-            ("_____ فلافل كتير", "_____ a lot of falafel"),
-            ("_____ بالمطعم كل جمعة", "_____ at the restaurant every Friday"),
+            ("_____ الفطور كل يوم", "_____ eat breakfast every day"),
+            ("_____ فلافل كل يوم", "_____ eat falafel every day"),
+            ("_____ بالمطعم كل جمعة", "_____ eat at the restaurant every Friday"),
         ],
         "perfect": [
-            ("_____ الفطور الصبح", "_____ breakfast this morning"),
-            ("_____ شاورما مبارح", "_____ shawarma yesterday"),
-            ("_____ عند ستي", "_____ at grandma's"),
+            ("_____ الفطور مبارح", "_____ ate breakfast yesterday"),
+            ("_____ شاورما مبارح", "_____ ate shawarma yesterday"),
+            ("_____ عند ستي مبارح", "_____ ate at grandma's yesterday"),
         ],
     },
     "أمَر": {  # to order
         "bi_imperfect": [
-            ("_____ قهوة من المقهى", "_____ coffee from the cafe"),
-            ("_____ أكل من المطعم", "_____ food from the restaurant"),
-            ("شو _____؟", "what would _____ like to order?"),
+            ("_____ قهوة كل يوم", "_____ order coffee every day"),
+            ("_____ أكل كل يوم", "_____ order food every day"),
+            ("_____ من المطعم كل أسبوع", "_____ order from the restaurant every week"),
         ],
         "perfect": [
-            ("_____ قهوة وكرواسان", "_____ coffee and a croissant"),
-            ("_____ شاورما دجاج", "_____ chicken shawarma"),
+            ("_____ قهوة مبارح", "_____ ordered coffee yesterday"),
+            ("_____ شاورما مبارح", "_____ ordered shawarma yesterday"),
         ],
     },
     "باع": {  # to sell
         "bi_imperfect": [
-            ("_____ خضرة بالسوق", "_____ vegetables at the market"),
-            ("_____ السيارة قريباً", "_____ the car soon"),
-            ("_____ بالدكان كل يوم", "_____ at the shop every day"),
+            ("_____ خضرة كل يوم", "_____ sell vegetables every day"),
+            ("_____ بالسوق كل يوم", "_____ sell at the market every day"),
         ],
         "perfect": [
-            ("_____ السيارة مبارح", "_____ the car yesterday"),
-            ("_____ البيت الشهر الماضي", "_____ the house last month"),
+            ("_____ السيارة مبارح", "_____ sold the car yesterday"),
+            ("_____ البيت مبارح", "_____ sold the house yesterday"),
         ],
     },
     "بَرَم": {  # to turn/wander
         "bi_imperfect": [
-            ("_____ بالسوق كل سبت", "_____ around the market every Saturday"),
-            ("_____ بالضيعة", "_____ around the village"),
-            ("_____ بالمدينة", "_____ around the city"),
+            ("_____ بالسوق كل يوم", "_____ wander the market every day"),
+            ("_____ بالضيعة كل أسبوع", "_____ wander the village every week"),
         ],
         "perfect": [
-            ("_____ بالسوق مبارح", "_____ around the market yesterday"),
-            ("_____ بكل المحلات", "_____ all the shops"),
+            ("_____ بالسوق مبارح", "_____ wandered the market yesterday"),
+            ("_____ بكل المحلات مبارح", "_____ visited all the shops yesterday"),
         ],
     },
     "بِقي": {  # to stay/become
         "bi_imperfect": [
-            ("_____ بالبيت اليوم", "_____ at home today"),
-            ("_____ هادي وقت المشاكل", "_____ calm during problems"),
-            ("_____ صاحي للصبح", "_____ awake until morning"),
+            ("_____ بالبيت كل يوم", "_____ stay home every day"),
+            ("_____ هادي كل يوم", "_____ stay calm every day"),
         ],
         "perfect": [
-            ("_____ بالبيت مبارح", "_____ at home yesterday"),
-            ("_____ عند صحابي", "_____ at my friends' place"),
+            ("_____ بالبيت مبارح", "_____ stayed home yesterday"),
+            ("_____ عند صحابي مبارح", "_____ stayed at friends' yesterday"),
         ],
     },
     "بَلَّش": {  # to begin
         "bi_imperfect": [
-            ("_____ الشغل بكير", "_____ work early"),
-            ("_____ يدرس الساعة ثمانية", "_____ studying at eight"),
-            ("أيمتى _____؟", "when does _____ start?"),
+            ("_____ الشغل كل يوم", "_____ start work every day"),
+            ("_____ الدرس كل يوم", "_____ start the lesson every day"),
         ],
         "perfect": [
-            ("_____ الشغل الصبح", "_____ work this morning"),
-            ("_____ يدرس عربي", "_____ studying Arabic"),
+            ("_____ الشغل مبارح", "_____ started work yesterday"),
+            ("_____ يدرس عربي مبارح", "_____ started studying Arabic yesterday"),
         ],
     },
     "تَرَك": {  # to leave
         "bi_imperfect": [
-            ("_____ الشغل الساعة خمسة", "_____ work at five"),
-            ("_____ التدخين قريباً", "_____ smoking soon"),
-            ("ما _____ الولاد لوحدن", "_____ never leave the kids alone"),
+            ("_____ الشغل كل يوم الساعة خمسة", "_____ leave work at five every day"),
+            ("_____ البيت كل صبح", "_____ leave home every morning"),
         ],
         "perfect": [
-            ("_____ الشغل مبارح", "_____ work yesterday"),
-            ("_____ التدخين السنة الماضية", "_____ smoking last year"),
+            ("_____ الشغل مبارح", "_____ left work yesterday"),
+            ("_____ التدخين مبارح", "_____ quit smoking yesterday"),
         ],
     },
 }
@@ -307,11 +303,9 @@ VERB_TEMPLATES = {
 GENERIC_TEMPLATES = {
     "bi_imperfect": [
         ("_____ كل يوم", "_____ every day"),
-        ("_____ كتير", "_____ a lot"),
     ],
     "perfect": [
         ("_____ مبارح", "_____ yesterday"),
-        ("_____ قبل شوي", "_____ a while ago"),
     ],
 }
 
