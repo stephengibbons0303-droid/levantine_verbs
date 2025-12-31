@@ -188,15 +188,96 @@ def page_quiz():
     if "quiz_questions" in st.session_state:
         run_quiz()
 
+# Sentence templates for contextual conjugation quiz
+SENTENCE_TEMPLATES = {
+    "bi_imperfect": {
+        "ana": [
+            ("أنا _____ كل يوم", "I _____ every day"),
+            ("أنا _____ كتير", "I _____ a lot"),
+            ("أنا عادةً _____", "I usually _____"),
+        ],
+        "nihna": [
+            ("نحنا _____ سوا", "We _____ together"),
+            ("نحنا _____ كل أسبوع", "We _____ every week"),
+        ],
+        "inta": [
+            ("إنت _____ كتير؟", "Do you (m) _____ a lot?"),
+            ("إنت _____ كل يوم؟", "Do you (m) _____ every day?"),
+        ],
+        "inti": [
+            ("إنتي _____ كتير؟", "Do you (f) _____ a lot?"),
+            ("إنتي _____ عادةً؟", "Do you (f) usually _____?"),
+        ],
+        "intu": [
+            ("إنتو _____ سوا؟", "Do you (pl) _____ together?"),
+            ("إنتو _____ كل يوم؟", "Do you (pl) _____ every day?"),
+        ],
+        "huwwe": [
+            ("هو _____ كل يوم", "He _____ every day"),
+            ("هو _____ كتير", "He _____ a lot"),
+        ],
+        "hiyye": [
+            ("هي _____ كل يوم", "She _____ every day"),
+            ("هي _____ كتير", "She _____ a lot"),
+        ],
+        "hinne": [
+            ("هنّي _____ سوا", "They _____ together"),
+            ("هنّي _____ كل أسبوع", "They _____ every week"),
+        ],
+    },
+    "perfect": {
+        "ana": [
+            ("أنا _____ مبارح", "I _____ yesterday"),
+            ("أنا _____ الأسبوع الماضي", "I _____ last week"),
+        ],
+        "nihna": [
+            ("نحنا _____ مبارح", "We _____ yesterday"),
+            ("نحنا _____ سوا", "We _____ together"),
+        ],
+        "inta": [
+            ("إنت _____؟", "Did you (m) _____?"),
+            ("إنت _____ مبارح؟", "Did you (m) _____ yesterday?"),
+        ],
+        "inti": [
+            ("إنتي _____؟", "Did you (f) _____?"),
+            ("إنتي _____ مبارح؟", "Did you (f) _____ yesterday?"),
+        ],
+        "intu": [
+            ("إنتو _____؟", "Did you (pl) _____?"),
+            ("إنتو _____ مبارح؟", "Did you (pl) _____ yesterday?"),
+        ],
+        "huwwe": [
+            ("هو _____ مبارح", "He _____ yesterday"),
+            ("هو _____ قبل شوي", "He _____ a while ago"),
+        ],
+        "hiyye": [
+            ("هي _____ مبارح", "She _____ yesterday"),
+            ("هي _____ قبل شوي", "She _____ a while ago"),
+        ],
+        "hinne": [
+            ("هنّي _____ مبارح", "They _____ yesterday"),
+            ("هنّي _____ سوا", "They _____ together"),
+        ],
+    },
+}
+
 def generate_quiz(verbs, quiz_type, num):
     questions = []
     for _ in range(num):
         verb = random.choice(verbs)
-        
+
         if quiz_type == "Conjugation":
             tense = random.choice(["perfect", "bi_imperfect"])
             forms = verb["conjugations"][tense]["forms"]
             form = random.choice(forms)
+
+            # Get contextual sentence template
+            person = form["person"]
+            templates = SENTENCE_TEMPLATES.get(tense, {}).get(person, [])
+            if templates:
+                ar_template, en_template = random.choice(templates)
+            else:
+                ar_template, en_template = "_____ ؟", "_____ ?"
 
             # Get unique wrong answers
             wrong_options = list(set(f["arabic"] for f in forms if f["arabic"] != form["arabic"]))
@@ -204,7 +285,8 @@ def generate_quiz(verbs, quiz_type, num):
             options = [form["arabic"]] + wrong_options[:3]
 
             q = {
-                "prompt": f"Conjugate '{verb['verb']['english']}' in {tense} for {PERSON_LABELS[form['person']]}",
+                "prompt": ar_template,
+                "prompt_english": en_template.replace("_____", verb["verb"]["english"]),
                 "answer": form["arabic"],
                 "hint": form["translit"],
                 "options": options
@@ -251,7 +333,11 @@ def run_quiz():
     q = questions[idx]
     st.progress(idx / len(questions))
     st.subheader(f"Q{idx + 1}: {q['prompt']}")
-    
+
+    # Show English translation for conjugation questions
+    if "prompt_english" in q:
+        st.write(f"*{q['prompt_english']}*")
+
     if "hint" in q:
         st.caption(f"Hint: {q['hint']}")
     
