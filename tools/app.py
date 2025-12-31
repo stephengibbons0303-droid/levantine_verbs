@@ -186,6 +186,8 @@ def page_quiz():
         st.session_state.quiz_questions = generate_quiz(verbs, quiz_type, num_questions, use_arabic_script)
         st.session_state.quiz_idx = 0
         st.session_state.quiz_score = 0
+        st.session_state.lightsaber_level = 0  # Track lightsaber progress (0-100)
+        st.session_state.max_level = num_questions  # Need this many correct to fill
         st.session_state.use_arabic_script = use_arabic_script
 
     if "quiz_questions" in st.session_state:
@@ -387,20 +389,167 @@ def generate_quiz(verbs, quiz_type, num, use_arabic_script=False):
         questions.append(q)
     return questions
 
+def render_lightsaber(level, max_level):
+    """Render a vertical lightsaber progress bar on the right side."""
+    # Calculate fill percentage (0-100)
+    fill_pct = min(100, max(0, (level / max_level) * 100)) if max_level > 0 else 0
+    is_full = fill_pct >= 100
+
+    # Lightsaber CSS and HTML
+    lightsaber_html = f"""
+    <style>
+    .lightsaber-container {{
+        position: fixed;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 1000;
+    }}
+    .lightsaber-blade-container {{
+        width: 24px;
+        height: 300px;
+        background: linear-gradient(to bottom, #1a1a2e, #0d0d1a);
+        border-radius: 12px 12px 0 0;
+        position: relative;
+        overflow: hidden;
+        box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+    }}
+    .lightsaber-blade {{
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: {fill_pct}%;
+        background: linear-gradient(to top,
+            rgba(0, 150, 255, 0.3) 0%,
+            rgba(100, 200, 255, 0.7) 30%,
+            rgba(150, 220, 255, 0.9) 50%,
+            rgba(200, 240, 255, 1) 70%,
+            rgba(255, 255, 255, 1) 100%);
+        box-shadow:
+            0 0 10px rgba(0, 150, 255, 0.8),
+            0 0 20px rgba(0, 150, 255, 0.6),
+            0 0 30px rgba(0, 150, 255, 0.4),
+            0 0 40px rgba(0, 150, 255, 0.2);
+        border-radius: 10px 10px 0 0;
+        transition: height 0.5s ease-out;
+    }}
+    .lightsaber-core {{
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 8px;
+        height: {fill_pct}%;
+        background: linear-gradient(to top,
+            rgba(200, 230, 255, 0.8) 0%,
+            rgba(255, 255, 255, 1) 100%);
+        border-radius: 4px 4px 0 0;
+        transition: height 0.5s ease-out;
+    }}
+    .lightsaber-handle {{
+        width: 20px;
+        height: 60px;
+        background: linear-gradient(to right, #2a2a3a, #4a4a5a, #3a3a4a);
+        border-radius: 3px;
+        position: relative;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }}
+    .lightsaber-handle::before {{
+        content: '';
+        position: absolute;
+        top: 10px;
+        left: 2px;
+        right: 2px;
+        height: 3px;
+        background: #666;
+        border-radius: 1px;
+    }}
+    .lightsaber-handle::after {{
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 2px;
+        right: 2px;
+        height: 25px;
+        background: repeating-linear-gradient(
+            to bottom,
+            #555 0px,
+            #555 2px,
+            #333 2px,
+            #333 4px
+        );
+        border-radius: 1px;
+    }}
+    .lightsaber-emitter {{
+        width: 24px;
+        height: 10px;
+        background: linear-gradient(to right, #3a3a4a, #5a5a6a, #4a4a5a);
+        border-radius: 2px 2px 0 0;
+    }}
+    .level-text {{
+        color: #00a0ff;
+        font-size: 14px;
+        font-weight: bold;
+        margin-top: 10px;
+        text-shadow: 0 0 10px rgba(0, 150, 255, 0.8);
+    }}
+    {'@keyframes pulse { 0%, 100% { box-shadow: 0 0 20px rgba(0,150,255,0.8), 0 0 40px rgba(0,150,255,0.6), 0 0 60px rgba(0,150,255,0.4); } 50% { box-shadow: 0 0 30px rgba(0,150,255,1), 0 0 60px rgba(0,150,255,0.8), 0 0 90px rgba(0,150,255,0.6); } } .lightsaber-blade { animation: pulse 1s ease-in-out infinite; }' if is_full else ''}
+    </style>
+    <div class="lightsaber-container">
+        <div class="lightsaber-blade-container">
+            <div class="lightsaber-blade"></div>
+            <div class="lightsaber-core"></div>
+        </div>
+        <div class="lightsaber-emitter"></div>
+        <div class="lightsaber-handle"></div>
+        <div class="level-text">{int(fill_pct)}%</div>
+    </div>
+    """
+
+    # Add sound effect when fully lit
+    if is_full:
+        lightsaber_html += """
+        <audio autoplay>
+            <source src="https://www.soundjay.com/mechanical/sounds/electric-fan-1.mp3" type="audio/mpeg">
+        </audio>
+        <script>
+            // Lightsaber ignition celebration
+            console.log('🗡️ LIGHTSABER FULLY CHARGED! 🗡️');
+        </script>
+        """
+
+    st.markdown(lightsaber_html, unsafe_allow_html=True)
+
 def run_quiz():
     idx = st.session_state.quiz_idx
     questions = st.session_state.quiz_questions
-    
+    level = st.session_state.get('lightsaber_level', 0)
+    max_level = st.session_state.get('max_level', len(questions))
+
+    # Render the lightsaber
+    render_lightsaber(level, max_level)
+
     if idx >= len(questions):
-        st.success(f"Quiz Complete! Score: {st.session_state.quiz_score}/{len(questions)}")
+        if level >= max_level:
+            st.balloons()
+            st.success(f"🗡️ LIGHTSABER FULLY CHARGED! Quiz Complete! Score: {st.session_state.quiz_score}/{len(questions)}")
+        else:
+            st.success(f"Quiz Complete! Score: {st.session_state.quiz_score}/{len(questions)}")
+            st.info(f"Lightsaber level: {int((level/max_level)*100)}% - Keep practicing!")
         if st.button("New Quiz"):
             del st.session_state.quiz_questions
+            if 'lightsaber_level' in st.session_state:
+                del st.session_state.lightsaber_level
             st.rerun()
         return
-    
+
     q = questions[idx]
-    st.progress(idx / len(questions))
-    st.subheader(f"Q{idx + 1}: {q['prompt']}")
+    st.caption(f"Q{idx + 1} of {len(questions)}")
+    st.subheader(f"{q['prompt']}")
 
     # Show English translation for conjugation questions
     if "prompt_english" in q:
@@ -408,22 +557,26 @@ def run_quiz():
 
     if "hint" in q:
         st.caption(f"Hint: {q['hint']}")
-    
+
     for opt_idx, opt in enumerate(q["options"]):
         if st.button(opt, key=f"opt_{idx}_{opt_idx}"):
             if opt == q["answer"]:
                 st.session_state.quiz_score += 1
+                # Increase lightsaber level on correct answer
+                st.session_state.lightsaber_level = min(max_level, level + 1)
                 alt = q.get("answer_alt", "")
                 if alt:
-                    st.success(f"Correct! {q['answer']} = {alt}")
+                    st.success(f"✓ Correct! {q['answer']} = {alt}")
                 else:
-                    st.success("Correct!")
+                    st.success("✓ Correct!")
             else:
+                # Decrease lightsaber level on wrong answer (but not below 0)
+                st.session_state.lightsaber_level = max(0, level - 1)
                 alt = q.get("answer_alt", "")
                 if alt:
-                    st.error(f"Wrong. Answer: {q['answer']} = {alt}")
+                    st.error(f"✗ Wrong. Answer: {q['answer']} = {alt}")
                 else:
-                    st.error(f"Wrong. Answer: {q['answer']}")
+                    st.error(f"✗ Wrong. Answer: {q['answer']}")
             st.session_state.quiz_idx += 1
             st.rerun()
 
