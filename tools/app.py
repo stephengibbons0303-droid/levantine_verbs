@@ -284,9 +284,11 @@ def generate_quiz(verbs, quiz_type, num):
             random.shuffle(wrong_options)
             options = [form["translit"]] + wrong_options[:3]
 
+            # Remove "to " prefix from verb for natural English
+            verb_eng = verb["verb"]["english"].replace("to ", "")
             q = {
                 "prompt": ar_template,
-                "prompt_english": en_template.replace("_____", verb["verb"]["english"]),
+                "prompt_english": en_template.replace("_____", verb_eng),
                 "answer": form["translit"],
                 "answer_arabic": form["arabic"],
                 "options": options
