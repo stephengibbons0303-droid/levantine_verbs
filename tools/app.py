@@ -279,16 +279,16 @@ def generate_quiz(verbs, quiz_type, num):
             else:
                 ar_template, en_template = "_____ ؟", "_____ ?"
 
-            # Get unique wrong answers
-            wrong_options = list(set(f["arabic"] for f in forms if f["arabic"] != form["arabic"]))
+            # Get unique wrong answers (using transliteration)
+            wrong_options = list(set(f["translit"] for f in forms if f["translit"] != form["translit"]))
             random.shuffle(wrong_options)
-            options = [form["arabic"]] + wrong_options[:3]
+            options = [form["translit"]] + wrong_options[:3]
 
             q = {
                 "prompt": ar_template,
                 "prompt_english": en_template.replace("_____", verb["verb"]["english"]),
-                "answer": form["arabic"],
-                "hint": form["translit"],
+                "answer": form["translit"],
+                "answer_arabic": form["arabic"],
                 "options": options
             }
         elif quiz_type == "Arabic → English":
@@ -345,9 +345,17 @@ def run_quiz():
         if st.button(opt, key=f"opt_{idx}_{opt_idx}"):
             if opt == q["answer"]:
                 st.session_state.quiz_score += 1
-                st.success("Correct!")
+                arabic = q.get("answer_arabic", "")
+                if arabic:
+                    st.success(f"Correct! {q['answer']} = {arabic}")
+                else:
+                    st.success("Correct!")
             else:
-                st.error(f"Wrong. Answer: {q['answer']}")
+                arabic = q.get("answer_arabic", "")
+                if arabic:
+                    st.error(f"Wrong. Answer: {q['answer']} = {arabic}")
+                else:
+                    st.error(f"Wrong. Answer: {q['answer']}")
             st.session_state.quiz_idx += 1
             st.rerun()
 
