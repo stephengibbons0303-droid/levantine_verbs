@@ -188,77 +188,131 @@ def page_quiz():
     if "quiz_questions" in st.session_state:
         run_quiz()
 
-# Sentence templates for contextual conjugation quiz
-SENTENCE_TEMPLATES = {
-    "bi_imperfect": {
-        "ana": [
-            ("أنا _____ كل يوم", "I _____ every day"),
-            ("أنا _____ كتير", "I _____ a lot"),
-            ("أنا عادةً _____", "I usually _____"),
+# Verb-specific sentence templates with natural collocations
+# Format: verb_arabic -> {tense -> [(ar_template, en_template), ...]}
+VERB_TEMPLATES = {
+    "إجا": {  # to come
+        "bi_imperfect": [
+            ("_____ عالبيت كل يوم", "_____ home every day"),
+            ("_____ لعندي بكرا؟", "_____ to my place tomorrow?"),
+            ("_____ عالشغل بالباص", "_____ to work by bus"),
         ],
-        "nihna": [
-            ("نحنا _____ سوا", "We _____ together"),
-            ("نحنا _____ كل أسبوع", "We _____ every week"),
-        ],
-        "inta": [
-            ("إنت _____ كتير؟", "Do you (m) _____ a lot?"),
-            ("إنت _____ كل يوم؟", "Do you (m) _____ every day?"),
-        ],
-        "inti": [
-            ("إنتي _____ كتير؟", "Do you (f) _____ a lot?"),
-            ("إنتي _____ عادةً؟", "Do you (f) usually _____?"),
-        ],
-        "intu": [
-            ("إنتو _____ سوا؟", "Do you (pl) _____ together?"),
-            ("إنتو _____ كل يوم؟", "Do you (pl) _____ every day?"),
-        ],
-        "huwwe": [
-            ("هو _____ كل يوم", "He _____ every day"),
-            ("هو _____ كتير", "He _____ a lot"),
-        ],
-        "hiyye": [
-            ("هي _____ كل يوم", "She _____ every day"),
-            ("هي _____ كتير", "She _____ a lot"),
-        ],
-        "hinne": [
-            ("هنّي _____ سوا", "They _____ together"),
-            ("هنّي _____ كل أسبوع", "They _____ every week"),
+        "perfect": [
+            ("_____ عالبيت مبارح", "_____ home yesterday"),
+            ("_____ لعندي الصبح", "_____ to my place this morning"),
         ],
     },
-    "perfect": {
-        "ana": [
-            ("أنا _____ مبارح", "I _____ yesterday"),
-            ("أنا _____ الأسبوع الماضي", "I _____ last week"),
+    "أخَذ": {  # to take
+        "bi_imperfect": [
+            ("_____ الباص كل يوم", "_____ the bus every day"),
+            ("_____ الدوا كل صبح", "_____ medicine every morning"),
+            ("_____ قهوة بالصبح", "_____ coffee in the morning"),
         ],
-        "nihna": [
-            ("نحنا _____ مبارح", "We _____ yesterday"),
-            ("نحنا _____ سوا", "We _____ together"),
-        ],
-        "inta": [
-            ("إنت _____؟", "Did you (m) _____?"),
-            ("إنت _____ مبارح؟", "Did you (m) _____ yesterday?"),
-        ],
-        "inti": [
-            ("إنتي _____؟", "Did you (f) _____?"),
-            ("إنتي _____ مبارح؟", "Did you (f) _____ yesterday?"),
-        ],
-        "intu": [
-            ("إنتو _____؟", "Did you (pl) _____?"),
-            ("إنتو _____ مبارح؟", "Did you (pl) _____ yesterday?"),
-        ],
-        "huwwe": [
-            ("هو _____ مبارح", "He _____ yesterday"),
-            ("هو _____ قبل شوي", "He _____ a while ago"),
-        ],
-        "hiyye": [
-            ("هي _____ مبارح", "She _____ yesterday"),
-            ("هي _____ قبل شوي", "She _____ a while ago"),
-        ],
-        "hinne": [
-            ("هنّي _____ مبارح", "They _____ yesterday"),
-            ("هنّي _____ سوا", "They _____ together"),
+        "perfect": [
+            ("_____ الباص مبارح", "_____ the bus yesterday"),
+            ("_____ الكتاب من المكتبة", "_____ the book from the library"),
         ],
     },
+    "أعْلَن": {  # to announce
+        "bi_imperfect": [
+            ("_____ الخبر بكرا", "_____ the news tomorrow"),
+            ("_____ النتيجة قريباً", "_____ the result soon"),
+        ],
+        "perfect": [
+            ("_____ الخبر مبارح", "_____ the news yesterday"),
+            ("_____ خطوبتن", "_____ their engagement"),
+        ],
+    },
+    "أكَل": {  # to eat
+        "bi_imperfect": [
+            ("_____ الفطور كل صبح", "_____ breakfast every morning"),
+            ("_____ فلافل كتير", "_____ a lot of falafel"),
+            ("_____ بالمطعم كل جمعة", "_____ at the restaurant every Friday"),
+        ],
+        "perfect": [
+            ("_____ الفطور الصبح", "_____ breakfast this morning"),
+            ("_____ شاورما مبارح", "_____ shawarma yesterday"),
+            ("_____ عند ستي", "_____ at grandma's"),
+        ],
+    },
+    "أمَر": {  # to order
+        "bi_imperfect": [
+            ("_____ قهوة من المقهى", "_____ coffee from the cafe"),
+            ("_____ أكل من المطعم", "_____ food from the restaurant"),
+            ("شو _____؟", "what would _____ like to order?"),
+        ],
+        "perfect": [
+            ("_____ قهوة وكرواسان", "_____ coffee and a croissant"),
+            ("_____ شاورما دجاج", "_____ chicken shawarma"),
+        ],
+    },
+    "باع": {  # to sell
+        "bi_imperfect": [
+            ("_____ خضرة بالسوق", "_____ vegetables at the market"),
+            ("_____ السيارة قريباً", "_____ the car soon"),
+            ("_____ بالدكان كل يوم", "_____ at the shop every day"),
+        ],
+        "perfect": [
+            ("_____ السيارة مبارح", "_____ the car yesterday"),
+            ("_____ البيت الشهر الماضي", "_____ the house last month"),
+        ],
+    },
+    "بَرَم": {  # to turn/wander
+        "bi_imperfect": [
+            ("_____ بالسوق كل سبت", "_____ around the market every Saturday"),
+            ("_____ بالضيعة", "_____ around the village"),
+            ("_____ بالمدينة", "_____ around the city"),
+        ],
+        "perfect": [
+            ("_____ بالسوق مبارح", "_____ around the market yesterday"),
+            ("_____ بكل المحلات", "_____ all the shops"),
+        ],
+    },
+    "بِقي": {  # to stay/become
+        "bi_imperfect": [
+            ("_____ بالبيت اليوم", "_____ at home today"),
+            ("_____ هادي وقت المشاكل", "_____ calm during problems"),
+            ("_____ صاحي للصبح", "_____ awake until morning"),
+        ],
+        "perfect": [
+            ("_____ بالبيت مبارح", "_____ at home yesterday"),
+            ("_____ عند صحابي", "_____ at my friends' place"),
+        ],
+    },
+    "بَلَّش": {  # to begin
+        "bi_imperfect": [
+            ("_____ الشغل بكير", "_____ work early"),
+            ("_____ يدرس الساعة ثمانية", "_____ studying at eight"),
+            ("أيمتى _____؟", "when does _____ start?"),
+        ],
+        "perfect": [
+            ("_____ الشغل الصبح", "_____ work this morning"),
+            ("_____ يدرس عربي", "_____ studying Arabic"),
+        ],
+    },
+    "تَرَك": {  # to leave
+        "bi_imperfect": [
+            ("_____ الشغل الساعة خمسة", "_____ work at five"),
+            ("_____ التدخين قريباً", "_____ smoking soon"),
+            ("ما _____ الولاد لوحدن", "_____ never leave the kids alone"),
+        ],
+        "perfect": [
+            ("_____ الشغل مبارح", "_____ work yesterday"),
+            ("_____ التدخين السنة الماضية", "_____ smoking last year"),
+        ],
+    },
+}
+
+# Fallback generic templates if verb not found
+GENERIC_TEMPLATES = {
+    "bi_imperfect": [
+        ("_____ كل يوم", "_____ every day"),
+        ("_____ كتير", "_____ a lot"),
+    ],
+    "perfect": [
+        ("_____ مبارح", "_____ yesterday"),
+        ("_____ قبل شوي", "_____ a while ago"),
+    ],
 }
 
 def generate_quiz(verbs, quiz_type, num):
@@ -271,24 +325,28 @@ def generate_quiz(verbs, quiz_type, num):
             forms = verb["conjugations"][tense]["forms"]
             form = random.choice(forms)
 
-            # Get contextual sentence template
-            person = form["person"]
-            templates = SENTENCE_TEMPLATES.get(tense, {}).get(person, [])
-            if templates:
-                ar_template, en_template = random.choice(templates)
-            else:
-                ar_template, en_template = "_____ ؟", "_____ ?"
+            # Get verb-specific template with natural collocations
+            verb_arabic = verb["verb"]["arabic"]
+            verb_templates = VERB_TEMPLATES.get(verb_arabic, {}).get(tense, [])
+            if not verb_templates:
+                verb_templates = GENERIC_TEMPLATES.get(tense, [("_____", "_____")])
+            ar_template, en_template = random.choice(verb_templates)
 
             # Get unique wrong answers (using transliteration)
             wrong_options = list(set(f["translit"] for f in forms if f["translit"] != form["translit"]))
             random.shuffle(wrong_options)
             options = [form["translit"]] + wrong_options[:3]
 
-            # Remove "to " prefix from verb for natural English
-            verb_eng = verb["verb"]["english"].replace("to ", "")
+            # Build English prompt with subject
+            person_subjects = {
+                "ana": "I", "nihna": "we", "inta": "you (m)", "inti": "you (f)",
+                "intu": "you (pl)", "huwwe": "he", "hiyye": "she", "hinne": "they"
+            }
+            subject = person_subjects.get(form["person"], "")
+
             q = {
                 "prompt": ar_template,
-                "prompt_english": en_template.replace("_____", verb_eng),
+                "prompt_english": en_template.replace("_____", subject),
                 "answer": form["translit"],
                 "answer_arabic": form["arabic"],
                 "options": options
