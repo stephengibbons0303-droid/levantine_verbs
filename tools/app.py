@@ -197,25 +197,40 @@ def generate_quiz(verbs, quiz_type, num):
             tense = random.choice(["perfect", "bi_imperfect"])
             forms = verb["conjugations"][tense]["forms"]
             form = random.choice(forms)
-            
+
+            # Get unique wrong answers
+            wrong_options = list(set(f["arabic"] for f in forms if f["arabic"] != form["arabic"]))
+            random.shuffle(wrong_options)
+            options = [form["arabic"]] + wrong_options[:3]
+
             q = {
                 "prompt": f"Conjugate '{verb['verb']['english']}' in {tense} for {PERSON_LABELS[form['person']]}",
                 "answer": form["arabic"],
                 "hint": form["translit"],
-                "options": [form["arabic"]] + [random.choice(forms)["arabic"] for _ in range(3)]
+                "options": options
             }
         elif quiz_type == "Arabic → English":
+            # Get unique wrong answers
+            wrong_options = list(set(v["verb"]["english"] for v in verbs if v["verb"]["english"] != verb["verb"]["english"]))
+            random.shuffle(wrong_options)
+            options = [verb["verb"]["english"]] + wrong_options[:3]
+
             q = {
                 "prompt": verb["verb"]["arabic"],
                 "answer": verb["verb"]["english"],
-                "options": [verb["verb"]["english"]] + [random.choice(verbs)["verb"]["english"] for _ in range(3)]
+                "options": options
             }
         else:
+            # Get unique wrong answers
+            wrong_options = list(set(v["verb"]["arabic"] for v in verbs if v["verb"]["arabic"] != verb["verb"]["arabic"]))
+            random.shuffle(wrong_options)
+            options = [verb["verb"]["arabic"]] + wrong_options[:3]
+
             q = {
                 "prompt": verb["verb"]["english"],
                 "answer": verb["verb"]["arabic"],
                 "hint": verb["verb"]["translit"],
-                "options": [verb["verb"]["arabic"]] + [random.choice(verbs)["verb"]["arabic"] for _ in range(3)]
+                "options": options
             }
         
         random.shuffle(q["options"])
@@ -240,8 +255,8 @@ def run_quiz():
     if "hint" in q:
         st.caption(f"Hint: {q['hint']}")
     
-    for opt in q["options"]:
-        if st.button(opt, key=f"opt_{idx}_{opt}"):
+    for opt_idx, opt in enumerate(q["options"]):
+        if st.button(opt, key=f"opt_{idx}_{opt_idx}"):
             if opt == q["answer"]:
                 st.session_state.quiz_score += 1
                 st.success("Correct!")
