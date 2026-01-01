@@ -7,6 +7,11 @@ import streamlit as st
 import json
 from pathlib import Path
 import random
+import sys
+
+# Add scripts directory to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
+from md_to_json import parse_markdown_content
 
 # Paths
 DATA_DIR = Path(__file__).parent.parent / "data"
@@ -95,75 +100,131 @@ def display_verb(verb):
                     st.write(f"**{gender}**: {ap[gender]['arabic']}")
                     st.caption(ap[gender]['translit'])
 
-def page_editor():
-    st.header("✏️ Verb Editor")
-    verbs = load_verbs()
-    
-    mode = st.radio("Mode", ["Add New", "Edit Existing"], horizontal=True)
-    
-    if mode == "Edit Existing" and verbs:
-        verb_options = {f"{v['id']:03d}. {v['verb']['translit']}": i for i, v in enumerate(verbs)}
-        selected = st.selectbox("Select verb to edit", list(verb_options.keys()))
-        verb_idx = verb_options[selected]
-        verb = verbs[verb_idx].copy()
-    else:
-        verb_idx = None
-        verb = {
-            "id": len(verbs) + 1,
-            "verb": {"arabic": "", "translit": "", "english": ""},
-            "classification": {"measure": "I", "type": "sound", "root": ""},
-            "conjugations": {
-                "perfect": {"label": "Past", "forms": [{"person": p, "arabic": "", "translit": "", "english": ""} for p in PERSONS]},
-                "imperfect": {"label": "Subjunctive", "forms": [{"person": p, "arabic": "", "translit": "", "english": ""} for p in PERSONS]},
-                "bi_imperfect": {"label": "Habitual", "forms": [{"person": p, "arabic": "", "translit": "", "english": ""} for p in PERSONS]},
-                "imperative": {"label": "Command", "forms": [{"person": p, "arabic": "", "translit": "", "english": ""} for p in ["inta", "inti", "intu"]]}
-            }
-        }
-    
-    # Basic info
-    st.subheader("Basic Info")
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        verb["verb"]["arabic"] = st.text_input("Arabic", verb["verb"]["arabic"])
-    with col2:
-        verb["verb"]["translit"] = st.text_input("Transliteration", verb["verb"]["translit"])
-    with col3:
-        verb["verb"]["english"] = st.text_input("English", verb["verb"]["english"])
-    
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        verb["classification"]["measure"] = st.selectbox("Measure", ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "Iq", "IIq"], 
-            index=["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "Iq", "IIq"].index(verb["classification"]["measure"]))
-    with col2:
-        verb["classification"]["type"] = st.text_input("Type", verb["classification"]["type"])
-    with col3:
-        verb["classification"]["root"] = st.text_input("Root", verb["classification"]["root"])
-    
-    # Conjugations
-    for tense in ["perfect", "imperfect", "bi_imperfect", "imperative"]:
-        st.subheader(f"{verb['conjugations'][tense]['label']} ({tense})")
-        forms = verb["conjugations"][tense]["forms"]
-        
-        cols_per_row = 4
-        for i in range(0, len(forms), cols_per_row):
-            cols = st.columns(cols_per_row)
-            for j, col in enumerate(cols):
-                if i + j < len(forms):
-                    form = forms[i + j]
-                    with col:
-                        st.markdown(f"**{form['person']}** ({PERSON_LABELS.get(form['person'], '')})")
-                        form["arabic"] = st.text_input(f"Arabic##{tense}{i+j}", form["arabic"], key=f"{tense}_ar_{i+j}")
-                        form["translit"] = st.text_input(f"Translit##{tense}{i+j}", form["translit"], key=f"{tense}_tr_{i+j}")
-    
-    # Save
-    if st.button("💾 Save Verb", type="primary"):
-        if verb_idx is not None:
-            verbs[verb_idx] = verb
+def page_converter():
+    st.header("📤 MD to JSON Converter")
+    st.caption("Upload a markdown file with verb conjugation tables to add verbs to the database")
+
+    existing_verbs = load_verbs()
+    existing_arabic = {v["verb"]["arabic"] for v in existing_verbs}
+    max_id = max((v["id"] for v in existing_verbs), default=0)
+
+    # File uploader
+    uploaded_file = st.file_uploader("Upload MD file", type=["md", "txt"])
+
+    if uploaded_file is not None:
+        content = uploaded_file.read().decode("utf-8")
+
+        # Parse the markdown
+        try:
+            parsed_verbs = parse_markdown_content(content)
+        except Exception as e:
+            st.error(f"Error parsing markdown: {e}")
+            return
+
+        if not parsed_verbs:
+            st.warning("No verbs found in the uploaded file. Make sure the format matches:")
+            st.code("## 1. إجا — *irregular defective measure I* — **to come**", language="markdown")
+            return
+
+        # Analyze for duplicates
+        new_verbs = []
+        duplicates = []
+
+        for verb in parsed_verbs:
+            if verb["verb"]["arabic"] in existing_arabic:
+                # Find existing verb
+                existing = next(v for v in existing_verbs if v["verb"]["arabic"] == verb["verb"]["arabic"])
+                duplicates.append((verb, existing))
+            else:
+                new_verbs.append(verb)
+
+        # Store in session state for preview
+        st.session_state.parsed_verbs = parsed_verbs
+        st.session_state.new_verbs = new_verbs
+        st.session_state.duplicates = duplicates
+
+        st.divider()
+
+        # Preview section
+        st.subheader("Preview")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            st.metric("Current verbs", len(existing_verbs))
+        with col2:
+            st.metric("After import", len(existing_verbs) + len(new_verbs))
+
+        # New verbs
+        if new_verbs:
+            st.success(f"**{len(new_verbs)} new verb(s) to add:**")
+            for verb in new_verbs:
+                st.write(f"• {verb['verb']['arabic']} ({verb['verb']['translit']}) — {verb['verb']['english']}")
         else:
-            verbs.append(verb)
-        save_verbs(verbs)
-        st.success(f"Saved verb #{verb['id']}: {verb['verb']['translit']}")
-        st.rerun()
+            st.info("No new verbs to add.")
+
+        # Duplicates
+        if duplicates:
+            st.warning(f"**{len(duplicates)} duplicate(s) found (will be skipped):**")
+            for new_verb, existing in duplicates:
+                st.write(f"• {new_verb['verb']['arabic']} — already exists as ID {existing['id']}")
+
+        st.divider()
+
+        # Import button
+        if new_verbs:
+            if st.button("💾 Import to verbs.json", type="primary"):
+                # Assign new IDs
+                for i, verb in enumerate(new_verbs):
+                    verb["id"] = max_id + 1 + i
+
+                # Merge and save
+                merged = existing_verbs + new_verbs
+                save_verbs(merged)
+
+                st.success(f"Successfully imported {len(new_verbs)} verb(s)!")
+                st.balloons()
+
+                # Clear state
+                for key in ["parsed_verbs", "new_verbs", "duplicates"]:
+                    if key in st.session_state:
+                        del st.session_state[key]
+
+                st.rerun()
+        else:
+            st.info("Nothing to import - all verbs already exist in the database.")
+
+    # Show expected format
+    with st.expander("📖 Expected MD Format"):
+        st.markdown("""
+The markdown file should contain verb entries in this format:
+
+```markdown
+## 1. إجا — *irregular defective measure I* — **to come**
+
+| | **perfect** | | **imperfect** | | **bi-imperfect** | |
+|---|---|---|---|---|---|---|
+| ána | jīt | جيت | íji | إجي | bíji | بِجي |
+| níḥna | jīna | جينا | níji | نِجي | mníji | مْنِجي |
+...
+
+| **imperative** | | |
+|---|---|---|
+| ínta | tá3a | تَعا |
+...
+
+| **active participle** | | |
+|---|---|---|
+| masculine | jēy | جاي |
+...
+
+**Notes:**
+① Note text here...
+
+**Example sentences:**
+- Arabic sentence here
+  - English translation
+```
+        """)
 
 def page_quiz():
     st.header("🎯 Quiz Tester")
@@ -613,12 +674,12 @@ def main():
     st.set_page_config(page_title="Levantine Verbs", page_icon="🇱🇧", layout="wide")
     st.title("🇱🇧 Levantine Arabic Verb Tool")
     
-    tab1, tab2, tab3, tab4 = st.tabs(["📚 Browse", "✏️ Editor", "🎯 Quiz", "📊 Stats"])
-    
+    tab1, tab2, tab3, tab4 = st.tabs(["📚 Browse", "📤 Import", "🎯 Quiz", "📊 Stats"])
+
     with tab1:
         page_browse()
     with tab2:
-        page_editor()
+        page_converter()
     with tab3:
         page_quiz()
     with tab4:

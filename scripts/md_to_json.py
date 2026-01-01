@@ -478,11 +478,15 @@ def build_verb_json(header_info, verb_data):
     return result
 
 
-def parse_markdown_file(filepath):
-    """Parse a markdown file and extract all verbs."""
-    with open(filepath, 'r', encoding='utf-8') as f:
-        content = f.read()
+def parse_markdown_content(content):
+    """Parse markdown content string and extract all verbs.
 
+    Args:
+        content: Markdown string containing verb definitions
+
+    Returns:
+        List of verb dictionaries in JSON format
+    """
     lines = content.split('\n')
     verbs = []
 
@@ -502,6 +506,13 @@ def parse_markdown_file(filepath):
         i += 1
 
     return verbs
+
+
+def parse_markdown_file(filepath):
+    """Parse a markdown file and extract all verbs."""
+    with open(filepath, 'r', encoding='utf-8') as f:
+        content = f.read()
+    return parse_markdown_content(content)
 
 
 def main():
