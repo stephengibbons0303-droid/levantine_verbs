@@ -100,6 +100,35 @@ def display_verb(verb):
                     st.write(f"**{gender}**: {ap[gender]['arabic']}")
                     st.caption(ap[gender]['translit'])
 
+def validate_verb_structure(verb):
+    """Check if a parsed verb has all required components."""
+    issues = []
+
+    # Check basic info
+    if not verb.get("verb", {}).get("arabic"):
+        issues.append("Missing Arabic verb")
+    if not verb.get("verb", {}).get("english"):
+        issues.append("Missing English translation")
+
+    # Check conjugations
+    conjugations = verb.get("conjugations", {})
+    for tense in ["perfect", "imperfect", "bi_imperfect"]:
+        forms = conjugations.get(tense, {}).get("forms", [])
+        if len(forms) != 8:
+            issues.append(f"{tense}: expected 8 forms, got {len(forms)}")
+
+    imp_forms = conjugations.get("imperative", {}).get("forms", [])
+    if len(imp_forms) != 3:
+        issues.append(f"imperative: expected 3 forms, got {len(imp_forms)}")
+
+    # Check active participle
+    participle = verb.get("active_participle", {}).get("forms", {})
+    if len(participle) < 3:
+        issues.append(f"active participle: expected 3 forms, got {len(participle)}")
+
+    return issues
+
+
 def page_converter():
     st.header("📤 MD to JSON Converter")
     st.caption("Upload a markdown file with verb conjugation tables to add verbs to the database")
@@ -118,13 +147,57 @@ def page_converter():
         try:
             parsed_verbs = parse_markdown_content(content)
         except Exception as e:
-            st.error(f"Error parsing markdown: {e}")
+            st.error(f"❌ Error parsing markdown: {e}")
             return
 
         if not parsed_verbs:
-            st.warning("No verbs found in the uploaded file. Make sure the format matches:")
+            st.error("❌ **Format Error**: No verbs found in the uploaded file.")
+            st.info("Make sure the format matches:")
             st.code("## 1. إجا — *irregular defective measure I* — **to come**", language="markdown")
             return
+
+        st.divider()
+
+        # Format validation section
+        st.subheader("📋 Format Validation")
+
+        all_valid = True
+        validation_results = []
+
+        for verb in parsed_verbs:
+            issues = validate_verb_structure(verb)
+            validation_results.append((verb, issues))
+            if issues:
+                all_valid = False
+
+        if all_valid:
+            st.success(f"✅ **Format OK** — {len(parsed_verbs)} verb(s) parsed correctly")
+        else:
+            st.warning(f"⚠️ **Format Issues** — Some verbs may have incomplete data")
+
+        # Show validation details in expander
+        with st.expander("View parsed verb details", expanded=not all_valid):
+            for verb, issues in validation_results:
+                arabic = verb.get("verb", {}).get("arabic", "???")
+                english = verb.get("verb", {}).get("english", "???")
+                translit = verb.get("verb", {}).get("translit", "")
+
+                conj = verb.get("conjugations", {})
+                perf_count = len(conj.get("perfect", {}).get("forms", []))
+                impf_count = len(conj.get("imperfect", {}).get("forms", []))
+                bi_count = len(conj.get("bi_imperfect", {}).get("forms", []))
+                imp_count = len(conj.get("imperative", {}).get("forms", []))
+                part_count = len(verb.get("active_participle", {}).get("forms", {}))
+
+                if issues:
+                    st.markdown(f"⚠️ **{arabic}** ({translit}) — {english}")
+                    for issue in issues:
+                        st.caption(f"   └─ {issue}")
+                else:
+                    st.markdown(f"✅ **{arabic}** ({translit}) — {english}")
+                    st.caption(f"   └─ perfect: {perf_count}, imperfect: {impf_count}, bi-imperfect: {bi_count}, imperative: {imp_count}, participle: {part_count}")
+
+        st.divider()
 
         # Analyze for duplicates
         new_verbs = []
@@ -132,41 +205,36 @@ def page_converter():
 
         for verb in parsed_verbs:
             if verb["verb"]["arabic"] in existing_arabic:
-                # Find existing verb
                 existing = next(v for v in existing_verbs if v["verb"]["arabic"] == verb["verb"]["arabic"])
                 duplicates.append((verb, existing))
             else:
                 new_verbs.append(verb)
 
-        # Store in session state for preview
-        st.session_state.parsed_verbs = parsed_verbs
-        st.session_state.new_verbs = new_verbs
-        st.session_state.duplicates = duplicates
-
-        st.divider()
-
         # Preview section
-        st.subheader("Preview")
+        st.subheader("📊 Import Preview")
 
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
         with col1:
             st.metric("Current verbs", len(existing_verbs))
         with col2:
+            st.metric("New to add", len(new_verbs))
+        with col3:
             st.metric("After import", len(existing_verbs) + len(new_verbs))
 
         # New verbs
         if new_verbs:
-            st.success(f"**{len(new_verbs)} new verb(s) to add:**")
+            st.success(f"**{len(new_verbs)} new verb(s) will be added:**")
             for verb in new_verbs:
                 st.write(f"• {verb['verb']['arabic']} ({verb['verb']['translit']}) — {verb['verb']['english']}")
-        else:
-            st.info("No new verbs to add.")
 
         # Duplicates
         if duplicates:
-            st.warning(f"**{len(duplicates)} duplicate(s) found (will be skipped):**")
+            st.warning(f"**{len(duplicates)} duplicate(s) will be skipped:**")
             for new_verb, existing in duplicates:
                 st.write(f"• {new_verb['verb']['arabic']} — already exists as ID {existing['id']}")
+
+        if not new_verbs and not duplicates:
+            st.info("No verbs to process.")
 
         st.divider()
 
@@ -181,17 +249,16 @@ def page_converter():
                 merged = existing_verbs + new_verbs
                 save_verbs(merged)
 
-                st.success(f"Successfully imported {len(new_verbs)} verb(s)!")
+                st.success(f"✅ **Successfully imported {len(new_verbs)} verb(s) to verbs.json!**")
+
+                # Show what was added
+                st.info("**Added:**")
+                for verb in new_verbs:
+                    st.write(f"• ID {verb['id']}: {verb['verb']['arabic']} ({verb['verb']['translit']}) — {verb['verb']['english']}")
+
                 st.balloons()
-
-                # Clear state
-                for key in ["parsed_verbs", "new_verbs", "duplicates"]:
-                    if key in st.session_state:
-                        del st.session_state[key]
-
-                st.rerun()
-        else:
-            st.info("Nothing to import - all verbs already exist in the database.")
+        elif duplicates and not new_verbs:
+            st.info("All verbs already exist in the database. Nothing to import.")
 
     # Show expected format
     with st.expander("📖 Expected MD Format"):
