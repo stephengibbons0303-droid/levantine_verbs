@@ -166,7 +166,7 @@ def parse_pipe_content(content):
     current_verb = None
     current_data = {
         'perfect': [], 'imperfect': [], 'bi_imperfect': [],
-        'imperative': [], 'participle': [], 'notes': []
+        'imperative': [], 'participle': [], 'notes': [], 'examples': []
     }
 
     def finalize_verb():
@@ -318,7 +318,7 @@ def parse_pipe_content(content):
                 'forms': build_participle_forms(current_data['participle'])
             },
             'notes': current_data['notes'],
-            'examples': []
+            'examples': current_data['examples']
         }
 
         verbs.append(verb_json)
@@ -327,7 +327,7 @@ def parse_pipe_content(content):
         current_verb = None
         current_data = {
             'perfect': [], 'imperfect': [], 'bi_imperfect': [],
-            'imperative': [], 'participle': [], 'notes': []
+            'imperative': [], 'participle': [], 'notes': [], 'examples': []
         }
 
     for line in lines:
@@ -409,6 +409,14 @@ def parse_pipe_content(content):
         elif line_type == 'NOTE' and current_verb:
             if len(parts) >= 2:
                 current_data['notes'].append(parts[1])
+
+        elif line_type == 'EXAMPLE' and current_verb:
+            if len(parts) >= 3:
+                current_data['examples'].append({
+                    'arabic': parts[1],
+                    'english': parts[2],
+                    'translit': parts[3] if len(parts) >= 4 else ''
+                })
 
     # Finalize last verb
     if current_verb:
