@@ -111,6 +111,65 @@ def page_converter():
 
     existing_verbs = load_verbs()
     existing_arabic = {v["verb"]["arabic"] for v in existing_verbs}
+    existing_by_id = {v["id"]: v for v in existing_verbs}
+
+    # Data Management Section
+    with st.expander("🔧 Data Management", expanded=False):
+        st.caption("Manage existing verb data by ID range")
+
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            range_start = st.number_input("From ID", min_value=1, value=1, step=1)
+        with col2:
+            range_end = st.number_input("To ID", min_value=1, value=10, step=1)
+        with col3:
+            action = st.selectbox("Action", [
+                "Delete verbs",
+                "Clear examples",
+                "Clear notes"
+            ])
+
+        # Show affected verbs
+        affected = [v for v in existing_verbs if range_start <= v["id"] <= range_end]
+        if affected:
+            st.info(f"**{len(affected)} verb(s) in range {range_start}-{range_end}:**")
+            for v in affected[:5]:  # Show first 5
+                st.caption(f"• ID {v['id']}: {v['verb']['arabic']} ({v['verb']['translit']})")
+            if len(affected) > 5:
+                st.caption(f"... and {len(affected) - 5} more")
+        else:
+            st.warning(f"No verbs found in range {range_start}-{range_end}")
+
+        if affected and st.button(f"⚠️ Execute: {action}", type="secondary"):
+            if action == "Delete verbs":
+                new_verbs_list = [v for v in existing_verbs if not (range_start <= v["id"] <= range_end)]
+                save_verbs(new_verbs_list)
+                st.success(f"✅ Deleted {len(affected)} verb(s) from range {range_start}-{range_end}")
+                st.rerun()
+            elif action == "Clear examples":
+                for v in existing_verbs:
+                    if range_start <= v["id"] <= range_end:
+                        v["examples"] = []
+                save_verbs(existing_verbs)
+                st.success(f"✅ Cleared examples for {len(affected)} verb(s)")
+                st.rerun()
+            elif action == "Clear notes":
+                for v in existing_verbs:
+                    if range_start <= v["id"] <= range_end:
+                        v["notes"] = []
+                save_verbs(existing_verbs)
+                st.success(f"✅ Cleared notes for {len(affected)} verb(s)")
+                st.rerun()
+
+    st.divider()
+
+    # Import mode selector
+    import_mode = st.radio(
+        "Import Mode",
+        ["Add new verbs", "Update examples only"],
+        horizontal=True,
+        help="'Add new verbs' imports complete verb entries. 'Update examples only' merges examples into existing verbs by ID."
+    )
 
     # File uploader
     uploaded_file = st.file_uploader("Upload verb data file", type=["txt"])
@@ -176,62 +235,133 @@ def page_converter():
 
         st.divider()
 
-        # Analyze for duplicates
-        new_verbs = []
-        duplicates = []
+        # Handle different import modes
+        if import_mode == "Add new verbs":
+            # Analyze for duplicates
+            new_verbs = []
+            duplicates = []
 
-        for verb in parsed_verbs:
-            if verb["verb"]["arabic"] in existing_arabic:
-                existing = next(v for v in existing_verbs if v["verb"]["arabic"] == verb["verb"]["arabic"])
-                duplicates.append((verb, existing))
-            else:
-                new_verbs.append(verb)
+            for verb in parsed_verbs:
+                if verb["verb"]["arabic"] in existing_arabic:
+                    existing = next(v for v in existing_verbs if v["verb"]["arabic"] == verb["verb"]["arabic"])
+                    duplicates.append((verb, existing))
+                else:
+                    new_verbs.append(verb)
 
-        # Preview section
-        st.subheader("📊 Import Preview")
+            # Preview section
+            st.subheader("📊 Import Preview")
 
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.metric("Current verbs", len(existing_verbs))
-        with col2:
-            st.metric("New to add", len(new_verbs))
-        with col3:
-            st.metric("After import", len(existing_verbs) + len(new_verbs))
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Current verbs", len(existing_verbs))
+            with col2:
+                st.metric("New to add", len(new_verbs))
+            with col3:
+                st.metric("After import", len(existing_verbs) + len(new_verbs))
 
-        # New verbs
-        if new_verbs:
-            st.success(f"**{len(new_verbs)} new verb(s) will be added:**")
-            for verb in new_verbs:
-                st.write(f"• {verb['verb']['arabic']} ({verb['verb']['translit']}) — {verb['verb']['english']}")
-
-        # Duplicates
-        if duplicates:
-            st.warning(f"**{len(duplicates)} duplicate(s) will be skipped:**")
-            for new_verb, existing in duplicates:
-                st.write(f"• {new_verb['verb']['arabic']} — already exists as ID {existing['id']}")
-
-        if not new_verbs and not duplicates:
-            st.info("No verbs to process.")
-
-        st.divider()
-
-        # Import button
-        if new_verbs:
-            if st.button("💾 Import to verbs.json", type="primary"):
-                # Merge and save (preserving original IDs from source file)
-                merged = existing_verbs + new_verbs
-                save_verbs(merged)
-
-                st.success(f"✅ **Successfully imported {len(new_verbs)} verb(s) to verbs.json!**")
-
-                # Show what was added
-                st.info("**Added:**")
+            # New verbs
+            if new_verbs:
+                st.success(f"**{len(new_verbs)} new verb(s) will be added:**")
                 for verb in new_verbs:
-                    st.write(f"• ID {verb['id']}: {verb['verb']['arabic']} ({verb['verb']['translit']}) — {verb['verb']['english']}")
+                    st.write(f"• {verb['verb']['arabic']} ({verb['verb']['translit']}) — {verb['verb']['english']}")
 
-                st.balloons()
-        elif duplicates and not new_verbs:
-            st.info("All verbs already exist in the database. Nothing to import.")
+            # Duplicates
+            if duplicates:
+                st.warning(f"**{len(duplicates)} duplicate(s) will be skipped:**")
+                for new_verb, existing in duplicates:
+                    st.write(f"• {new_verb['verb']['arabic']} — already exists as ID {existing['id']}")
+
+            if not new_verbs and not duplicates:
+                st.info("No verbs to process.")
+
+            st.divider()
+
+            # Import button
+            if new_verbs:
+                if st.button("💾 Import to verbs.json", type="primary"):
+                    # Merge and save (preserving original IDs from source file)
+                    merged = existing_verbs + new_verbs
+                    save_verbs(merged)
+
+                    st.success(f"✅ **Successfully imported {len(new_verbs)} verb(s) to verbs.json!**")
+
+                    # Show what was added
+                    st.info("**Added:**")
+                    for verb in new_verbs:
+                        st.write(f"• ID {verb['id']}: {verb['verb']['arabic']} ({verb['verb']['translit']}) — {verb['verb']['english']}")
+
+                    st.balloons()
+            elif duplicates and not new_verbs:
+                st.info("All verbs already exist in the database. Nothing to import.")
+
+        else:  # "Update examples only" mode
+            # Find verbs that exist and have examples to merge
+            updates = []
+            not_found = []
+
+            for verb in parsed_verbs:
+                verb_id = verb["id"]
+                examples = verb.get("examples", [])
+                notes = verb.get("notes", [])
+
+                if verb_id in existing_by_id:
+                    if examples or notes:
+                        updates.append({
+                            "id": verb_id,
+                            "verb": existing_by_id[verb_id],
+                            "new_examples": examples,
+                            "new_notes": notes
+                        })
+                else:
+                    not_found.append(verb)
+
+            # Preview section
+            st.subheader("📊 Update Preview")
+
+            col1, col2 = st.columns(2)
+            with col1:
+                st.metric("Verbs to update", len(updates))
+            with col2:
+                st.metric("Not found (skipped)", len(not_found))
+
+            if updates:
+                st.success(f"**{len(updates)} verb(s) will be updated:**")
+                for u in updates[:10]:
+                    ex_count = len(u["new_examples"])
+                    note_count = len(u["new_notes"])
+                    v = u["verb"]
+                    st.write(f"• ID {u['id']}: {v['verb']['arabic']} — +{ex_count} examples, +{note_count} notes")
+                if len(updates) > 10:
+                    st.caption(f"... and {len(updates) - 10} more")
+
+            if not_found:
+                st.warning(f"**{len(not_found)} verb(s) not found in database (skipped):**")
+                for v in not_found[:5]:
+                    st.write(f"• ID {v['id']}: {v['verb']['arabic']}")
+                if len(not_found) > 5:
+                    st.caption(f"... and {len(not_found) - 5} more")
+
+            st.divider()
+
+            if updates:
+                if st.button("💾 Update examples in verbs.json", type="primary"):
+                    # Merge examples and notes into existing verbs
+                    for u in updates:
+                        existing_verb = existing_by_id[u["id"]]
+                        # Append new examples (avoid duplicates by checking arabic text)
+                        existing_ex_arabic = {e.get("arabic", "") for e in existing_verb.get("examples", [])}
+                        for ex in u["new_examples"]:
+                            if ex.get("arabic", "") not in existing_ex_arabic:
+                                existing_verb.setdefault("examples", []).append(ex)
+                        # Append new notes (avoid duplicates)
+                        existing_notes = set(existing_verb.get("notes", []))
+                        for note in u["new_notes"]:
+                            if note not in existing_notes:
+                                existing_verb.setdefault("notes", []).append(note)
+
+                    save_verbs(existing_verbs)
+                    st.success(f"✅ **Successfully updated {len(updates)} verb(s)!**")
+                    st.balloons()
 
     # Show expected format
     with st.expander("📖 Expected Format (from NotebookLM)"):
