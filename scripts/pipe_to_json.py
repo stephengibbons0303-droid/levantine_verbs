@@ -159,6 +159,14 @@ def parse_pipe_content(content):
     Returns:
         tuple: (list of valid verbs, list of skipped verb reports)
     """
+    # Pre-process: insert newlines before keywords if missing
+    # This handles NotebookLM output that lacks line breaks
+    import re
+    # Match keywords only when NOT preceded by underscore or the specific letters that form compound keywords
+    # BI_IMPERFECT, IMPERFECT - so we check for BI_ and IM prefixes
+    pattern = r'(?<!BI_)(?<!IM)(?<![_\n])(VERB\||PERFECT\||IMPERFECT\||BI_IMPERFECT\||IMPERATIVE\||PARTICIPLE\||EXAMPLE\||NOTE\||---)'
+    content = re.sub(pattern, r'\n\1', content)
+
     lines = content.strip().split('\n')
     verbs = []
     skipped = []
