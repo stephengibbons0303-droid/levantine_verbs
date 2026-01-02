@@ -418,8 +418,26 @@ def page_quiz():
     with col3:
         use_arabic_script = st.checkbox("Show Arabic script", value=False)
 
+    # Tense selector (only for Conjugation quiz)
+    if quiz_type == "Conjugation":
+        tense_option = st.radio(
+            "Tense",
+            ["All", "Past (perfect)", "Present (bi-imperfect)", "Dependent (imperfect)"],
+            horizontal=True,
+            help="Dependent/imperfect is used with auxiliaries (can, want), future (raḥ), progressive (3am), etc."
+        )
+        tense_map = {
+            "All": "all",
+            "Past (perfect)": "perfect",
+            "Present (bi-imperfect)": "bi_imperfect",
+            "Dependent (imperfect)": "imperfect"
+        }
+        selected_tense = tense_map[tense_option]
+    else:
+        selected_tense = "all"
+
     if st.button("Start Quiz"):
-        st.session_state.quiz_questions = generate_quiz(verbs, quiz_type, num_questions, use_arabic_script)
+        st.session_state.quiz_questions = generate_quiz(verbs, quiz_type, num_questions, use_arabic_script, selected_tense)
         st.session_state.quiz_idx = 0
         st.session_state.quiz_score = 0
         st.session_state.lightsaber_level = 0  # Track lightsaber progress (0-100)
@@ -550,7 +568,52 @@ GENERIC_TEMPLATES = {
     ],
 }
 
-def generate_quiz(verbs, quiz_type, num, use_arabic_script=False):
+# Imperfect (dependent) templates - used with auxiliaries, particles, conjunctions
+# These show the context where imperfect is required
+IMPERFECT_TEMPLATES = {
+    # Auxiliaries - person-matched (need to match verb person)
+    "auxiliary": [
+        # fiyyu/fiyya (can) - person-matched particles
+        {"particle_ar": "فيّي", "particle_tr": "fíyyi", "context_en": "I can", "person": "ana"},
+        {"particle_ar": "فينا", "particle_tr": "fína", "context_en": "we can", "person": "nihna"},
+        {"particle_ar": "فيك", "particle_tr": "fík", "context_en": "you (m) can", "person": "inta"},
+        {"particle_ar": "فيكي", "particle_tr": "fíki", "context_en": "you (f) can", "person": "inti"},
+        {"particle_ar": "فيكن", "particle_tr": "fíkon", "context_en": "you (pl) can", "person": "intu"},
+        {"particle_ar": "فيو", "particle_tr": "fíyyu", "context_en": "he can", "person": "huwwe"},
+        {"particle_ar": "فيا", "particle_tr": "fíya", "context_en": "she can", "person": "hiyye"},
+        {"particle_ar": "فين", "particle_tr": "fíyon", "context_en": "they can", "person": "hinne"},
+        # baddi (want) - person-matched
+        {"particle_ar": "بدّي", "particle_tr": "báddi", "context_en": "I want to", "person": "ana"},
+        {"particle_ar": "بدّنا", "particle_tr": "báddna", "context_en": "we want to", "person": "nihna"},
+        {"particle_ar": "بدّك", "particle_tr": "báddak", "context_en": "you (m) want to", "person": "inta"},
+        {"particle_ar": "بدّك", "particle_tr": "báddik", "context_en": "you (f) want to", "person": "inti"},
+        {"particle_ar": "بدّكن", "particle_tr": "báddkon", "context_en": "you (pl) want to", "person": "intu"},
+        {"particle_ar": "بدّو", "particle_tr": "báddo", "context_en": "he wants to", "person": "huwwe"},
+        {"particle_ar": "بدّا", "particle_tr": "bádda", "context_en": "she wants to", "person": "hiyye"},
+        {"particle_ar": "بدّن", "particle_tr": "báddon", "context_en": "they want to", "person": "hinne"},
+    ],
+    # Future particle - any person
+    "future": [
+        {"particle_ar": "رح", "particle_tr": "raḥ", "context_en": "will"},
+    ],
+    # Progressive particle - any person
+    "progressive": [
+        {"particle_ar": "عم", "particle_tr": "3am", "context_en": "is/are (doing)"},
+    ],
+    # Negative imperative - 2nd person only
+    "negative_imp": [
+        {"particle_ar": "ما", "particle_tr": "ma", "context_en": "don't", "persons": ["inta", "inti", "intu"]},
+    ],
+    # Purpose conjunctions - any person
+    "purpose": [
+        {"particle_ar": "ل", "particle_tr": "la-", "context_en": "in order to"},
+        {"particle_ar": "ت", "particle_tr": "ta-", "context_en": "in order to"},
+        {"particle_ar": "حتى", "particle_tr": "ḥátta", "context_en": "so that"},
+        {"particle_ar": "كرمال", "particle_tr": "kirmēl", "context_en": "so that"},
+    ],
+}
+
+def generate_quiz(verbs, quiz_type, num, use_arabic_script=False, selected_tense="all"):
     questions = []
 
     # For conjugation quiz, filter to verbs with enough forms for multiple choice
@@ -559,7 +622,8 @@ def generate_quiz(verbs, quiz_type, num, use_arabic_script=False):
             v for v in verbs
             if not v.get("partial", False) and
             len(v.get("conjugations", {}).get("perfect", {}).get("forms", [])) >= 4 and
-            len(v.get("conjugations", {}).get("bi_imperfect", {}).get("forms", [])) >= 4
+            len(v.get("conjugations", {}).get("bi_imperfect", {}).get("forms", [])) >= 4 and
+            len(v.get("conjugations", {}).get("imperfect", {}).get("forms", [])) >= 4
         ]
         if not quiz_verbs:
             quiz_verbs = verbs  # Fallback to all verbs if none qualify
@@ -570,63 +634,157 @@ def generate_quiz(verbs, quiz_type, num, use_arabic_script=False):
         verb = random.choice(quiz_verbs)
 
         if quiz_type == "Conjugation":
-            tense = random.choice(["perfect", "bi_imperfect"])
+            # Select tense based on user choice
+            if selected_tense == "all":
+                tense = random.choice(["perfect", "bi_imperfect", "imperfect"])
+            else:
+                tense = selected_tense
+
+            # Check if verb has this tense
+            if tense not in verb.get("conjugations", {}):
+                tense = "bi_imperfect"  # Fallback
+
             forms = verb["conjugations"][tense]["forms"]
-            form = random.choice(forms)
+            if not forms:
+                continue
 
-            # Get verb-specific template with natural collocations
-            verb_arabic = verb["verb"]["arabic"]
-            verb_templates = VERB_TEMPLATES.get(verb_arabic, {}).get(tense, [])
-            if not verb_templates:
-                verb_templates = GENERIC_TEMPLATES.get(tense, [("_____", "_____", "_____")])
-            ar_template, translit_template, en_template = random.choice(verb_templates)
+            # For imperfect, use special template with particles/auxiliaries
+            if tense == "imperfect":
+                # Choose a random context type
+                context_type = random.choice(["auxiliary", "future", "progressive", "purpose"])
 
-            # Get the pronoun for this person
-            person_pronoun = PERSON_TRANSLIT.get(form["person"], form["person"])
+                if context_type == "auxiliary":
+                    # Person-matched auxiliary (can/want)
+                    form = random.choice(forms)
+                    person = form["person"]
+                    # Find matching auxiliary for this person
+                    aux_options = [a for a in IMPERFECT_TEMPLATES["auxiliary"] if a["person"] == person]
+                    if aux_options:
+                        aux = random.choice(aux_options)
+                        if use_arabic_script:
+                            prompt_template = f"{aux['particle_ar']} __________"
+                            answer = form["arabic"]
+                            answer_alt = form["translit"]
+                        else:
+                            prompt_template = f"{aux['particle_tr']} __________"
+                            answer = form["translit"]
+                            answer_alt = form["arabic"]
+                        en_context = aux["context_en"]
+                    else:
+                        # Fallback to future
+                        context_type = "future"
 
-            # Build prompt with pronoun: "níḥna __________ kil yom"
-            if use_arabic_script:
-                prompt_template = ar_template.replace("_____", "__________")
+                if context_type in ["future", "progressive"]:
+                    form = random.choice(forms)
+                    particle = random.choice(IMPERFECT_TEMPLATES[context_type])
+                    person_pronoun = PERSON_TRANSLIT.get(form["person"], form["person"])
+                    if use_arabic_script:
+                        prompt_template = f"{particle['particle_ar']} __________"
+                        answer = form["arabic"]
+                        answer_alt = form["translit"]
+                    else:
+                        prompt_template = f"{person_pronoun} {particle['particle_tr']} __________"
+                        answer = form["translit"]
+                        answer_alt = form["arabic"]
+                    en_context = f"{PERSON_LABELS.get(form['person'], '')} {particle['context_en']}"
+
+                elif context_type == "purpose":
+                    form = random.choice(forms)
+                    particle = random.choice(IMPERFECT_TEMPLATES["purpose"])
+                    if use_arabic_script:
+                        prompt_template = f"{particle['particle_ar']}__________"
+                        answer = form["arabic"]
+                        answer_alt = form["translit"]
+                    else:
+                        prompt_template = f"{particle['particle_tr']}__________"
+                        answer = form["translit"]
+                        answer_alt = form["arabic"]
+                    en_context = particle["context_en"]
+
+                # Get wrong options from same tense
+                if use_arabic_script:
+                    wrong_options = list(set(f["arabic"] for f in forms if f["arabic"] != form["arabic"]))
+                else:
+                    wrong_options = list(set(f["translit"] for f in forms if f["translit"] != form["translit"]))
+
+                random.shuffle(wrong_options)
+                options = [answer] + wrong_options[:3]
+
+                examples = verb.get("examples", [])
+                example = random.choice(examples) if examples else None
+
+                q = {
+                    "prompt": prompt_template,
+                    "prompt_english": en_context,
+                    "answer": answer,
+                    "answer_alt": answer_alt,
+                    "options": options,
+                    "verb_info": {
+                        "translit": verb["verb"]["translit"],
+                        "arabic": verb["verb"]["arabic"],
+                        "english": verb["verb"]["english"]
+                    },
+                    "example": example,
+                    "tense": "imperfect",
+                    "context_type": context_type
+                }
             else:
-                prompt_template = translit_template.replace("_____", "__________")
+                # Perfect or bi-imperfect - use existing template logic
+                form = random.choice(forms)
 
-            # Prepend pronoun to template
-            prompt_with_pronoun = f"{person_pronoun} {prompt_template}"
+                # Get verb-specific template with natural collocations
+                verb_arabic = verb["verb"]["arabic"]
+                verb_templates = VERB_TEMPLATES.get(verb_arabic, {}).get(tense, [])
+                if not verb_templates:
+                    verb_templates = GENERIC_TEMPLATES.get(tense, [("_____", "_____", "_____")])
+                ar_template, translit_template, en_template = random.choice(verb_templates)
 
-            # Get unique wrong answers (using appropriate script)
-            if use_arabic_script:
-                wrong_options = list(set(f["arabic"] for f in forms if f["arabic"] != form["arabic"]))
-                answer = form["arabic"]
-                answer_alt = form["translit"]
-            else:
-                wrong_options = list(set(f["translit"] for f in forms if f["translit"] != form["translit"]))
-                answer = form["translit"]
-                answer_alt = form["arabic"]
+                # Get the pronoun for this person
+                person_pronoun = PERSON_TRANSLIT.get(form["person"], form["person"])
 
-            random.shuffle(wrong_options)
-            options = [answer] + wrong_options[:3]
+                # Build prompt with pronoun: "níḥna __________ kil yom"
+                if use_arabic_script:
+                    prompt_template = ar_template.replace("_____", "__________")
+                else:
+                    prompt_template = translit_template.replace("_____", "__________")
 
-            # Build English prompt with subject
-            subject = PERSON_LABELS.get(form["person"], "")
+                # Prepend pronoun to template
+                prompt_with_pronoun = f"{person_pronoun} {prompt_template}"
 
-            # Get a random example sentence from the verb if available
-            examples = verb.get("examples", [])
-            example = random.choice(examples) if examples else None
+                # Get unique wrong answers (using appropriate script)
+                if use_arabic_script:
+                    wrong_options = list(set(f["arabic"] for f in forms if f["arabic"] != form["arabic"]))
+                    answer = form["arabic"]
+                    answer_alt = form["translit"]
+                else:
+                    wrong_options = list(set(f["translit"] for f in forms if f["translit"] != form["translit"]))
+                    answer = form["translit"]
+                    answer_alt = form["arabic"]
 
-            q = {
-                "prompt": prompt_with_pronoun,
-                "prompt_english": en_template.replace("_____", subject),
-                "answer": answer,
-                "answer_alt": answer_alt,
-                "options": options,
-                "verb_info": {
-                    "translit": verb["verb"]["translit"],
-                    "arabic": verb["verb"]["arabic"],
-                    "english": verb["verb"]["english"]
-                },
-                "example": example,
-                "tense": tense
-            }
+                random.shuffle(wrong_options)
+                options = [answer] + wrong_options[:3]
+
+                # Build English prompt with subject
+                subject = PERSON_LABELS.get(form["person"], "")
+
+                # Get a random example sentence from the verb if available
+                examples = verb.get("examples", [])
+                example = random.choice(examples) if examples else None
+
+                q = {
+                    "prompt": prompt_with_pronoun,
+                    "prompt_english": en_template.replace("_____", subject),
+                    "answer": answer,
+                    "answer_alt": answer_alt,
+                    "options": options,
+                    "verb_info": {
+                        "translit": verb["verb"]["translit"],
+                        "arabic": verb["verb"]["arabic"],
+                        "english": verb["verb"]["english"]
+                    },
+                    "example": example,
+                    "tense": tense
+                }
         elif quiz_type == "Arabic → English":
             # Get unique wrong answers
             wrong_options = list(set(v["verb"]["english"] for v in verbs if v["verb"]["english"] != verb["verb"]["english"]))
