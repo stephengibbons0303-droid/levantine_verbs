@@ -680,14 +680,9 @@ def run_quiz():
     # Show verb info for conjugation questions
     if "verb_info" in q:
         vi = q["verb_info"]
-        tense_label = "Past" if q.get("tense") == "perfect" else "Present"
-        st.markdown(f"**{vi['translit']}** | {vi['arabic']} | *{vi['english']}* — ({tense_label})")
+        st.markdown(f"**{vi['translit']}** | {vi['arabic']} | *{vi['english']}*")
 
     st.subheader(f"{q['prompt']}")
-
-    # Show English translation for conjugation questions
-    if "prompt_english" in q:
-        st.write(f"*{q['prompt_english']}*")
 
     # Show example sentence from verb data
     if "example" in q and q["example"]:
