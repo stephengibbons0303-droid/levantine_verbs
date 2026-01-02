@@ -111,7 +111,6 @@ def page_converter():
 
     existing_verbs = load_verbs()
     existing_arabic = {v["verb"]["arabic"] for v in existing_verbs}
-    max_id = max((v["id"] for v in existing_verbs), default=0)
 
     # File uploader
     uploaded_file = st.file_uploader("Upload verb data file", type=["txt"])
@@ -219,11 +218,7 @@ def page_converter():
         # Import button
         if new_verbs:
             if st.button("💾 Import to verbs.json", type="primary"):
-                # Assign new IDs
-                for i, verb in enumerate(new_verbs):
-                    verb["id"] = max_id + 1 + i
-
-                # Merge and save
+                # Merge and save (preserving original IDs from source file)
                 merged = existing_verbs + new_verbs
                 save_verbs(merged)
 
@@ -427,8 +422,22 @@ GENERIC_TEMPLATES = {
 
 def generate_quiz(verbs, quiz_type, num, use_arabic_script=False):
     questions = []
+
+    # For conjugation quiz, filter to verbs with enough forms for multiple choice
+    if quiz_type == "Conjugation":
+        quiz_verbs = [
+            v for v in verbs
+            if not v.get("partial", False) and
+            len(v.get("conjugations", {}).get("perfect", {}).get("forms", [])) >= 4 and
+            len(v.get("conjugations", {}).get("bi_imperfect", {}).get("forms", [])) >= 4
+        ]
+        if not quiz_verbs:
+            quiz_verbs = verbs  # Fallback to all verbs if none qualify
+    else:
+        quiz_verbs = verbs
+
     for _ in range(num):
-        verb = random.choice(verbs)
+        verb = random.choice(quiz_verbs)
 
         if quiz_type == "Conjugation":
             tense = random.choice(["perfect", "bi_imperfect"])
