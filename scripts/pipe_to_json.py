@@ -214,7 +214,7 @@ def parse_pipe_content(content):
             current_verb = None
             current_data = {
                 'perfect': [], 'imperfect': [], 'bi_imperfect': [],
-                'imperative': [], 'participle': [], 'notes': []
+                'imperative': [], 'participle': [], 'notes': [], 'examples': []
             }
             return
 
