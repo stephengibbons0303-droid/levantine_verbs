@@ -29,13 +29,24 @@ PERSON_TRANSLIT = {
 }
 
 # ---------- Data Loading ----------
+def get_file_mtime():
+    """Get file modification time for cache invalidation."""
+    if VERBS_FILE.exists():
+        return VERBS_FILE.stat().st_mtime
+    return 0
+
 @st.cache_data
-def load_verbs():
+def load_verbs(_mtime):
+    """Load verbs with cache invalidation based on file modification time."""
     if VERBS_FILE.exists():
         with open(VERBS_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
             return data if isinstance(data, list) else [data]
     return []
+
+def get_verbs():
+    """Wrapper to load verbs with automatic cache invalidation."""
+    return load_verbs(get_file_mtime())
 
 def save_verbs(verbs):
     DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -46,7 +57,7 @@ def save_verbs(verbs):
 # ---------- Pages ----------
 def page_browse():
     st.header("📚 Browse Verbs")
-    verbs = load_verbs()
+    verbs = get_verbs()
     
     if not verbs:
         st.warning("No verbs loaded. Add verbs in the Editor tab.")
@@ -109,7 +120,7 @@ def page_converter():
     st.header("📤 Verb Importer")
     st.caption("Upload pipe-delimited verb data (from NotebookLM) to add verbs to the database")
 
-    existing_verbs = load_verbs()
+    existing_verbs = get_verbs()
     existing_arabic = {v["verb"]["arabic"] for v in existing_verbs}
     existing_by_id = {v["id"]: v for v in existing_verbs}
 
@@ -403,7 +414,7 @@ NOTE|The imperfect forms have a long vowel.
 
 def page_quiz():
     st.header("🎯 Quiz Tester")
-    verbs = load_verbs()
+    verbs = get_verbs()
 
     if not verbs:
         st.warning("No verbs loaded.")
@@ -1013,7 +1024,7 @@ def run_quiz():
 
 def page_stats():
     st.header("📊 Statistics")
-    verbs = load_verbs()
+    verbs = get_verbs()
     
     if not verbs:
         st.warning("No verbs loaded.")
