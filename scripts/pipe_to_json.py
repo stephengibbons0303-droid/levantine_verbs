@@ -187,29 +187,14 @@ def parse_pipe_content(content):
         if current_verb is None:
             return
 
-        issues = []
-
-        # Check completeness
-        for tense in ['perfect', 'imperfect', 'bi_imperfect']:
-            if len(current_data[tense]) != 8:
-                issues.append(f"{tense}: {len(current_data[tense])}/8 forms")
-
-        if not current_data['imperative'] and current_data['imperative'] != 'NONE':
-            issues.append("imperative: missing")
-        elif current_data['imperative'] != 'NONE' and len(current_data['imperative']) != 3:
-            issues.append(f"imperative: {len(current_data['imperative'])}/3 forms")
-
-        if not current_data['participle'] and current_data['participle'] != 'NONE':
-            issues.append("participle: missing")
-        elif current_data['participle'] != 'NONE' and len(current_data['participle']) != 3:
-            issues.append(f"participle: {len(current_data['participle'])}/3 forms")
-
-        if issues:
+        # Check if verb has at least 1 form in any tense (minimum requirement)
+        total_forms = sum(len(current_data[t]) for t in ['perfect', 'imperfect', 'bi_imperfect'])
+        if total_forms == 0:
             skipped.append({
                 'id': current_verb['id'],
                 'arabic': current_verb['arabic'],
                 'english': current_verb['english'],
-                'issues': issues
+                'issues': ['no conjugation forms found']
             })
             current_verb = None
             current_data = {
@@ -217,6 +202,12 @@ def parse_pipe_content(content):
                 'imperative': [], 'participle': [], 'notes': [], 'examples': []
             }
             return
+
+        # Determine if this is a partial verb (< 8 forms in any main tense)
+        is_partial = any(
+            0 < len(current_data[t]) < 8
+            for t in ['perfect', 'imperfect', 'bi_imperfect']
+        )
 
         # Build full verb JSON
         classification = parse_classification(current_verb['classification'])
@@ -272,6 +263,7 @@ def parse_pipe_content(content):
 
         verb_json = {
             'id': current_verb['id'],
+            'partial': is_partial,
             'verb': {
                 'arabic': current_verb['arabic'],
                 'translit': current_verb['translit'],
