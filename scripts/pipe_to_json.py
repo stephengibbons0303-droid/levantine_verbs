@@ -3,7 +3,7 @@
 Parse pipe-delimited verb data (from NotebookLM) into JSON format.
 
 Expected input format:
-VERB|number|arabic|translit|english|classification
+VERB|number|translit|arabic|english|classification
 PERFECT|person|translit|arabic
 ... (8 persons)
 IMPERFECT|person|translit|arabic
@@ -358,12 +358,13 @@ def parse_pipe_content(content):
             if current_verb:
                 finalize_verb()
 
-            # VERB|number|arabic|translit|english|classification
+            # VERB|number|translit|arabic|english|classification
+            # (translit before arabic to avoid RTL/LTR bidirectional text issues)
             if len(parts) >= 6:
                 current_verb = {
                     'id': int(parts[1]) if parts[1].isdigit() else len(verbs) + 1,
-                    'arabic': parts[2],
-                    'translit': parts[3],
+                    'translit': parts[2],
+                    'arabic': parts[3],
                     'english': parts[4],
                     'classification': parts[5]
                 }
