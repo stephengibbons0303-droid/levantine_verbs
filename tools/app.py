@@ -22,6 +22,11 @@ PERSON_LABELS = {
     "ana": "I", "nihna": "we", "inta": "you (m)", "inti": "you (f)",
     "intu": "you (pl)", "huwwe": "he", "hiyye": "she", "hinne": "they"
 }
+# Transliterated pronouns for quiz display
+PERSON_TRANSLIT = {
+    "ana": "ána", "nihna": "níḥna", "inta": "ínta", "inti": "ínti",
+    "intu": "íntu", "huwwe": "húwwe", "hiyye": "híyye", "hinne": "hínne"
+}
 
 # ---------- Data Loading ----------
 @st.cache_data
@@ -437,8 +442,17 @@ def generate_quiz(verbs, quiz_type, num, use_arabic_script=False):
                 verb_templates = GENERIC_TEMPLATES.get(tense, [("_____", "_____", "_____")])
             ar_template, translit_template, en_template = random.choice(verb_templates)
 
-            # Choose template based on script preference
-            prompt_template = ar_template if use_arabic_script else translit_template
+            # Get the pronoun for this person
+            person_pronoun = PERSON_TRANSLIT.get(form["person"], form["person"])
+
+            # Build prompt with pronoun: "níḥna __________ kil yom"
+            if use_arabic_script:
+                prompt_template = ar_template.replace("_____", "__________")
+            else:
+                prompt_template = translit_template.replace("_____", "__________")
+
+            # Prepend pronoun to template
+            prompt_with_pronoun = f"{person_pronoun} {prompt_template}"
 
             # Get unique wrong answers (using appropriate script)
             if use_arabic_script:
@@ -454,18 +468,25 @@ def generate_quiz(verbs, quiz_type, num, use_arabic_script=False):
             options = [answer] + wrong_options[:3]
 
             # Build English prompt with subject
-            person_subjects = {
-                "ana": "I", "nihna": "we", "inta": "you (m)", "inti": "you (f)",
-                "intu": "you (pl)", "huwwe": "he", "hiyye": "she", "hinne": "they"
-            }
-            subject = person_subjects.get(form["person"], "")
+            subject = PERSON_LABELS.get(form["person"], "")
+
+            # Get a random example sentence from the verb if available
+            examples = verb.get("examples", [])
+            example = random.choice(examples) if examples else None
 
             q = {
-                "prompt": prompt_template,
+                "prompt": prompt_with_pronoun,
                 "prompt_english": en_template.replace("_____", subject),
                 "answer": answer,
                 "answer_alt": answer_alt,
-                "options": options
+                "options": options,
+                "verb_info": {
+                    "translit": verb["verb"]["translit"],
+                    "arabic": verb["verb"]["arabic"],
+                    "english": verb["verb"]["english"]
+                },
+                "example": example,
+                "tense": tense
             }
         elif quiz_type == "Arabic → English":
             # Get unique wrong answers
@@ -655,11 +676,23 @@ def run_quiz():
 
     q = questions[idx]
     st.caption(f"Q{idx + 1} of {len(questions)}")
+
+    # Show verb info for conjugation questions
+    if "verb_info" in q:
+        vi = q["verb_info"]
+        tense_label = "Past" if q.get("tense") == "perfect" else "Present"
+        st.markdown(f"**{vi['translit']}** | {vi['arabic']} | *{vi['english']}* — ({tense_label})")
+
     st.subheader(f"{q['prompt']}")
 
     # Show English translation for conjugation questions
     if "prompt_english" in q:
         st.write(f"*{q['prompt_english']}*")
+
+    # Show example sentence from verb data
+    if "example" in q and q["example"]:
+        ex = q["example"]
+        st.caption(f"📖 {ex.get('arabic', '')} — {ex.get('english', '')}")
 
     if "hint" in q:
         st.caption(f"Hint: {q['hint']}")
