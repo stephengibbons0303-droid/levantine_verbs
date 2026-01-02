@@ -111,7 +111,6 @@ def page_converter():
 
     existing_verbs = load_verbs()
     existing_arabic = {v["verb"]["arabic"] for v in existing_verbs}
-    max_id = max((v["id"] for v in existing_verbs), default=0)
 
     # File uploader
     uploaded_file = st.file_uploader("Upload verb data file", type=["txt"])
@@ -219,11 +218,7 @@ def page_converter():
         # Import button
         if new_verbs:
             if st.button("💾 Import to verbs.json", type="primary"):
-                # Assign new IDs
-                for i, verb in enumerate(new_verbs):
-                    verb["id"] = max_id + 1 + i
-
-                # Merge and save
+                # Merge and save (preserving original IDs from source file)
                 merged = existing_verbs + new_verbs
                 save_verbs(merged)
 
