@@ -27,6 +27,11 @@ IMPERATIVE_PERSONS = ['inta', 'inti', 'intu']
 PARTICIPLE_GENDERS = ['m', 'f', 'pl']
 
 
+def contains_arabic(text):
+    """Check if text contains Arabic characters."""
+    return any('\u0600' <= char <= '\u06FF' for char in text)
+
+
 def get_english_translation(person, verb_english, tense):
     """Generate English translation for conjugation."""
     person_subjects = {
@@ -358,13 +363,22 @@ def parse_pipe_content(content):
             if current_verb:
                 finalize_verb()
 
-            # VERB|number|translit|arabic|english|classification
-            # (translit before arabic to avoid RTL/LTR bidirectional text issues)
+            # Auto-detect format:
+            # New format: VERB|number|translit|arabic|english|classification
+            # Old format: VERB|number|arabic|translit|english|classification
             if len(parts) >= 6:
+                # If parts[2] contains Arabic, it's old format (arabic first)
+                if contains_arabic(parts[2]):
+                    arabic = parts[2]
+                    translit = parts[3]
+                else:
+                    translit = parts[2]
+                    arabic = parts[3]
+
                 current_verb = {
                     'id': int(parts[1]) if parts[1].isdigit() else len(verbs) + 1,
-                    'translit': parts[2],
-                    'arabic': parts[3],
+                    'translit': translit,
+                    'arabic': arabic,
                     'english': parts[4],
                     'classification': parts[5]
                 }
