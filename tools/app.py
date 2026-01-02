@@ -11,7 +11,7 @@ import sys
 
 # Add scripts directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
-from md_to_json import parse_markdown_content
+from pipe_to_json import parse_pipe_content
 
 # Paths
 DATA_DIR = Path(__file__).parent.parent / "data"
@@ -100,102 +100,75 @@ def display_verb(verb):
                     st.write(f"**{gender}**: {ap[gender]['arabic']}")
                     st.caption(ap[gender]['translit'])
 
-def validate_verb_structure(verb):
-    """Check if a parsed verb has all required components."""
-    issues = []
-
-    # Check basic info
-    if not verb.get("verb", {}).get("arabic"):
-        issues.append("Missing Arabic verb")
-    if not verb.get("verb", {}).get("english"):
-        issues.append("Missing English translation")
-
-    # Check conjugations
-    conjugations = verb.get("conjugations", {})
-    for tense in ["perfect", "imperfect", "bi_imperfect"]:
-        forms = conjugations.get(tense, {}).get("forms", [])
-        if len(forms) != 8:
-            issues.append(f"{tense}: expected 8 forms, got {len(forms)}")
-
-    imp_forms = conjugations.get("imperative", {}).get("forms", [])
-    if len(imp_forms) != 3:
-        issues.append(f"imperative: expected 3 forms, got {len(imp_forms)}")
-
-    # Check active participle
-    participle = verb.get("active_participle", {}).get("forms", {})
-    if len(participle) < 3:
-        issues.append(f"active participle: expected 3 forms, got {len(participle)}")
-
-    return issues
-
-
 def page_converter():
-    st.header("📤 MD to JSON Converter")
-    st.caption("Upload a markdown file with verb conjugation tables to add verbs to the database")
+    st.header("📤 Verb Importer")
+    st.caption("Upload pipe-delimited verb data (from NotebookLM) to add verbs to the database")
 
     existing_verbs = load_verbs()
     existing_arabic = {v["verb"]["arabic"] for v in existing_verbs}
     max_id = max((v["id"] for v in existing_verbs), default=0)
 
     # File uploader
-    uploaded_file = st.file_uploader("Upload MD file", type=["md", "txt"])
+    uploaded_file = st.file_uploader("Upload verb data file", type=["txt"])
 
     if uploaded_file is not None:
         content = uploaded_file.read().decode("utf-8")
 
-        # Parse the markdown
+        # Parse the pipe-delimited content
         try:
-            parsed_verbs = parse_markdown_content(content)
+            parsed_verbs, skipped = parse_pipe_content(content)
         except Exception as e:
-            st.error(f"❌ Error parsing markdown: {e}")
+            st.error(f"❌ Error parsing file: {e}")
             return
 
-        if not parsed_verbs:
+        if not parsed_verbs and not skipped:
             st.error("❌ **Format Error**: No verbs found in the uploaded file.")
-            st.info("Make sure the format matches:")
-            st.code("## 1. إجا — *irregular defective measure I* — **to come**", language="markdown")
+            st.info("Make sure the format matches the expected pipe-delimited format (see below).")
             return
 
         st.divider()
 
-        # Format validation section
-        st.subheader("📋 Format Validation")
+        # Parsing results section
+        st.subheader("📋 Parsing Results")
 
-        all_valid = True
-        validation_results = []
+        col1, col2 = st.columns(2)
+        with col1:
+            st.metric("Successfully parsed", len(parsed_verbs))
+        with col2:
+            st.metric("Skipped (incomplete)", len(skipped))
 
-        for verb in parsed_verbs:
-            issues = validate_verb_structure(verb)
-            validation_results.append((verb, issues))
-            if issues:
-                all_valid = False
-
-        if all_valid:
-            st.success(f"✅ **Format OK** — {len(parsed_verbs)} verb(s) parsed correctly")
+        if parsed_verbs and not skipped:
+            st.success(f"✅ **All verbs parsed successfully!**")
+        elif parsed_verbs and skipped:
+            st.warning(f"⚠️ **{len(skipped)} verb(s) skipped due to incomplete data**")
         else:
-            st.warning(f"⚠️ **Format Issues** — Some verbs may have incomplete data")
+            st.error(f"❌ **No valid verbs found** — all {len(skipped)} verb(s) had issues")
 
-        # Show validation details in expander
-        with st.expander("View parsed verb details", expanded=not all_valid):
-            for verb, issues in validation_results:
-                arabic = verb.get("verb", {}).get("arabic", "???")
-                english = verb.get("verb", {}).get("english", "???")
-                translit = verb.get("verb", {}).get("translit", "")
-
-                conj = verb.get("conjugations", {})
-                perf_count = len(conj.get("perfect", {}).get("forms", []))
-                impf_count = len(conj.get("imperfect", {}).get("forms", []))
-                bi_count = len(conj.get("bi_imperfect", {}).get("forms", []))
-                imp_count = len(conj.get("imperative", {}).get("forms", []))
-                part_count = len(verb.get("active_participle", {}).get("forms", {}))
-
-                if issues:
-                    st.markdown(f"⚠️ **{arabic}** ({translit}) — {english}")
-                    for issue in issues:
+        # Show skipped verbs
+        if skipped:
+            with st.expander(f"View {len(skipped)} skipped verb(s)", expanded=True):
+                for s in skipped:
+                    st.markdown(f"⚠️ **{s['arabic']}** — {s['english']}")
+                    for issue in s['issues']:
                         st.caption(f"   └─ {issue}")
-                else:
+
+        # Show parsed verbs
+        if parsed_verbs:
+            with st.expander(f"View {len(parsed_verbs)} parsed verb(s)"):
+                for verb in parsed_verbs:
+                    arabic = verb["verb"]["arabic"]
+                    english = verb["verb"]["english"]
+                    translit = verb["verb"]["translit"]
+                    conj = verb.get("conjugations", {})
+                    perf_count = len(conj.get("perfect", {}).get("forms", []))
+                    imp_count = len(conj.get("imperative", {}).get("forms", []))
+                    part_count = len(verb.get("active_participle", {}).get("forms", {}))
+
                     st.markdown(f"✅ **{arabic}** ({translit}) — {english}")
-                    st.caption(f"   └─ perfect: {perf_count}, imperfect: {impf_count}, bi-imperfect: {bi_count}, imperative: {imp_count}, participle: {part_count}")
+                    st.caption(f"   └─ perfect: {perf_count}, imperative: {imp_count}, participle: {part_count}")
+
+        if not parsed_verbs:
+            return
 
         st.divider()
 
@@ -261,35 +234,40 @@ def page_converter():
             st.info("All verbs already exist in the database. Nothing to import.")
 
     # Show expected format
-    with st.expander("📖 Expected MD Format"):
+    with st.expander("📖 Expected Format (from NotebookLM)"):
         st.markdown("""
-The markdown file should contain verb entries in this format:
+**Pipe-delimited format** — one line per field, verbs separated by `---`
 
-```markdown
-## 1. إجا — *irregular defective measure I* — **to come**
+```
+VERB|number|arabic|transliteration|english|classification
+PERFECT|person|translit|arabic
+(8 rows: ana, nihna, inta, inti, intu, huwwe, hiyye, hinne)
+IMPERFECT|person|translit|arabic
+(8 rows)
+BI_IMPERFECT|person|translit|arabic
+(8 rows)
+IMPERATIVE|person|translit|arabic
+(3 rows: inta, inti, intu — or IMPERATIVE|NONE if no imperative)
+PARTICIPLE|gender|translit|arabic
+(3 rows: m, f, pl — or PARTICIPLE|NONE if no participle)
+NOTE|note text
+---
+```
 
-| | **perfect** | | **imperfect** | | **bi-imperfect** | |
-|---|---|---|---|---|---|---|
-| ána | jīt | جيت | íji | إجي | bíji | بِجي |
-| níḥna | jīna | جينا | níji | نِجي | mníji | مْنِجي |
+**Example:**
+```
+VERB|2|أخد|Paxad|to take|irregular measure I
+PERFECT|ana|Paxádit|أَخَدت
+PERFECT|nihna|Paxádna|أَخَدنا
 ...
-
-| **imperative** | | |
-|---|---|---|
-| ínta | tá3a | تَعا |
-...
-
-| **active participle** | | |
-|---|---|---|
-| masculine | jēy | جاي |
-...
-
-**Notes:**
-① Note text here...
-
-**Example sentences:**
-- Arabic sentence here
-  - English translation
+IMPERATIVE|inta|xud|خُد
+IMPERATIVE|inti|xidi|خدي
+IMPERATIVE|intu|xidu|خدوا
+PARTICIPLE|m|Pēxid|آخد
+PARTICIPLE|f|Pēxdi|آخدة
+PARTICIPLE|pl|Pēxdīn|آخدين
+NOTE|The imperfect forms have a long vowel.
+---
 ```
         """)
 
