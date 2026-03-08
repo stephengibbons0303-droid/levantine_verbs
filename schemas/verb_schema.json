@@ -18,7 +18,7 @@
       "type": "object",
       "required": ["measure", "type", "root"],
       "properties": {
-        "measure": { "type": "string", "enum": ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "Iq", "IIq"] },
+        "measure": { "type": "string", "enum": ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "Iq", "IIq"] },
         "type": { "type": "string" },
         "root": { "type": "string" }
       }
@@ -48,7 +48,7 @@
         "forms": {
           "type": "array",
           "items": { "$ref": "#/$defs/personForm" },
-          "minItems": 8,
+          "minItems": 2,
           "maxItems": 8
         }
       }
@@ -61,7 +61,7 @@
         "forms": {
           "type": "array",
           "items": { "$ref": "#/$defs/personForm" },
-          "minItems": 3,
+          "minItems": 0,
           "maxItems": 3
         }
       }
@@ -70,7 +70,7 @@
       "type": "object",
       "required": ["person", "arabic", "translit", "english"],
       "properties": {
-        "person": { "type": "string", "enum": ["ana", "nihna", "inta", "inti", "intu", "huwwe", "hiyye", "hinne"] },
+        "person": { "type": "string", "enum": ["ana", "nihna", "inta", "inti", "intu", "huwwe", "hiyye", "hinne", "positive", "negative"] },
         "arabic": { "type": "string" },
         "translit": { "type": "string" },
         "english": { "type": "string" }
