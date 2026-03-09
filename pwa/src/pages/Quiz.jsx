@@ -213,7 +213,9 @@ export default function Quiz({ verbs }) {
 
       {q.example && (
         <div className="quiz-example">
-          <span dir="rtl">{q.example.arabic}</span> — {q.example.english}
+          <p dir="rtl">{q.example.arabic}</p>
+          {q.example.translit && <p className="quiz-example-translit">{q.example.translit}</p>}
+          <p>{q.example.english}</p>
         </div>
       )}
 

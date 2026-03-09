@@ -200,7 +200,23 @@ td.arabic {
 .example {
   font-size: 0.85rem;
   color: #aaa;
-  margin: 0.3rem 0;
+  margin: 0.5rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #2a2a4a;
+}
+.example:last-child {
+  border-bottom: none;
+}
+.example p {
+  margin: 0.15rem 0;
+}
+.example-translit {
+  color: #8ab4f8;
+  font-size: 0.8rem;
+}
+.example-english {
+  color: #999;
+  font-size: 0.8rem;
 }
 .note {
   font-size: 0.8rem;
@@ -335,6 +351,13 @@ input[type="range"] {
   padding: 0.4rem 0.6rem;
   background: #1a1a2e;
   border-radius: 6px;
+}
+.quiz-example p {
+  margin: 0.1rem 0;
+}
+.quiz-example-translit {
+  color: #8ab4f8;
+  font-size: 0.75rem;
 }
 
 .options {

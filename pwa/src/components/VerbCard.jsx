@@ -61,9 +61,11 @@ export default function VerbCard({ verb }) {
             <div className="tense-section">
               <h4>Examples</h4>
               {verb.examples.map((ex, i) => (
-                <p key={i} className="example">
-                  <span dir="rtl">{ex.arabic}</span> — {ex.english}
-                </p>
+                <div key={i} className="example">
+                  <p dir="rtl">{ex.arabic}</p>
+                  {ex.translit && <p className="example-translit">{ex.translit}</p>}
+                  <p className="example-english">{ex.english}</p>
+                </div>
               ))}
             </div>
           )}
