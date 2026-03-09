@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { generateQuiz } from '../utils/quizGenerator';
+import { PERSONS, PERSON_LABELS } from '../utils/constants';
 import Lightsaber from '../components/Lightsaber';
 
 const QUIZ_TYPES = [
@@ -15,11 +16,24 @@ const TENSE_OPTIONS = [
   { value: 'imperfect', label: 'Dependent (imperfect)' },
 ];
 
+function loadPersons() {
+  try {
+    const saved = localStorage.getItem('quiz_persons');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch {}
+  return [...PERSONS];
+}
+
 export default function Quiz({ verbs }) {
   const [quizType, setQuizType] = useState('conjugation');
   const [tense, setTense] = useState('all');
   const [numQuestions, setNumQuestions] = useState(10);
   const [useArabic, setUseArabic] = useState(false);
+  const [selectedPersons, setSelectedPersons] = useState(loadPersons);
+  const [showPersons, setShowPersons] = useState(false);
 
   const [questions, setQuestions] = useState(null);
   const [idx, setIdx] = useState(0);
@@ -27,14 +41,26 @@ export default function Quiz({ verbs }) {
   const [level, setLevel] = useState(0);
   const [feedback, setFeedback] = useState(null);
 
+  const togglePerson = (person) => {
+    setSelectedPersons(prev => {
+      const next = prev.includes(person)
+        ? prev.filter(p => p !== person)
+        : [...prev, person];
+      // Don't allow deselecting all
+      if (next.length === 0) return prev;
+      localStorage.setItem('quiz_persons', JSON.stringify(next));
+      return next;
+    });
+  };
+
   const startQuiz = useCallback(() => {
-    const qs = generateQuiz(verbs, quizType, numQuestions, useArabic, tense);
+    const qs = generateQuiz(verbs, quizType, numQuestions, useArabic, tense, selectedPersons);
     setQuestions(qs);
     setIdx(0);
     setScore(0);
     setLevel(0);
     setFeedback(null);
-  }, [verbs, quizType, numQuestions, useArabic, tense]);
+  }, [verbs, quizType, numQuestions, useArabic, tense, selectedPersons]);
 
   const handleAnswer = (opt) => {
     const q = questions[idx];
@@ -75,20 +101,48 @@ export default function Quiz({ verbs }) {
           </label>
 
           {quizType === 'conjugation' && (
-            <label>
-              Tense
-              <div className="chip-group">
-                {TENSE_OPTIONS.map(t => (
-                  <button
-                    key={t.value}
-                    className={`chip ${tense === t.value ? 'active' : ''}`}
-                    onClick={() => setTense(t.value)}
-                  >
-                    {t.label}
-                  </button>
-                ))}
-              </div>
-            </label>
+            <>
+              <label>
+                Tense
+                <div className="chip-group">
+                  {TENSE_OPTIONS.map(t => (
+                    <button
+                      key={t.value}
+                      className={`chip ${tense === t.value ? 'active' : ''}`}
+                      onClick={() => setTense(t.value)}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </label>
+
+              <label>
+                Subjects
+                <button
+                  className="subject-toggle-btn"
+                  onClick={() => setShowPersons(s => !s)}
+                >
+                  {selectedPersons.length === PERSONS.length
+                    ? 'All subjects'
+                    : `${selectedPersons.length} of ${PERSONS.length} selected`}
+                  <span className={`subject-arrow ${showPersons ? 'open' : ''}`}>&#9662;</span>
+                </button>
+                {showPersons && (
+                  <div className="chip-group person-chips">
+                    {PERSONS.map(p => (
+                      <button
+                        key={p}
+                        className={`chip ${selectedPersons.includes(p) ? 'active' : ''}`}
+                        onClick={() => togglePerson(p)}
+                      >
+                        {PERSON_LABELS[p]}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </label>
+            </>
           )}
 
           <label>
