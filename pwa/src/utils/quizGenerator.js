@@ -48,9 +48,9 @@ export function generateQuiz(verbs, quizType, num, useArabicScript = false, sele
 
       let q;
       if (tense === "imperfect") {
-        q = generateImperfectQuestion(verb, forms, useArabicScript);
+        q = generateImperfectQuestion(verb, forms, allForms, useArabicScript);
       } else {
-        q = generateStandardQuestion(verb, forms, tense, useArabicScript);
+        q = generateStandardQuestion(verb, forms, allForms, tense, useArabicScript);
       }
       if (q) {
         q.options = shuffle(q.options);
@@ -81,7 +81,7 @@ export function generateQuiz(verbs, quizType, num, useArabicScript = false, sele
   return questions;
 }
 
-function generateImperfectQuestion(verb, forms, useArabicScript) {
+function generateImperfectQuestion(verb, forms, allForms, useArabicScript) {
   let contextType = pick(["auxiliary", "future", "progressive", "purpose"]);
   const form = pick(forms);
   let promptTemplate, answer, answerAlt, enContext;
@@ -133,7 +133,7 @@ function generateImperfectQuestion(verb, forms, useArabicScript) {
   }
 
   const wrongKey = useArabicScript ? "arabic" : "translit";
-  const wrongOptions = [...new Set(forms.map(f => f[wrongKey]).filter(v => v !== answer))];
+  const wrongOptions = [...new Set(allForms.map(f => f[wrongKey]).filter(v => v !== answer))];
 
   const examples = verb.examples || [];
   return {
@@ -149,7 +149,7 @@ function generateImperfectQuestion(verb, forms, useArabicScript) {
   };
 }
 
-function generateStandardQuestion(verb, forms, tense, useArabicScript) {
+function generateStandardQuestion(verb, forms, allForms, tense, useArabicScript) {
   const form = pick(forms);
   const verbArabic = verb.verb.arabic;
   let templates = VERB_TEMPLATES[verbArabic]?.[tense];
@@ -164,7 +164,7 @@ function generateStandardQuestion(verb, forms, tense, useArabicScript) {
   const answer = useArabicScript ? form.arabic : form.translit;
   const answerAlt = useArabicScript ? form.translit : form.arabic;
   const wrongKey = useArabicScript ? "arabic" : "translit";
-  const wrongOptions = [...new Set(forms.map(f => f[wrongKey]).filter(v => v !== answer))];
+  const wrongOptions = [...new Set(allForms.map(f => f[wrongKey]).filter(v => v !== answer))];
   const subject = PERSON_LABELS[form.person] || "";
 
   const examples = verb.examples || [];
