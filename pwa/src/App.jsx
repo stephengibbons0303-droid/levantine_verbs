@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useVerbs } from './hooks/useVerbs';
 import Browse from './pages/Browse';
 import Quiz from './pages/Quiz';
+import TranslitDrawer from './components/TranslitDrawer';
 import './App.css';
 
 const TABS = [
@@ -40,6 +41,8 @@ export default function App() {
           </button>
         ))}
       </nav>
+
+      <TranslitDrawer />
     </div>
   );
 }
