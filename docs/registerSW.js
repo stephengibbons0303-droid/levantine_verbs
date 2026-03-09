@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/levantine_verbs/sw.js', { scope: '/levantine_verbs/' })})}
