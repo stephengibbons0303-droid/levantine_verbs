@@ -266,6 +266,32 @@ input[type="range"] {
   margin-top: 0.5rem;
 }
 
+/* ===== Subject Picker ===== */
+.subject-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: #1a1a2e;
+  color: #ccc;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.subject-arrow {
+  transition: transform 0.2s;
+  font-size: 0.7rem;
+  color: #666;
+}
+.subject-arrow.open {
+  transform: rotate(180deg);
+}
+.person-chips {
+  margin-top: 0.4rem;
+}
+
 /* ===== Quiz Active ===== */
 .quiz-progress {
   color: #666;

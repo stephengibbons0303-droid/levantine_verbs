@@ -14,7 +14,7 @@ function shuffle(arr) {
   return a;
 }
 
-export function generateQuiz(verbs, quizType, num, useArabicScript = false, selectedTense = "all") {
+export function generateQuiz(verbs, quizType, num, useArabicScript = false, selectedTense = "all", selectedPersons = null) {
   const questions = [];
 
   let quizVerbs;
@@ -39,8 +39,12 @@ export function generateQuiz(verbs, quizType, num, useArabicScript = false, sele
         : selectedTense;
 
       if (!verb.conjugations?.[tense]) tense = "bi_imperfect";
-      const forms = verb.conjugations[tense].forms;
-      if (!forms?.length) continue;
+      const allForms = verb.conjugations[tense].forms;
+      if (!allForms?.length) continue;
+      const forms = selectedPersons
+        ? allForms.filter(f => selectedPersons.includes(f.person))
+        : allForms;
+      if (!forms.length) continue;
 
       let q;
       if (tense === "imperfect") {
