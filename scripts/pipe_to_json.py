@@ -281,7 +281,7 @@ def parse_pipe_content(content):
                 'examples': {
                     'perfect': f"ما {perf_form['arabic']} (ma {perf_form['translit']}) - I didn't {verb_base}",
                     'bi_imperfect': f"ما {bi_form['arabic']} (ma {bi_form['translit']}) - I don't {verb_base}",
-                    'future': f"ما رح {impf_form['arabic']} (ma raḥ {impf_form['translit']}) - I won't {verb_base}"
+                    'future': f"ما رح {impf_form['arabic']} (ma ra7 {impf_form['translit']}) - I won't {verb_base}"
                 }
             },
             'conjugations': {
@@ -292,7 +292,7 @@ def parse_pipe_content(content):
                 },
                 'imperfect': {
                     'label': 'Subjunctive/Base',
-                    'usage': 'Used with particles (bedde, raḥ, 3am, la-, etc.)',
+                    'usage': 'Used with particles (bedde, ra7, 3am, la-, etc.)',
                     'forms': build_forms(current_data['imperfect'], 'imperfect')
                 },
                 'bi_imperfect': {
