@@ -1,23 +1,23 @@
 # Transliteration Guide — Levantine Arabic
 
-Quick reference for the transliteration system used throughout the app.
+Quick reference for the transliteration system used throughout the app (based on the Aldrich book).
 
 ---
 
 ## Consonants
 
-| Special Character | Arabic Letter | Name | Approximate Sound | Example |
+| Character(s) | Arabic Letter | Name | Approximate Sound | Example |
 |:-:|:-:|---|---|---|
-| ʔ | ء | hamza | glottal stop (uh-oh) | ʔaxad (أخد) — to take |
-| ɧ | ح | ḥāʔ | emphatic h (breathy) | ɧabb (حب) — love |
-| x | خ | xāʔ | kh (like Scottish "loch") | xāf — was afraid |
-| š | ش | šīn | sh (as in "ship") | šāf (شاف) — saw |
-| 3 | ع | ʕayn | pharyngeal voiced fricative | bi3raf (بعرف) — I know |
-| ɣ | غ | ġayn | French r / gargled g | ɣarīb (غریب) — strange |
-| ş | ص | ṣād | emphatic s | şubuɧ (صُبُح) — morning |
-| ʈ | ط | ṭāʔ | emphatic t | ʈálab (طَلَب) — requested |
-| ɖ | ض | ḍād | emphatic d | ɖárab (ضَرَب) — hit |
-| ʐ | ظ | ẓāʔ | emphatic z | būʐa (بوظة) — ice cream |
+| 2 | ء / ق | hamza / 2āf | glottal stop (uh-oh) | 2akhad (أخد) — to take |
+| 7 | ح | 7ā2 | emphatic h (breathy) | 7abb (حب) — love |
+| kh | خ | khā2 | like Scottish "loch" | khāf — was afraid |
+| sh | ش | shīn | sh (as in "ship") | shāf (شاف) — saw |
+| 3 | ع | 3ayn | pharyngeal voiced fricative | bi3raf (بعرف) — I know |
+| gh | غ | ghayn | French r / gargled g | gharīb (غریب) — strange |
+| S | ص | Sād | emphatic s (uppercase = emphatic) | Subu7 (صُبُح) — morning |
+| T | ط | Tā2 | emphatic t (uppercase = emphatic) | Tálab (طَلَب) — requested |
+| D | ض | Dād | emphatic d (uppercase = emphatic) | Dárab (ضَرَب) — hit |
+| Z | ظ | Zā2 | emphatic z (uppercase = emphatic) | būZa (بوظة) — ice cream |
 
 > All other Arabic consonants (b, t, d, f, j, k, l, m, n, r, s, w, y, z, h) use their standard Latin equivalents.
 
@@ -28,18 +28,18 @@ Quick reference for the transliteration system used throughout the app.
 ### Short Stressed Vowels (acute accent)
 | Character | Sound | Example |
 |:-:|---|---|
-| á | short stressed "a" | ʈálab — requested |
+| á | short stressed "a" | Tálab — requested |
 | í | short stressed "i" | bíji — he comes |
-| ú | short stressed "u" | şúbuɧ — morning |
+| ú | short stressed "u" | Súbu7 — morning |
 
 ### Long Vowels (macron)
 | Character | Sound | Example |
 |:-:|---|---|
-| ā | long "a" | šāf — saw |
+| ā | long "a" | shāf — saw |
 | ē | long "e" | jēy — coming (m) |
 | ī | long "i" | jīt — I came |
 | ō | long "o" | béddo — he wants |
-| ū | long "u" | ṭlūb — request! (m) |
+| ū | long "u" | Tlūb — request! (m) |
 
 ### Nasal Vowels (tilde)
 | Character | Sound |
@@ -51,7 +51,7 @@ Quick reference for the transliteration system used throughout the app.
 
 ## Unicode Reference
 
-For typing or rendering these characters:
+For typing or rendering the vowel diacritics:
 
 | Char | Unicode | HTML Entity | Description |
 |:-:|---|---|---|
@@ -64,11 +64,3 @@ For typing or rendering these characters:
 | ū | U+016B | `&#363;` | Latin Small U with Macron |
 | ã | U+00E3 | `&#227;` | Latin Small A with Tilde |
 | õ | U+00F5 | `&#245;` | Latin Small O with Tilde |
-| ɧ | U+0267 | `&#615;` | Latin Small Heng |
-| ʔ | U+0294 | `&#660;` | Latin Letter Glottal Stop |
-| š | U+0161 | `&#353;` | Latin Small S with Caron |
-| ɣ | U+0263 | `&#611;` | Latin Small Gamma (IPA) |
-| ş | U+015F | `&#351;` | Latin Small S with Cedilla |
-| ʈ | U+0288 | `&#648;` | Latin Small T with Retroflex Hook |
-| ɖ | U+0256 | `&#598;` | Latin Small D with Tail |
-| ʐ | U+0290 | `&#656;` | Latin Small Z with Retroflex Hook |
