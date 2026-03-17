@@ -131,12 +131,12 @@ export const IMPERFECT_TEMPLATES = {
     { particle_ar: "بدّا", particle_tr: "bádda", context_en: "she wants to", person: "hiyye" },
     { particle_ar: "بدّن", particle_tr: "báddon", context_en: "they want to", person: "hinne" },
   ],
-  future: [{ particle_ar: "رح", particle_tr: "raḥ", context_en: "will" }],
+  future: [{ particle_ar: "رح", particle_tr: "ra7", context_en: "will" }],
   progressive: [{ particle_ar: "عم", particle_tr: "3am", context_en: "is/are (doing)" }],
   purpose: [
     { particle_ar: "ل", particle_tr: "la-", context_en: "in order to" },
     { particle_ar: "ت", particle_tr: "ta-", context_en: "in order to" },
-    { particle_ar: "حتى", particle_tr: "ḥátta", context_en: "so that" },
+    { particle_ar: "حتى", particle_tr: "7átta", context_en: "so that" },
     { particle_ar: "كرمال", particle_tr: "kirmēl", context_en: "so that" },
   ],
 };
