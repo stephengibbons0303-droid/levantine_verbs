@@ -6,7 +6,7 @@ export const PERSON_LABELS = {
 };
 
 export const PERSON_TRANSLIT = {
-  ana: "ána", nihna: "níḥna", inta: "ínta", inti: "ínti",
+  ana: "ána", nihna: "ní7na", inta: "ínta", inti: "ínti",
   intu: "íntu", huwwe: "húwwe", hiyye: "híyye", hinne: "hínne"
 };
 

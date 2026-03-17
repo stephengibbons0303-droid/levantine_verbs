@@ -113,16 +113,16 @@ export default function TranslitDrawer() {
               <tr><th>Char</th><th>Arabic</th><th>Name</th><th>Sound</th><th>Example</th></tr>
             </thead>
             <tbody>
-              <tr><td>ʔ</td><td>ء</td><td>hamza</td><td>glottal stop</td><td>ʔaxad (أخد)</td></tr>
-              <tr><td>ɧ</td><td>ح</td><td>ḥāʔ</td><td>emphatic h</td><td>ɧabb (حب)</td></tr>
-              <tr><td>x</td><td>خ</td><td>xāʔ</td><td>kh ("loch")</td><td>xāf</td></tr>
-              <tr><td>š</td><td>ش</td><td>šīn</td><td>sh ("ship")</td><td>šāf (شاف)</td></tr>
-              <tr><td>3</td><td>ع</td><td>ʕayn</td><td>pharyngeal fricative</td><td>bi3raf (بعرف)</td></tr>
-              <tr><td>ɣ</td><td>غ</td><td>ġayn</td><td>French r</td><td>ɣarīb (غریب)</td></tr>
-              <tr><td>ş</td><td>ص</td><td>ṣād</td><td>emphatic s</td><td>şubuɧ (صُبُح)</td></tr>
-              <tr><td>ʈ</td><td>ط</td><td>ṭāʔ</td><td>emphatic t</td><td>ʈálab (طَلَب)</td></tr>
-              <tr><td>ɖ</td><td>ض</td><td>ḍād</td><td>emphatic d</td><td>ɖárab (ضَرَب)</td></tr>
-              <tr><td>ʐ</td><td>ظ</td><td>ẓāʔ</td><td>emphatic z</td><td>būʐa (بوظة)</td></tr>
+              <tr><td>2</td><td>ء / ق</td><td>hamza / 2āf</td><td>glottal stop</td><td>2akhad (أخد)</td></tr>
+              <tr><td>7</td><td>ح</td><td>7ā2</td><td>emphatic h</td><td>7abb (حب)</td></tr>
+              <tr><td>kh</td><td>خ</td><td>khā2</td><td>kh ("loch")</td><td>khāf</td></tr>
+              <tr><td>sh</td><td>ش</td><td>shīn</td><td>sh ("ship")</td><td>shāf (شاف)</td></tr>
+              <tr><td>3</td><td>ع</td><td>3ayn</td><td>pharyngeal fricative</td><td>bi3raf (بعرف)</td></tr>
+              <tr><td>gh</td><td>غ</td><td>ghayn</td><td>French r</td><td>gharīb (غریب)</td></tr>
+              <tr><td>S</td><td>ص</td><td>Sād</td><td>emphatic s</td><td>Subu7 (صُبُح)</td></tr>
+              <tr><td>T</td><td>ط</td><td>Tā2</td><td>emphatic t</td><td>Tálab (طَلَب)</td></tr>
+              <tr><td>D</td><td>ض</td><td>Dād</td><td>emphatic d</td><td>Dárab (ضَرَب)</td></tr>
+              <tr><td>Z</td><td>ظ</td><td>Zā2</td><td>emphatic z</td><td>būZa (بوظة)</td></tr>
             </tbody>
           </table>
           <p className="guide-note">All other consonants (b, t, d, f, j, k, l, m, n, r, s, w, y, z, h) use standard Latin equivalents.</p>
@@ -131,9 +131,9 @@ export default function TranslitDrawer() {
           <table className="guide-table">
             <thead><tr><th>Char</th><th>Sound</th><th>Example</th></tr></thead>
             <tbody>
-              <tr><td>á</td><td>short stressed "a"</td><td>ʈálab</td></tr>
+              <tr><td>á</td><td>short stressed "a"</td><td>Tálab</td></tr>
               <tr><td>í</td><td>short stressed "i"</td><td>bíji</td></tr>
-              <tr><td>ú</td><td>short stressed "u"</td><td>şúbuɧ</td></tr>
+              <tr><td>ú</td><td>short stressed "u"</td><td>Súbu7</td></tr>
             </tbody>
           </table>
 
@@ -141,11 +141,11 @@ export default function TranslitDrawer() {
           <table className="guide-table">
             <thead><tr><th>Char</th><th>Sound</th><th>Example</th></tr></thead>
             <tbody>
-              <tr><td>ā</td><td>long "a"</td><td>šāf</td></tr>
+              <tr><td>ā</td><td>long "a"</td><td>shāf</td></tr>
               <tr><td>ē</td><td>long "e"</td><td>jēy</td></tr>
               <tr><td>ī</td><td>long "i"</td><td>jīt</td></tr>
               <tr><td>ō</td><td>long "o"</td><td>béddo</td></tr>
-              <tr><td>ū</td><td>long "u"</td><td>ṭlūb</td></tr>
+              <tr><td>ū</td><td>long "u"</td><td>Tlūb</td></tr>
             </tbody>
           </table>
 
@@ -159,6 +159,7 @@ export default function TranslitDrawer() {
           </table>
 
           <h3>Unicode Reference</h3>
+          <p className="guide-note">Consonants are now plain ASCII — only vowel diacritics need special characters.</p>
           <table className="guide-table unicode-table">
             <thead><tr><th>Char</th><th>Unicode</th><th>Description</th></tr></thead>
             <tbody>
@@ -171,14 +172,6 @@ export default function TranslitDrawer() {
               <tr><td>ū</td><td>U+016B</td><td>U with Macron</td></tr>
               <tr><td>ã</td><td>U+00E3</td><td>A with Tilde</td></tr>
               <tr><td>õ</td><td>U+00F5</td><td>O with Tilde</td></tr>
-              <tr><td>ɧ</td><td>U+0267</td><td>Heng</td></tr>
-              <tr><td>ʔ</td><td>U+0294</td><td>Glottal Stop</td></tr>
-              <tr><td>š</td><td>U+0161</td><td>S with Caron</td></tr>
-              <tr><td>ɣ</td><td>U+0263</td><td>Gamma (IPA)</td></tr>
-              <tr><td>ş</td><td>U+015F</td><td>S with Cedilla</td></tr>
-              <tr><td>ʈ</td><td>U+0288</td><td>T Retroflex</td></tr>
-              <tr><td>ɖ</td><td>U+0256</td><td>D with Tail</td></tr>
-              <tr><td>ʐ</td><td>U+0290</td><td>Z Retroflex</td></tr>
             </tbody>
           </table>
         </div>
