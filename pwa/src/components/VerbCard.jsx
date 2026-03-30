@@ -13,8 +13,21 @@ export default function VerbCard({ verb }) {
         <span className="verb-english">{verb.verb.english}</span>
       </div>
       <div className="verb-meta">
-        <span className="badge">{verb.classification.measure}</span>
-        <span className="badge">{verb.classification.type}</span>
+        {verb.classification && (
+          <>
+            <span className="badge">{verb.classification.measure}</span>
+            <span className="badge">{verb.classification.type}</span>
+          </>
+        )}
+        {verb.form && <span className="badge">{verb.form}</span>}
+        {verb.difficulty && (
+          <span
+            className="difficulty-badge"
+            style={{ background: { A: '#0c6', B: '#0af', BA: '#0af', C: '#f90', D: '#f44', E: '#a0a' }[verb.difficulty] || '#666' }}
+          >
+            {verb.difficulty}
+          </span>
+        )}
       </div>
 
       {expanded && (
