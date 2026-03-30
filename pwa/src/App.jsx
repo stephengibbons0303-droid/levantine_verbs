@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { useVerbs } from './hooks/useVerbs';
 import Browse from './pages/Browse';
 import Quiz from './pages/Quiz';
+import SRSDashboard from './pages/SRSDashboard';
 import TranslitDrawer from './components/TranslitDrawer';
 import './App.css';
 
 const TABS = [
   { id: 'browse', label: 'Browse', icon: '\uD83D\uDCDA' },
   { id: 'quiz', label: 'Quiz', icon: '\uD83C\uDFAF' },
+  { id: 'srs', label: 'SRS', icon: '\uD83D\uDCC8' },
 ];
 
 export default function App() {
@@ -27,6 +29,7 @@ export default function App() {
       <main className="app-main">
         {tab === 'browse' && <Browse verbs={verbs} />}
         {tab === 'quiz' && <Quiz verbs={verbs} />}
+        {tab === 'srs' && <SRSDashboard verbs={verbs} />}
       </main>
 
       <nav className="bottom-nav">

@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Levantine Verb",
   "type": "object",
-  "required": ["id", "verb", "classification", "conjugations"],
+  "required": ["id", "verb"],
   "properties": {
     "id": { "type": "integer", "minimum": 1 },
     "verb": {
@@ -24,17 +24,32 @@
       }
     },
     "conjugations": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "required": ["perfect", "imperfect", "bi_imperfect", "imperative"],
+          "properties": {
+            "perfect": { "$ref": "#/$defs/conjugationSet" },
+            "imperfect": { "$ref": "#/$defs/conjugationSet" },
+            "bi_imperfect": { "$ref": "#/$defs/conjugationSet" },
+            "imperative": { "$ref": "#/$defs/imperativeSet" }
+          }
+        }
+      ]
+    },
+    "root_letters": { "type": "array", "items": { "type": "string" } },
+    "form": { "type": "string" },
+    "citation": {
       "type": "object",
-      "required": ["perfect", "imperfect", "bi_imperfect", "imperative"],
       "properties": {
-        "perfect": { "$ref": "#/$defs/conjugationSet" },
-        "imperfect": { "$ref": "#/$defs/conjugationSet" },
-        "bi_imperfect": { "$ref": "#/$defs/conjugationSet" },
-        "imperative": { "$ref": "#/$defs/imperativeSet" }
+        "past": { "type": "string" },
+        "present": { "type": "string" }
       }
     },
     "bedde": { "type": "object" },
     "active_participle": { "type": "object" },
+    "difficulty": { "type": "string", "enum": ["A", "B", "BA", "C", "D", "E"] },
     "notes": { "type": "array", "items": { "type": "string" } },
     "examples": { "type": "array" }
   },

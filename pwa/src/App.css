@@ -653,3 +653,257 @@ input[type="range"] {
   color: #555;
   font-size: 0.6rem;
 }
+
+/* ===== Confidence Slider ===== */
+.confidence-slider {
+  margin: 0.75rem 0;
+}
+.confidence-track {
+  display: flex;
+  gap: 0.4rem;
+}
+.confidence-btn {
+  flex: 1;
+  padding: 0.5rem 0.25rem;
+  border: 2px solid #333;
+  border-radius: 8px;
+  background: #1a1a2e;
+  color: #888;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.confidence-btn.active {
+  background: #1a1a3e;
+}
+
+/* ===== SRS Mode ===== */
+.srs-toggle {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #2a2a4a;
+}
+.srs-stats-bar {
+  display: flex;
+  gap: 1rem;
+  padding: 0.5rem 0;
+}
+.srs-stat {
+  color: #888;
+  font-size: 0.85rem;
+}
+.srs-progress-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+.option-btn.selected {
+  border-color: #00a0ff;
+  background: #1a1a3e;
+}
+.submit-btn {
+  margin-top: 0.25rem;
+}
+.submit-btn.disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ===== Tier Filter ===== */
+.tier-filter {
+  margin-top: 0.5rem;
+}
+
+/* ===== Difficulty Badge ===== */
+.difficulty-badge {
+  display: inline-block;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #fff;
+  margin-left: 0.4rem;
+}
+
+/* ===== Remedial Sequence ===== */
+.remedial-sequence {
+  padding: 0.5rem 0;
+}
+.remedial-header {
+  color: #f44;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: rgba(255, 0, 0, 0.08);
+  border: 1px solid #f44;
+  border-radius: 8px;
+  text-align: center;
+}
+.remedial-comparison {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.remedial-wrong, .remedial-correct {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 8px;
+  text-align: center;
+}
+.remedial-wrong {
+  background: rgba(255, 0, 0, 0.08);
+  border: 1px solid #f44;
+}
+.remedial-correct {
+  background: rgba(0, 255, 0, 0.08);
+  border: 1px solid #0f0;
+}
+.remedial-label {
+  display: block;
+  font-size: 0.7rem;
+  color: #888;
+  margin-bottom: 0.3rem;
+}
+.remedial-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ddd;
+}
+.remedial-table {
+  margin-bottom: 1rem;
+}
+.remedial-table h4 {
+  color: #00a0ff;
+  margin: 0 0 0.4rem 0;
+  font-size: 0.85rem;
+}
+.remedial-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.remedial-table td {
+  padding: 0.25rem 0.5rem;
+  border-bottom: 1px solid #1d1d30;
+}
+.remedial-table tr.highlight {
+  background: rgba(255, 255, 0, 0.08);
+}
+.remedial-table tr.highlight td {
+  color: #ff0;
+}
+
+/* ===== SRS Dashboard ===== */
+.srs-dashboard h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  color: #e0e0ff;
+}
+.srs-dashboard h3 {
+  color: #00a0ff;
+  font-size: 0.9rem;
+  margin: 1.25rem 0 0.5rem 0;
+}
+.srs-overview {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.srs-overview-card {
+  flex: 1;
+  background: #1a1a2e;
+  border: 1px solid #2a2a4a;
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+}
+.srs-overview-num {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #00a0ff;
+}
+.srs-overview-label {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 0.25rem;
+}
+.tier-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.tier-card {
+  background: #1a1a2e;
+  border: 1px solid #2a2a4a;
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+.tier-card.locked {
+  opacity: 0.5;
+}
+.tier-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+.tier-badge {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 4px;
+  text-align: center;
+  line-height: 1.5rem;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: #fff;
+}
+.tier-lock {
+  color: #666;
+  font-size: 0.75rem;
+}
+.tier-progress-bar {
+  height: 6px;
+  background: #2a2a4a;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.3rem;
+}
+.tier-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+.tier-progress-text {
+  font-size: 0.75rem;
+  color: #888;
+}
+.trouble-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.trouble-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  padding: 0.5rem;
+  background: #1a1a2e;
+  border: 1px solid #2a2a4a;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+.trouble-verb {
+  color: #ddd;
+  font-weight: 600;
+}
+.trouble-english {
+  color: #888;
+  font-style: italic;
+}
+.trouble-errors {
+  margin-left: auto;
+  color: #f44;
+  font-size: 0.75rem;
+}
