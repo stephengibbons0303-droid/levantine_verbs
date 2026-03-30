@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { generateRemedialItems } from '../utils/scheduler';
 import { PERSON_LABELS, TENSE_LABELS } from '../utils/constants';
+import { getTenseLabel } from '../utils/tenseLabels';
 
 /**
  * RemedialSequence — Confident error remedial path UI.
@@ -57,10 +58,14 @@ export default function RemedialSequence({ verb, originalTense, originalPerson, 
       const shuffled = [...distractors].sort(() => Math.random() - 0.5).slice(0, 3);
       const options = [answer, ...shuffled].sort(() => Math.random() - 0.5);
       const personLabel = PERSON_LABELS[currentFollowUp.person] || currentFollowUp.person;
-      const tenseLabel = TENSE_LABELS[currentFollowUp.tense] || currentFollowUp.tense;
+      const { label: tenseLabel } = getTenseLabel(currentFollowUp.tense);
+
+      const prompt = currentFollowUp.tense === 'imperative'
+        ? `${tenseLabel} — to ${personLabel}`
+        : `${personLabel} — ${tenseLabel}`;
 
       followUpQuestion = {
-        prompt: `${personLabel} — ${tenseLabel}`,
+        prompt,
         answer,
         options,
         tense: currentFollowUp.tense,

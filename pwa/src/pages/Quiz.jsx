@@ -1,6 +1,8 @@
 import { useState, useCallback } from 'react';
 import { generateQuiz } from '../utils/quizGenerator';
-import { PERSONS, PERSON_LABELS, TENSE_LABELS } from '../utils/constants';
+import { PERSONS, PERSON_LABELS } from '../utils/constants';
+import { getTenseLabel } from '../utils/tenseLabels';
+import { buildExampleSentence } from '../utils/exampleSentenceBuilder';
 import { mapConfidenceOutcome, updateCard } from '../utils/fsrs';
 import { getCard, saveCard } from '../utils/srsState';
 import { getNextSRSItem, getDueCount as getDueCountFromScheduler, getNewCount } from '../utils/scheduler';
@@ -16,9 +18,9 @@ const QUIZ_TYPES = [
 
 const TENSE_OPTIONS = [
   { value: 'all', label: 'All tenses' },
-  { value: 'perfect', label: 'Past (perfect)' },
-  { value: 'bi_imperfect', label: 'Present (bi-imperfect)' },
-  { value: 'imperfect', label: 'Dependent (imperfect)' },
+  { value: 'perfect', label: 'Past' },
+  { value: 'bi_imperfect', label: 'Present' },
+  { value: 'imperfect', label: 'Dependent' },
 ];
 
 function loadPersons() {
@@ -54,6 +56,7 @@ export default function Quiz({ verbs }) {
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(0);
   const [feedback, setFeedback] = useState(null);
+  const [exampleSentence, setExampleSentence] = useState(null);
 
   // SRS mode state
   const [srsActive, setSrsActive] = useState(false);
@@ -67,6 +70,7 @@ export default function Quiz({ verbs }) {
   const [srsTotal, setSrsTotal] = useState(0);
   const [lastItem, setLastItem] = useState(null);
   const [remedialState, setRemedialState] = useState(null);
+  const [srsExampleSentence, setSrsExampleSentence] = useState(null);
 
   const toggleSrsMode = () => {
     const next = !srsMode;
@@ -105,10 +109,28 @@ export default function Quiz({ verbs }) {
       setLevel(l => Math.max(0, l - 1));
     }
     setFeedback({ correct, answer: q.answer, alt: q.answer_alt });
+
+    // Build example sentence if we have enough info (conjugation questions)
+    if (q.tense && q.person && q.verb_info) {
+      const verb = verbs.find(v => v.verb.translit === q.verb_info.translit);
+      if (verb) {
+        const correctForm = verb.conjugations?.[q.tense]?.forms?.find(f => f.person === q.person);
+        if (correctForm) {
+          setExampleSentence(buildExampleSentence({
+            tense: q.tense,
+            person: q.person,
+            correctTranslit: correctForm.translit,
+            verbEnglish: verb.verb.english,
+            particle: q.particle || null,
+          }));
+        }
+      }
+    }
   };
 
   const nextQuestion = () => {
     setFeedback(null);
+    setExampleSentence(null);
     setIdx(i => i + 1);
   };
 
@@ -130,16 +152,21 @@ export default function Quiz({ verbs }) {
     const shuffled = [...distractors].sort(() => Math.random() - 0.5).slice(0, 3);
     const options = [answer, ...shuffled].sort(() => Math.random() - 0.5);
     const personLabel = PERSON_LABELS[person] || person;
-    const tenseLabel = TENSE_LABELS[t] || t;
+    const { label: tenseLabel, particle } = getTenseLabel(t);
+
+    const prompt = t === 'imperative'
+      ? `${tenseLabel} — to ${personLabel}`
+      : `${personLabel} — ${tenseLabel}`;
 
     return {
-      prompt: `${personLabel} — ${tenseLabel}`,
+      prompt,
       verb_info: { translit: verb.verb.translit, arabic: verb.verb.arabic, english: verb.verb.english },
       answer,
       answer_alt: useArabic ? correctForm.translit : correctForm.arabic,
       options,
       tense: t,
       person,
+      particle,
       verbId: verb.id,
     };
   }, [useArabic]);
@@ -185,6 +212,19 @@ export default function Quiz({ verbs }) {
     setSrsTotal(t => t + 1);
     if (isCorrect) setSrsScore(s => s + 1);
 
+    // Build example sentence
+    const correctForm = srsItem.verb.conjugations?.[srsQuestion.tense]?.forms
+      ?.find(f => f.person === srsQuestion.person);
+    if (correctForm) {
+      setSrsExampleSentence(buildExampleSentence({
+        tense: srsQuestion.tense,
+        person: srsQuestion.person,
+        correctTranslit: correctForm.translit,
+        verbEnglish: srsItem.verb.verb.english,
+        particle: srsQuestion.particle,
+      }));
+    }
+
     // Trigger remedial path for confident errors
     if (isConfidentError) {
       setRemedialState({
@@ -212,6 +252,7 @@ export default function Quiz({ verbs }) {
     setConfidence(3);
     setSrsSubmitted(false);
     setSrsFeedback(null);
+    setSrsExampleSentence(null);
     setLastItem(newLastItem);
     setRemedialState(null);
   };
@@ -441,9 +482,20 @@ export default function Quiz({ verbs }) {
 
         {srsFeedback && !remedialState && (
           <div className={`feedback ${srsFeedback.correct ? 'correct' : 'wrong'}`}>
-            {srsFeedback.correct ? 'Correct!' : `Wrong. Answer: ${srsFeedback.answer}`}
-            {srsFeedback.alt && ` = ${srsFeedback.alt}`}
-            <button className="next-btn" onClick={nextSRSQuestion}>Next</button>
+            <div className="feedback-header">
+              {srsFeedback.correct ? '✓ Correct!' : `✗ The answer was: ${srsFeedback.answer}`}
+              {srsFeedback.alt && <span className="feedback-alt"> = {srsFeedback.alt}</span>}
+            </div>
+            {srsExampleSentence && (
+              <div className="example-sentence">
+                <p className="example-translit">
+                  {srsExampleSentence.sentence}
+                  <span className="speaker-icon disabled" title="Audio coming soon">🔊</span>
+                </p>
+                <p className="example-english">{srsExampleSentence.english}</p>
+              </div>
+            )}
+            <button className="next-btn" onClick={nextSRSQuestion}>Next Question</button>
           </div>
         )}
       </div>
@@ -522,9 +574,20 @@ export default function Quiz({ verbs }) {
 
       {feedback && (
         <div className={`feedback ${feedback.correct ? 'correct' : 'wrong'}`}>
-          {feedback.correct ? 'Correct!' : `Wrong. Answer: ${feedback.answer}`}
-          {feedback.alt && ` = ${feedback.alt}`}
-          <button className="next-btn" onClick={nextQuestion}>Next</button>
+          <div className="feedback-header">
+            {feedback.correct ? '✓ Correct!' : `✗ The answer was: ${feedback.answer}`}
+            {feedback.alt && <span className="feedback-alt"> = {feedback.alt}</span>}
+          </div>
+          {exampleSentence && (
+            <div className="example-sentence">
+              <p className="example-translit">
+                {exampleSentence.sentence}
+                <span className="speaker-icon disabled" title="Audio coming soon">🔊</span>
+              </p>
+              <p className="example-english">{exampleSentence.english}</p>
+            </div>
+          )}
+          <button className="next-btn" onClick={nextQuestion}>Next Question</button>
         </div>
       )}
     </div>

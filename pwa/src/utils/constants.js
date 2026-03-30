@@ -14,7 +14,7 @@ export const TENSES = ["perfect", "imperfect", "bi_imperfect", "imperative"];
 
 export const TENSE_LABELS = {
   perfect: "Past",
-  imperfect: "Subjunctive / Dependent",
-  bi_imperfect: "Present (habitual)",
+  imperfect: "Dependent",
+  bi_imperfect: "Present",
   imperative: "Command"
 };
