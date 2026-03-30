@@ -1,5 +1,6 @@
 import { PERSON_LABELS, PERSON_TRANSLIT } from './constants';
 import { VERB_TEMPLATES, GENERIC_TEMPLATES, IMPERFECT_TEMPLATES } from './templates';
+import { getTenseLabel } from './tenseLabels';
 
 function pick(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -135,6 +136,20 @@ function generateImperfectQuestion(verb, forms, allForms, useArabicScript) {
   const wrongKey = useArabicScript ? "arabic" : "translit";
   const wrongOptions = [...new Set(allForms.map(f => f[wrongKey]).filter(v => v !== answer))];
 
+  // Map context type to particle for example sentence builder
+  let particle = null;
+  if (contextType === 'future') particle = 'ra7';
+  else if (contextType === 'auxiliary') {
+    // Check if this was a bedde auxiliary
+    const auxOpts = IMPERFECT_TEMPLATES.auxiliary.filter(a => a.person === form.person);
+    const isBedde = auxOpts.some(a => a.particle_tr.startsWith('b'));
+    particle = isBedde ? 'bedde' : 'lezim';
+  } else {
+    // progressive, purpose — use a random particle for example
+    const { particle: p } = getTenseLabel('imperfect');
+    particle = p;
+  }
+
   const examples = verb.examples || [];
   return {
     prompt: promptTemplate,
@@ -145,6 +160,8 @@ function generateImperfectQuestion(verb, forms, allForms, useArabicScript) {
     verb_info: { translit: verb.verb.translit, arabic: verb.verb.arabic, english: verb.verb.english },
     example: examples.length ? pick(examples) : null,
     tense: "imperfect",
+    person: form.person,
+    particle,
     context_type: contextType,
   };
 }
@@ -177,5 +194,7 @@ function generateStandardQuestion(verb, forms, allForms, tense, useArabicScript)
     verb_info: { translit: verb.verb.translit, arabic: verb.verb.arabic, english: verb.verb.english },
     example: examples.length ? pick(examples) : null,
     tense,
+    person: form.person,
+    particle: null,
   };
 }

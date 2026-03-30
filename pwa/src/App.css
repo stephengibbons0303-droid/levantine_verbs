@@ -400,9 +400,41 @@ input[type="range"] {
   border-radius: 10px;
   font-size: 0.9rem;
   display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+.feedback-header {
+  display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
+}
+.feedback-alt {
+  opacity: 0.7;
+}
+.example-sentence {
+  margin: 0.25rem 0;
+  padding: 0.5rem 0;
+  text-align: center;
+}
+.example-sentence .example-translit {
+  font-size: 1.1rem;
+  color: #e0e0ff;
+  margin: 0;
+}
+.example-sentence .example-english {
+  font-size: 0.85rem;
+  color: #999;
+  margin: 0.25rem 0 0;
+  font-style: italic;
+}
+.speaker-icon.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  font-size: 1rem;
+  margin-left: 0.5rem;
+  user-select: none;
 }
 .feedback.correct {
   background: rgba(0, 255, 0, 0.08);
@@ -415,7 +447,7 @@ input[type="range"] {
   border: 1px solid #f44;
 }
 .next-btn {
-  margin-left: auto;
+  align-self: center;
   background: #333;
   color: #ddd;
   border: none;
