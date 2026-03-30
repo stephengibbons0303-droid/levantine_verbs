@@ -383,7 +383,9 @@
         "tense": "mikhed"
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "essential": true,
+    "topic": "movement"
   },
   {
     "id": 2,
@@ -769,7 +771,9 @@
         "tense": "mikhed"
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "essential": true,
+    "topic": "shopping"
   },
   {
     "id": 3,
@@ -1537,7 +1541,9 @@
         "tense": "mikhed"
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "essential": true,
+    "topic": "daily_routine"
   },
   {
     "id": 5,
@@ -2301,7 +2307,8 @@
         "tense": "mikhed"
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "shopping"
   },
   {
     "id": 7,
@@ -3447,7 +3454,9 @@
         "tense": "mikhed"
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "essential": true,
+    "topic": "actions"
   },
   {
     "id": 10,
@@ -3829,7 +3838,8 @@
         "tense": "mikhed"
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "home_life"
   },
   {
     "id": 11,
@@ -5017,7 +5027,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "daily_routine"
   },
   {
     "id": 14,
@@ -7014,7 +7025,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "movement"
   },
   {
     "id": 19,
@@ -7808,7 +7820,9 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "essential": true,
+    "topic": "wants_feelings"
   },
   {
     "id": 21,
@@ -9786,7 +9800,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "home_life"
   },
   {
     "id": 26,
@@ -10182,7 +10197,9 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "essential": true,
+    "topic": "communication"
   },
   {
     "id": 27,
@@ -11766,7 +11783,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "home_life"
   },
   {
     "id": 31,
@@ -12157,7 +12175,9 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "essential": true,
+    "topic": "actions"
   },
   {
     "id": 32,
@@ -12553,7 +12573,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "shopping"
   },
   {
     "id": 33,
@@ -13345,7 +13366,9 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "essential": true,
+    "topic": "movement"
   },
   {
     "id": 35,
@@ -14533,7 +14556,9 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "essential": true,
+    "topic": "movement"
   },
   {
     "id": 38,
@@ -16122,7 +16147,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "social"
   },
   {
     "id": 42,
@@ -16518,7 +16544,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "communication"
   },
   {
     "id": 43,
@@ -16919,7 +16946,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "actions"
   },
   {
     "id": 44,
@@ -17711,7 +17739,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "actions"
   },
   {
     "id": 46,
@@ -18107,7 +18136,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "BA"
+    "difficulty": "BA",
+    "topic": "home_life"
   },
   {
     "id": 47,
@@ -18503,7 +18533,9 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "essential": true,
+    "topic": "communication"
   },
   {
     "id": 48,
@@ -19295,7 +19327,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "shopping"
   },
   {
     "id": 50,
@@ -19696,7 +19729,9 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "essential": true,
+    "topic": "daily_routine"
   },
   {
     "id": 51,
@@ -20092,7 +20127,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "daily_routine"
   },
   {
     "id": 52,
@@ -20884,7 +20920,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "home_life"
   },
   {
     "id": 54,
@@ -21280,7 +21317,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "wants_feelings"
   },
   {
     "id": 55,
@@ -21681,7 +21719,9 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "essential": true,
+    "topic": "home_life"
   },
   {
     "id": 56,
@@ -22077,7 +22117,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "home_life"
   },
   {
     "id": 57,
@@ -22879,7 +22920,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "movement"
   },
   {
     "id": 59,
@@ -23287,7 +23329,9 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "essential": true,
+    "topic": "communication"
   },
   {
     "id": 60,
@@ -25662,7 +25706,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "BA"
+    "difficulty": "BA",
+    "topic": "daily_routine"
   },
   {
     "id": 66,
@@ -26058,7 +26103,9 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "essential": true,
+    "topic": "actions"
   },
   {
     "id": 67,
@@ -27246,7 +27293,9 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "essential": true,
+    "topic": "communication"
   },
   {
     "id": 70,
@@ -27642,7 +27691,9 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "essential": true,
+    "topic": "communication"
   },
   {
     "id": 71,
@@ -28832,7 +28883,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "shopping"
   },
   {
     "id": 74,
@@ -29230,7 +29282,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "communication"
   },
   {
     "id": 75,
@@ -30025,7 +30078,9 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "essential": true,
+    "topic": "social"
   },
   {
     "id": 77,
@@ -30421,7 +30476,9 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "essential": true,
+    "topic": "communication"
   },
   {
     "id": 78,
@@ -31611,7 +31668,9 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "essential": true,
+    "topic": "daily_routine"
   },
   {
     "id": 81,
@@ -32007,7 +32066,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "social"
   },
   {
     "id": 82,
@@ -32801,7 +32861,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "movement"
   },
   {
     "id": 84,
@@ -33197,7 +33258,9 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "essential": true,
+    "topic": "daily_routine"
   },
   {
     "id": 85,
@@ -33593,7 +33656,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "wants_feelings"
   },
   {
     "id": 86,
@@ -33989,7 +34053,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "wants_feelings"
   },
   {
     "id": 87,
@@ -34781,7 +34846,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "shopping"
   },
   {
     "id": 89,
@@ -36243,7 +36309,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "movement"
   },
   {
     "id": 93,
@@ -37426,7 +37493,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "social"
   },
   {
     "id": 96,
@@ -39942,7 +40010,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "wants_feelings"
   },
   {
     "id": 103,
@@ -40308,7 +40377,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "topic": "wants_feelings"
   },
   {
     "id": 104,
@@ -40343,7 +40413,8 @@
     "citation": {
       "past": "2assar",
       "present": "b2assir"
-    }
+    },
+    "topic": "social"
   },
   {
     "id": 106,
@@ -40358,7 +40429,8 @@
     "citation": {
       "past": "2ija",
       "present": "bijy"
-    }
+    },
+    "topic": "movement"
   },
   {
     "id": 107,
@@ -40920,7 +40992,8 @@
     "citation": {
       "past": "barad",
       "present": "bibrod"
-    }
+    },
+    "topic": "wants_feelings"
   },
   {
     "id": 137,
@@ -41523,7 +41596,8 @@
     "citation": {
       "past": "t2akhkhar",
       "present": "bit2akhkhar"
-    }
+    },
+    "topic": "daily_routine"
   },
   {
     "id": 168,
@@ -41738,7 +41812,8 @@
     "citation": {
       "past": "ttaSal",
       "present": "bittiSil/bottoSil"
-    }
+    },
+    "topic": "communication"
   },
   {
     "id": 182,
@@ -42089,7 +42164,8 @@
     "citation": {
       "past": "t7ammam",
       "present": "bit7ammam"
-    }
+    },
+    "topic": "daily_routine"
   },
   {
     "id": 205,
@@ -42319,7 +42395,8 @@
     "citation": {
       "past": "tzakkar",
       "present": "bitzakkar"
-    }
+    },
+    "topic": "communication"
   },
   {
     "id": 220,
@@ -42471,7 +42548,8 @@
     "citation": {
       "past": "trawwa2",
       "present": "bitrawwa2"
-    }
+    },
+    "topic": "daily_routine"
   },
   {
     "id": 230,
@@ -42591,7 +42669,8 @@
     "citation": {
       "past": "tsalla",
       "present": "bitsalla"
-    }
+    },
+    "topic": "wants_feelings"
   },
   {
     "id": 238,
@@ -42926,7 +43005,8 @@
     "citation": {
       "past": "ti3ib",
       "present": "bit3ab"
-    }
+    },
+    "topic": "wants_feelings"
   },
   {
     "id": 260,
@@ -43031,7 +43111,8 @@
     "citation": {
       "past": "t3ashsha",
       "present": "bit3ashsha"
-    }
+    },
+    "topic": "daily_routine"
   },
   {
     "id": 267,
@@ -43211,7 +43292,8 @@
     "citation": {
       "past": "tfaDDal",
       "present": "bitfaDDal"
-    }
+    },
+    "topic": "social"
   },
   {
     "id": 279,
@@ -43781,7 +43863,8 @@
     "citation": {
       "past": "jeib",
       "present": "bjiib"
-    }
+    },
+    "topic": "movement"
   },
   {
     "id": 315,
@@ -43816,7 +43899,8 @@
     "citation": {
       "past": "jei3",
       "present": "bjuu3"
-    }
+    },
+    "topic": "wants_feelings"
   },
   {
     "id": 317,
@@ -43851,7 +43935,8 @@
     "citation": {
       "past": "jeiwab",
       "present": "bjeiwib"
-    }
+    },
+    "topic": "communication"
   },
   {
     "id": 319,
@@ -44163,7 +44248,8 @@
     "citation": {
       "past": "jala",
       "present": "bijly"
-    }
+    },
+    "topic": "home_life"
   },
   {
     "id": 335,
@@ -45072,7 +45158,8 @@
     "citation": {
       "past": "7aDDar",
       "present": "b7aDDir"
-    }
+    },
+    "topic": "actions"
   },
   {
     "id": 383,
@@ -45308,7 +45395,8 @@
     "citation": {
       "past": "7aka",
       "present": "bi7ky"
-    }
+    },
+    "topic": "communication"
   },
   {
     "id": 395,
@@ -45743,7 +45831,8 @@
     "citation": {
       "past": "khabbar",
       "present": "bkhabbir"
-    }
+    },
+    "topic": "communication"
   },
   {
     "id": 418,
@@ -46473,7 +46562,8 @@
     "citation": {
       "past": "khalaS",
       "present": "bokhlaS"
-    }
+    },
+    "topic": "actions"
   },
   {
     "id": 455,
@@ -46768,7 +46858,8 @@
     "citation": {
       "past": "dei2",
       "present": "bduu2"
-    }
+    },
+    "topic": "shopping"
   },
   {
     "id": 471,
@@ -47105,7 +47196,8 @@
     "citation": {
       "past": "da22",
       "present": "bdi22"
-    }
+    },
+    "topic": "actions"
   },
   {
     "id": 488,
@@ -47518,7 +47610,8 @@
     "citation": {
       "past": "raa7",
       "present": "bruu7"
-    }
+    },
+    "topic": "movement"
   },
   {
     "id": 509,
@@ -48433,7 +48526,8 @@
     "citation": {
       "past": "rakaD",
       "present": "birkoD"
-    }
+    },
+    "topic": "movement"
   },
   {
     "id": 557,
@@ -48729,7 +48823,8 @@
     "citation": {
       "past": "zabaT",
       "present": "bozbaT"
-    }
+    },
+    "topic": "actions"
   },
   {
     "id": 573,
@@ -49229,7 +49324,8 @@
     "citation": {
       "past": "sei3ad",
       "present": "bsei3id"
-    }
+    },
+    "topic": "social"
   },
   {
     "id": 598,
@@ -49264,7 +49360,8 @@
     "citation": {
       "past": "sei2",
       "present": "bsuu2"
-    }
+    },
+    "topic": "movement"
   },
   {
     "id": 600,
@@ -50124,7 +50221,8 @@
     "citation": {
       "past": "sa7ab",
       "present": "bis7ab"
-    }
+    },
+    "topic": "shopping"
   },
   {
     "id": 653,
@@ -50455,7 +50553,8 @@
     "citation": {
       "past": "sallam",
       "present": "bsallim"
-    }
+    },
+    "topic": "social"
   },
   {
     "id": 670,
@@ -50871,7 +50970,8 @@
     "citation": {
       "past": "sheif",
       "present": "bshuuf"
-    }
+    },
+    "topic": "social"
   },
   {
     "id": 692,
@@ -50886,7 +50986,8 @@
     "citation": {
       "past": "sheil",
       "present": "bshiil"
-    }
+    },
+    "topic": "home_life"
   },
   {
     "id": 693,
@@ -51694,7 +51795,8 @@
     "citation": {
       "past": "shala7",
       "present": "bishla7"
-    }
+    },
+    "topic": "daily_routine"
   },
   {
     "id": 735,
@@ -51946,7 +52048,8 @@
     "citation": {
       "past": "Saar",
       "present": "bSiir"
-    }
+    },
+    "topic": "home_life"
   },
   {
     "id": 748,
@@ -52112,7 +52215,8 @@
     "citation": {
       "past": "Sadda2",
       "present": "bSaddi2"
-    }
+    },
+    "topic": "actions"
   },
   {
     "id": 757,
@@ -52833,7 +52937,8 @@
     "citation": {
       "past": "Dahar",
       "present": "boDhar"
-    }
+    },
+    "topic": "movement"
   },
   {
     "id": 794,
@@ -52923,7 +53028,8 @@
     "citation": {
       "past": "Taar",
       "present": "bTiir"
-    }
+    },
+    "topic": "movement"
   },
   {
     "id": 799,
@@ -53485,7 +53591,8 @@
     "citation": {
       "past": "Toli3",
       "present": "boTla3"
-    }
+    },
+    "topic": "movement"
   },
   {
     "id": 828,
@@ -53845,7 +53952,8 @@
     "citation": {
       "past": "3aaz",
       "present": "b3uuz"
-    }
+    },
+    "topic": "wants_feelings"
   },
   {
     "id": 847,
@@ -53860,7 +53968,8 @@
     "citation": {
       "past": "3aash",
       "present": "b3iish"
-    }
+    },
+    "topic": "home_life"
   },
   {
     "id": 848,
@@ -54256,7 +54365,8 @@
     "citation": {
       "past": "3ajab",
       "present": "bi3job"
-    }
+    },
+    "topic": "wants_feelings"
   },
   {
     "id": 868,
@@ -54276,7 +54386,8 @@
     "citation": {
       "past": "3ajjal",
       "present": "b3ajjil"
-    }
+    },
+    "topic": "social"
   },
   {
     "id": 869,
@@ -54577,7 +54688,8 @@
     "citation": {
       "past": "3aSSab",
       "present": "b3aSSib"
-    }
+    },
+    "topic": "wants_feelings"
   },
   {
     "id": 884,
@@ -54873,7 +54985,8 @@
     "citation": {
       "past": "3allam",
       "present": "b3allim"
-    }
+    },
+    "topic": "actions"
   },
   {
     "id": 899,
@@ -54968,7 +55081,8 @@
     "citation": {
       "past": "3imil",
       "present": "ba3mil/ba3mol"
-    }
+    },
+    "topic": "actions"
   },
   {
     "id": 904,
@@ -55432,7 +55546,8 @@
     "citation": {
       "past": "ghify",
       "present": "bighfa"
-    }
+    },
+    "topic": "daily_routine"
   },
   {
     "id": 930,
@@ -55662,7 +55777,8 @@
     "citation": {
       "past": "feit",
       "present": "bfuut"
-    }
+    },
+    "topic": "movement"
   },
   {
     "id": 942,
@@ -55792,7 +55908,8 @@
     "citation": {
       "past": "fei2",
       "present": "bfii2"
-    }
+    },
+    "topic": "daily_routine"
   },
   {
     "id": 950,
@@ -56552,7 +56669,8 @@
     "citation": {
       "past": "fall",
       "present": "bfill"
-    }
+    },
+    "topic": "movement"
   },
   {
     "id": 988,
@@ -56854,7 +56972,8 @@
     "citation": {
       "past": "2aal",
       "present": "b2uul"
-    }
+    },
+    "topic": "communication"
   },
   {
     "id": 1004,
@@ -56869,7 +56988,8 @@
     "citation": {
       "past": "2aam",
       "present": "b2uum"
-    }
+    },
+    "topic": "daily_routine"
   },
   {
     "id": 1005,
@@ -57782,7 +57902,8 @@
     "citation": {
       "past": "kein",
       "present": "bkuun"
-    }
+    },
+    "topic": "social"
   },
   {
     "id": 1051,
@@ -58082,7 +58203,8 @@
     "citation": {
       "past": "kasar",
       "present": "biksor"
-    }
+    },
+    "topic": "home_life"
   },
   {
     "id": 1066,
@@ -58635,7 +58757,8 @@
     "citation": {
       "past": "li3ib",
       "present": "bil3ab"
-    }
+    },
+    "topic": "social"
   },
   {
     "id": 1095,
@@ -59044,7 +59167,8 @@
     "citation": {
       "past": "meit",
       "present": "bmuut"
-    }
+    },
+    "topic": "social"
   },
   {
     "id": 1116,
@@ -59255,7 +59379,8 @@
     "citation": {
       "past": "mara2",
       "present": "bimro2"
-    }
+    },
+    "topic": "movement"
   },
   {
     "id": 1127,
@@ -59414,7 +59539,8 @@
     "citation": {
       "past": "mishy",
       "present": "bimshy"
-    }
+    },
+    "topic": "movement"
   },
   {
     "id": 1135,
@@ -59659,7 +59785,8 @@
     "citation": {
       "past": "neim",
       "present": "bneim"
-    }
+    },
+    "topic": "daily_routine"
   },
   {
     "id": 1148,
@@ -60353,7 +60480,8 @@
     "citation": {
       "past": "nizil",
       "present": "binzal"
-    }
+    },
+    "topic": "movement"
   },
   {
     "id": 1184,
@@ -60409,7 +60537,8 @@
     "citation": {
       "past": "nisy",
       "present": "binsa"
-    }
+    },
+    "topic": "wants_feelings"
   },
   {
     "id": 1187,
@@ -61858,7 +61987,8 @@
     "citation": {
       "past": "hilik",
       "present": "bihlak"
-    }
+    },
+    "topic": "wants_feelings"
   },
   {
     "id": 1262,
@@ -62436,7 +62566,8 @@
     "citation": {
       "past": "waSSal",
       "present": "bwaSSil"
-    }
+    },
+    "topic": "movement"
   },
   {
     "id": 1291,
@@ -62456,7 +62587,8 @@
     "citation": {
       "past": "wiSil",
       "present": "buuSal"
-    }
+    },
+    "topic": "movement"
   },
   {
     "id": 1292,

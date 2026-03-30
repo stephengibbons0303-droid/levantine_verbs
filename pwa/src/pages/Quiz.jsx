@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { generateQuiz } from '../utils/quizGenerator';
-import { PERSONS, PERSON_LABELS } from '../utils/constants';
+import { PERSONS, PERSON_LABELS, TOPICS } from '../utils/constants';
 import { getTenseLabel } from '../utils/tenseLabels';
 import { buildExampleSentence } from '../utils/exampleSentenceBuilder';
 import { mapConfidenceOutcome, updateCard } from '../utils/fsrs';
@@ -50,6 +50,22 @@ export default function Quiz({ verbs }) {
   const [showPersons, setShowPersons] = useState(false);
   const [srsMode, setSrsMode] = useState(loadSRSMode);
 
+  // SRS verb range & interleaving settings (persisted)
+  const [verbRange, setVerbRange] = useState(() =>
+    localStorage.getItem('srs_verb_range') || 'full_tier'
+  );
+  const [selectedTopic, setSelectedTopic] = useState(() =>
+    localStorage.getItem('srs_topic') || 'daily_routine'
+  );
+  const [maxQuestionsPerVerb, setMaxQuestionsPerVerb] = useState(() =>
+    parseInt(localStorage.getItem('srs_max_per_verb') || '3')
+  );
+
+  // Interleaving tracking (session-only)
+  const [currentVerbId, setCurrentVerbId] = useState(null);
+  const [questionsOnCurrentVerb, setQuestionsOnCurrentVerb] = useState(0);
+  const [recentTensesForVerb, setRecentTensesForVerb] = useState([]);
+
   // Free practice state
   const [questions, setQuestions] = useState(null);
   const [idx, setIdx] = useState(0);
@@ -87,6 +103,27 @@ export default function Quiz({ verbs }) {
       localStorage.setItem('quiz_persons', JSON.stringify(next));
       return next;
     });
+  };
+
+  // Verb filtering based on SRS verb range selection
+  const filteredVerbs = useMemo(() => {
+    if (!srsMode) return verbs;
+    if (verbRange === 'essential') return verbs.filter(v => v.essential);
+    if (verbRange === 'topic') return verbs.filter(v => v.topic === selectedTopic);
+    return verbs; // 'full_tier' — scheduler handles tier gating internally
+  }, [verbs, srsMode, verbRange, selectedTopic]);
+
+  const updateVerbRange = (val) => {
+    setVerbRange(val);
+    localStorage.setItem('srs_verb_range', val);
+  };
+  const updateSelectedTopic = (val) => {
+    setSelectedTopic(val);
+    localStorage.setItem('srs_topic', val);
+  };
+  const updateMaxQuestionsPerVerb = (val) => {
+    setMaxQuestionsPerVerb(val);
+    localStorage.setItem('srs_max_per_verb', String(val));
   };
 
   // --- Free Practice ---
@@ -172,7 +209,7 @@ export default function Quiz({ verbs }) {
   }, [useArabic]);
 
   const startSRS = useCallback(() => {
-    const item = getNextSRSItem(verbs, null, { selectedPersons });
+    const item = getNextSRSItem(filteredVerbs, null, { selectedPersons });
     if (!item) {
       setSrsActive(true);
       setSrsItem(null);
@@ -191,7 +228,11 @@ export default function Quiz({ verbs }) {
     setSrsTotal(0);
     setLastItem(null);
     setRemedialState(null);
-  }, [verbs, selectedPersons, buildSRSQuestion]);
+    // Initialize interleaving tracking
+    setCurrentVerbId(item.verb.id);
+    setQuestionsOnCurrentVerb(1);
+    setRecentTensesForVerb([item.tense]);
+  }, [filteredVerbs, selectedPersons, buildSRSQuestion]);
 
   const submitSRSAnswer = () => {
     if (!selectedAnswer || !srsQuestion || !srsItem) return;
@@ -239,15 +280,67 @@ export default function Quiz({ verbs }) {
 
   const nextSRSQuestion = () => {
     const newLastItem = srsItem ? { verbId: srsItem.verb.id, tense: srsQuestion?.tense } : null;
-    const item = getNextSRSItem(verbs, newLastItem, { selectedPersons });
+
+    // Interleaving: determine exclusions
+    let excludeVerbId = null;
+    let excludeTenses = null;
+    const nextCount = questionsOnCurrentVerb + 1;
+
+    if (nextCount > maxQuestionsPerVerb) {
+      // Cap reached — force verb switch
+      excludeVerbId = currentVerbId;
+    } else {
+      // Same verb allowed — but vary tense
+      excludeTenses = [...recentTensesForVerb];
+    }
+
+    const item = getNextSRSItem(filteredVerbs, newLastItem, {
+      selectedPersons,
+      excludeVerbId,
+      excludeTenses,
+    });
     if (!item) {
       setSrsItem(null);
       setSrsQuestion(null);
       return;
     }
+
+    // Update interleaving tracking
+    if (item.verb.id === currentVerbId) {
+      setQuestionsOnCurrentVerb(nextCount);
+      setRecentTensesForVerb(prev => [...prev, item.tense]);
+    } else {
+      setCurrentVerbId(item.verb.id);
+      setQuestionsOnCurrentVerb(1);
+      setRecentTensesForVerb([item.tense]);
+    }
+
     const q = buildSRSQuestion(item);
     setSrsItem(item);
     setSrsQuestion(q);
+    setSelectedAnswer(null);
+    setConfidence(3);
+    setSrsSubmitted(false);
+    setSrsFeedback(null);
+    setSrsExampleSentence(null);
+    setLastItem(newLastItem);
+    setRemedialState(null);
+  };
+
+  const skipToNewVerb = () => {
+    const newLastItem = srsItem ? { verbId: srsItem.verb.id, tense: srsQuestion?.tense } : null;
+    const item = getNextSRSItem(filteredVerbs, newLastItem, {
+      selectedPersons,
+      excludeVerbId: currentVerbId, // Force different verb
+    });
+    if (!item) return;
+
+    const q = buildSRSQuestion(item);
+    setSrsItem(item);
+    setSrsQuestion(q);
+    setCurrentVerbId(item.verb.id);
+    setQuestionsOnCurrentVerb(1);
+    setRecentTensesForVerb([item.tense]);
     setSelectedAnswer(null);
     setConfidence(3);
     setSrsSubmitted(false);
@@ -262,9 +355,9 @@ export default function Quiz({ verbs }) {
     nextSRSQuestion();
   };
 
-  // Due count for display
-  const dueCount = srsMode ? getDueCountFromScheduler(verbs) : 0;
-  const newCount = srsMode ? getNewCount(verbs) : 0;
+  // Due count for display (uses filteredVerbs so counts reflect verb range)
+  const dueCount = srsMode ? getDueCountFromScheduler(filteredVerbs) : 0;
+  const newCount = srsMode ? getNewCount(filteredVerbs) : 0;
 
   // Setup screen
   if (!questions && !srsActive) {
@@ -283,10 +376,55 @@ export default function Quiz({ verbs }) {
           </label>
 
           {srsMode && (
-            <div className="srs-stats-bar">
-              <span className="srs-stat">{dueCount} due</span>
-              <span className="srs-stat">{newCount} new</span>
-            </div>
+            <>
+              {/* Verb Range */}
+              <fieldset className="srs-fieldset">
+                <legend>Verb range</legend>
+                <label className="radio-label">
+                  <input type="radio" name="verbRange" value="essential"
+                    checked={verbRange === 'essential'} onChange={() => updateVerbRange('essential')} />
+                  Top 20 essentials
+                </label>
+                <label className="radio-label">
+                  <input type="radio" name="verbRange" value="topic"
+                    checked={verbRange === 'topic'} onChange={() => updateVerbRange('topic')} />
+                  Topic
+                  {verbRange === 'topic' && (
+                    <select value={selectedTopic} onChange={e => updateSelectedTopic(e.target.value)}
+                      className="topic-select">
+                      {TOPICS.map(t => {
+                        const count = verbs.filter(v => v.topic === t.key).length;
+                        return <option key={t.key} value={t.key}>{t.label} ({count})</option>;
+                      })}
+                    </select>
+                  )}
+                </label>
+                <label className="radio-label">
+                  <input type="radio" name="verbRange" value="full_tier"
+                    checked={verbRange === 'full_tier'} onChange={() => updateVerbRange('full_tier')} />
+                  Full tier
+                </label>
+              </fieldset>
+
+              {/* Questions per verb slider */}
+              <fieldset className="srs-fieldset">
+                <legend>Session</legend>
+                <label>
+                  Questions per verb: {maxQuestionsPerVerb}
+                  <input
+                    type="range"
+                    min={1}
+                    max={10}
+                    value={maxQuestionsPerVerb}
+                    onChange={e => updateMaxQuestionsPerVerb(+e.target.value)}
+                  />
+                  <div className="slider-labels">
+                    <span>1 max interleaving</span>
+                    <span>10 drill deeper</span>
+                  </div>
+                </label>
+              </fieldset>
+            </>
           )}
 
           {!srsMode && (
@@ -353,6 +491,13 @@ export default function Quiz({ verbs }) {
                 )}
               </label>
             </>
+          )}
+
+          {srsMode && (
+            <div className="srs-stats-bar">
+              <span className="srs-stat">{dueCount} due</span>
+              <span className="srs-stat">{newCount} new</span>
+            </div>
           )}
 
           {!srsMode && (
@@ -431,7 +576,10 @@ export default function Quiz({ verbs }) {
       <div className="page quiz-page">
         <div className="srs-progress-bar">
           <span className="srs-stat">Score: {srsScore}/{srsTotal}</span>
-          <span className="srs-stat">{getDueCountFromScheduler(verbs)} due</span>
+          <span className="srs-stat">{getDueCountFromScheduler(filteredVerbs)} due</span>
+          <button className="new-verb-btn" onClick={skipToNewVerb} title="Skip to a new verb">
+            &#x27F3; New verb
+          </button>
         </div>
 
         {srsQuestion.verb_info && (

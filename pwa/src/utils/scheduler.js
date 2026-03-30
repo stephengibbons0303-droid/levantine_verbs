@@ -15,7 +15,7 @@ import { TENSES, PERSONS } from './constants.js';
  *
  * @param {Array} verbs - All verb objects
  * @param {Object} lastItem - Previous quiz item { verbId, tense } or null
- * @param {Object} options - { selectedTenses, selectedPersons }
+ * @param {Object} options - { selectedTenses, selectedPersons, excludeVerbId, excludeTenses }
  * @returns {{ verb, tense, person } | null} Next item to quiz, or null if nothing due
  */
 export function getNextSRSItem(verbs, lastItem = null, options = {}) {
@@ -24,6 +24,8 @@ export function getNextSRSItem(verbs, lastItem = null, options = {}) {
 
   const selectedTenses = options.selectedTenses || TENSES;
   const selectedPersons = options.selectedPersons || PERSONS;
+  const excludeVerbId = options.excludeVerbId || null;
+  const excludeTenses = options.excludeTenses || null;
 
   // Filter to verbs in unlocked tiers with available conjugations
   const eligible = verbs.filter(v => {
@@ -73,27 +75,62 @@ export function getNextSRSItem(verbs, lastItem = null, options = {}) {
   });
 
   // Pick a tense and person, avoiding the same verb/tense as last time
-  for (const { verb } of scored) {
-    const availableTenses = selectedTenses.filter(t => {
-      if (!verb.conjugations?.[t]) return false;
-      // Avoid same verb+tense as last item
-      if (lastItem && lastItem.verbId === verb.id && lastItem.tense === t) return false;
-      return true;
-    });
+  // If excludeVerbId filters out the only option, we'll retry without it
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const skipVerbId = attempt === 0 ? excludeVerbId : null;
 
-    if (availableTenses.length === 0) continue;
+    for (const { verb } of scored) {
+      // Skip excluded verb (interleaving cap reached or "New Verb" skip)
+      if (skipVerbId && verb.id === skipVerbId) continue;
 
-    const tense = availableTenses[Math.floor(Math.random() * availableTenses.length)];
-    const tenseForms = verb.conjugations[tense]?.forms || [];
-    const availablePersons = tenseForms
-      .map(f => f.person)
-      .filter(p => selectedPersons.includes(p));
+      const availableTenses = selectedTenses.filter(t => {
+        if (!verb.conjugations?.[t]) return false;
+        // Avoid same verb+tense as last item
+        if (lastItem && lastItem.verbId === verb.id && lastItem.tense === t) return false;
+        // Avoid recently-used tenses for tense variety within a verb streak
+        if (excludeTenses?.includes(t)) return false;
+        return true;
+      });
 
-    if (availablePersons.length === 0) continue;
+      if (availableTenses.length === 0) {
+        // If tense exclusion blocked all tenses, try again without it
+        if (excludeTenses && excludeTenses.length > 0) {
+          const fallbackTenses = selectedTenses.filter(t => {
+            if (!verb.conjugations?.[t]) return false;
+            if (lastItem && lastItem.verbId === verb.id && lastItem.tense === t) return false;
+            return true;
+          });
+          if (fallbackTenses.length > 0) {
+            const tense = fallbackTenses[Math.floor(Math.random() * fallbackTenses.length)];
+            const tenseForms = verb.conjugations[tense]?.forms || [];
+            const availablePersons = tenseForms
+              .map(f => f.person)
+              .filter(p => selectedPersons.includes(p));
+            if (availablePersons.length > 0) {
+              const person = availablePersons[Math.floor(Math.random() * availablePersons.length)];
+              return { verb, tense, person };
+            }
+          }
+        }
+        continue;
+      }
 
-    const person = availablePersons[Math.floor(Math.random() * availablePersons.length)];
+      const tense = availableTenses[Math.floor(Math.random() * availableTenses.length)];
+      const tenseForms = verb.conjugations[tense]?.forms || [];
+      const availablePersons = tenseForms
+        .map(f => f.person)
+        .filter(p => selectedPersons.includes(p));
 
-    return { verb, tense, person };
+      if (availablePersons.length === 0) continue;
+
+      const person = availablePersons[Math.floor(Math.random() * availablePersons.length)];
+
+      return { verb, tense, person };
+    }
+
+    // If first attempt (with exclusion) found nothing, retry without excluding
+    if (attempt === 0 && excludeVerbId) continue;
+    break;
   }
 
   return null;

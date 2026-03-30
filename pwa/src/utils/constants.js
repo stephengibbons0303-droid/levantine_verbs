@@ -18,3 +18,14 @@ export const TENSE_LABELS = {
   bi_imperfect: "Present",
   imperative: "Command"
 };
+
+export const TOPICS = [
+  { key: 'daily_routine', label: 'Daily routine' },
+  { key: 'communication', label: 'Communication' },
+  { key: 'actions', label: 'Actions & tasks' },
+  { key: 'movement', label: 'Movement' },
+  { key: 'wants_feelings', label: 'Wants & feelings' },
+  { key: 'shopping', label: 'Shopping & exchange' },
+  { key: 'home_life', label: 'Home & life' },
+  { key: 'social', label: 'Social' },
+];
