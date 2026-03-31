@@ -279,9 +279,11 @@ export default function Quiz({ verbs }) {
     const newLastItem = srsItem ? { verbId: srsItem.verb.id, tense: srsQuestion?.tense } : null;
 
     // Interleaving: exclude verbs that have hit the per-verb session cap
-    const exhaustedVerbIds = Object.entries(verbSessionCounts)
-      .filter(([, count]) => count >= maxQuestionsPerVerb)
-      .map(([id]) => Number(id));
+    const exhaustedVerbIds = new Set(
+      Object.entries(verbSessionCounts)
+        .filter(([, count]) => count >= maxQuestionsPerVerb)
+        .map(([id]) => id)
+    );
 
     // If current verb hasn't hit cap, vary tense within it
     const currentCount = verbSessionCounts[currentVerbId] || 0;
@@ -325,10 +327,13 @@ export default function Quiz({ verbs }) {
   const skipToNewVerb = () => {
     const newLastItem = srsItem ? { verbId: srsItem.verb.id, tense: srsQuestion?.tense } : null;
     // Exclude current verb + all exhausted verbs
-    const exhaustedVerbIds = Object.entries(verbSessionCounts)
-      .filter(([, count]) => count >= maxQuestionsPerVerb)
-      .map(([id]) => Number(id));
-    const excludeIds = [...new Set([...exhaustedVerbIds, currentVerbId].filter(Boolean))];
+    const exhaustedVerbIds = new Set(
+      Object.entries(verbSessionCounts)
+        .filter(([, count]) => count >= maxQuestionsPerVerb)
+        .map(([id]) => id)
+    );
+    const excludeIds = new Set([...exhaustedVerbIds]);
+    if (currentVerbId != null) excludeIds.add(String(currentVerbId));
     const item = getNextSRSItem(filteredVerbs, newLastItem, {
       selectedPersons,
       excludeVerbIds: excludeIds,

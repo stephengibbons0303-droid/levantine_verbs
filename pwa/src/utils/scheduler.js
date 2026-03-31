@@ -75,17 +75,20 @@ export function getNextSRSItem(verbs, lastItem = null, options = {}) {
     if (a.score >= 0 && b.score < 0) return 1;
     if (a.isNew && !b.isNew && b.score >= 0) return -1;
     if (!a.isNew && b.isNew && a.score >= 0) return 1;
-    return a.score - b.score;
+    if (a.score !== b.score) return a.score - b.score;
+    return Math.random() - 0.5; // random tiebreak for equal scores
   });
 
   // Pick a tense and person, avoiding the same verb/tense as last time
   // If excludeVerbIds filters out all options, we'll retry without them
   for (let attempt = 0; attempt < 2; attempt++) {
     const skipIds = attempt === 0 ? excludeVerbIds : [];
+    // Normalize to Set<String> for safe comparison regardless of ID types
+    const skipSet = skipIds instanceof Set ? skipIds : new Set([...skipIds].map(String));
 
     for (const { verb } of scored) {
       // Skip excluded verbs (interleaving cap reached or "New Verb" skip)
-      if (skipIds.length > 0 && skipIds.includes(verb.id)) continue;
+      if (skipSet.size > 0 && skipSet.has(String(verb.id))) continue;
 
       const availableTenses = selectedTenses.filter(t => {
         if (!verb.conjugations?.[t]) return false;
@@ -133,7 +136,8 @@ export function getNextSRSItem(verbs, lastItem = null, options = {}) {
     }
 
     // If first attempt (with exclusion) found nothing, retry without excluding
-    if (attempt === 0 && excludeVerbIds.length > 0) continue;
+    const hasExclusions = excludeVerbIds instanceof Set ? excludeVerbIds.size > 0 : excludeVerbIds.length > 0;
+    if (attempt === 0 && hasExclusions) continue;
     break;
   }
 

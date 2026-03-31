@@ -53,8 +53,8 @@ export function buildQuizPrompt(verb, tense, person, particle) {
   } else if (tense === 'imperfect' && particle === 'ra7') {
     prompt = `${pronoun} ra7 ${BLANK} ${tail}`;
   } else if (tense === 'imperfect' && particle === 'lezim') {
-    // lēzim is invariable — no pronoun needed
-    prompt = `lēzim ${BLANK} ${tail}`;
+    // lēzim is invariable — pronoun needed to identify person
+    prompt = `${pronoun} lēzim ${BLANK} ${tail}`;
   } else if (tense === 'imperative') {
     // Comma after pronoun, exclamation at end
     prompt = `${pronoun}, ${BLANK} ${tail}!`;
