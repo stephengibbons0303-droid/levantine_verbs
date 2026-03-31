@@ -41773,7 +41773,12 @@
       "present": "bit2akhkhar"
     },
     "topic": "daily_routine",
-    "transitivity": "intr"
+    "transitivity": "intr",
+    "root_letters": [
+      "2",
+      "kh",
+      "r"
+    ]
   },
   {
     "id": 168,
@@ -42343,7 +42348,12 @@
       "present": "bit7ammam"
     },
     "topic": "daily_routine",
-    "transitivity": "intr"
+    "transitivity": "intr",
+    "root_letters": [
+      "7",
+      "m",
+      "m"
+    ]
   },
   {
     "id": 205,
@@ -42739,6 +42749,11 @@
       "il-khíbiz",
       "is-sandwīsh",
       "il-2ahwe"
+    ],
+    "root_letters": [
+      "r",
+      "w",
+      "2"
     ]
   },
   {
@@ -43299,7 +43314,194 @@
     },
     "difficulty": "A",
     "form": "Form V, Irr., final weak",
-    "conjugations": null,
+    "conjugations": {
+      "perfect": {
+        "label": "Past",
+        "usage": "Completed actions",
+        "forms": [
+          {
+            "person": "ána",
+            "arabic": "تعشّيت",
+            "translit": "t3ashshēt",
+            "english": "ána have dinnered"
+          },
+          {
+            "person": "ní7na",
+            "arabic": "تعشّينا",
+            "translit": "t3ashsháyna",
+            "english": "ní7na have dinnered"
+          },
+          {
+            "person": "ínta",
+            "arabic": "تعشّيت",
+            "translit": "t3ashshēt",
+            "english": "ínta have dinnered"
+          },
+          {
+            "person": "ínti",
+            "arabic": "تعشّيتي",
+            "translit": "t3ashsháyti",
+            "english": "ínti have dinnered"
+          },
+          {
+            "person": "íntu",
+            "arabic": "تعشّيتوا",
+            "translit": "t3ashsháytu",
+            "english": "íntu have dinnered"
+          },
+          {
+            "person": "húwwi",
+            "arabic": "تعشّى",
+            "translit": "t3ashsha",
+            "english": "húwwi have dinnered"
+          },
+          {
+            "person": "híyyi",
+            "arabic": "تعشّت",
+            "translit": "t3áshshit",
+            "english": "híyyi have dinnered"
+          },
+          {
+            "person": "hínni",
+            "arabic": "تعشّوا",
+            "translit": "t3áshshu",
+            "english": "hínni have dinnered"
+          }
+        ]
+      },
+      "imperfect": {
+        "label": "Subjunctive/Base",
+        "usage": "Used with particles (bedde, raḥ, 3am, la-, etc.)",
+        "forms": [
+          {
+            "person": "ána",
+            "arabic": "إتعشّى",
+            "translit": "it3ashsha",
+            "english": "ána have dinner"
+          },
+          {
+            "person": "ní7na",
+            "arabic": "نتعشّى",
+            "translit": "nit3ashsha",
+            "english": "ní7na have dinner"
+          },
+          {
+            "person": "ínta",
+            "arabic": "تتعشّى",
+            "translit": "tit3ashsha",
+            "english": "ínta have dinner"
+          },
+          {
+            "person": "ínti",
+            "arabic": "تتعشّي",
+            "translit": "tit3áshshi",
+            "english": "ínti have dinner"
+          },
+          {
+            "person": "íntu",
+            "arabic": "تتعشّوا",
+            "translit": "tit3áshshu",
+            "english": "íntu have dinner"
+          },
+          {
+            "person": "húwwi",
+            "arabic": "يتعشّى",
+            "translit": "yit3ashsha",
+            "english": "húwwi have dinner"
+          },
+          {
+            "person": "híyyi",
+            "arabic": "تتعشّى",
+            "translit": "tit3ashsha",
+            "english": "híyyi have dinner"
+          },
+          {
+            "person": "hínni",
+            "arabic": "يتعشّوا",
+            "translit": "yit3áshshu",
+            "english": "hínni have dinner"
+          }
+        ]
+      },
+      "bi_imperfect": {
+        "label": "Habitual Present",
+        "usage": "Regular/habitual actions, general truths",
+        "forms": [
+          {
+            "person": "ána",
+            "arabic": "بتعشّى",
+            "translit": "bit3ashsha",
+            "english": "ána have dinner"
+          },
+          {
+            "person": "ní7na",
+            "arabic": "منتعشّى",
+            "translit": "mnit3ashsha",
+            "english": "ní7na have dinner"
+          },
+          {
+            "person": "ínta",
+            "arabic": "بتتعشّى",
+            "translit": "btit3ashsha",
+            "english": "ínta have dinner"
+          },
+          {
+            "person": "ínti",
+            "arabic": "بتتعشّي",
+            "translit": "btit3áshshi",
+            "english": "ínti have dinner"
+          },
+          {
+            "person": "íntu",
+            "arabic": "بتتعشّوا",
+            "translit": "btit3áshshu",
+            "english": "íntu have dinner"
+          },
+          {
+            "person": "húwwi",
+            "arabic": "بيتعشّى",
+            "translit": "byit3ashsha",
+            "english": "húwwi have dinner"
+          },
+          {
+            "person": "híyyi",
+            "arabic": "بتتعشّى",
+            "translit": "btit3ashsha",
+            "english": "híyyi have dinner"
+          },
+          {
+            "person": "hínni",
+            "arabic": "بيتعشّوا",
+            "translit": "byit3áshshu",
+            "english": "hínni have dinner"
+          }
+        ]
+      },
+      "imperative": {
+        "label": "Command",
+        "usage": "Direct commands",
+        "forms": [
+          {
+            "person": "ínta",
+            "arabic": "تعشّى",
+            "translit": "t3ashsha",
+            "english": "have dinner! ()"
+          },
+          {
+            "person": "ínti",
+            "arabic": "تعشّي",
+            "translit": "t3áshshi",
+            "english": "have dinner! ()"
+          },
+          {
+            "person": "íntu",
+            "arabic": "تعشّوا",
+            "translit": "t3áshshu",
+            "english": "have dinner! ()"
+          }
+        ]
+      }
+    },
     "citation": {
       "past": "t3ashsha",
       "present": "bit3ashsha"
@@ -55855,7 +56057,194 @@
     },
     "difficulty": "BA",
     "form": "Form ID, Irr., final weak",
-    "conjugations": null,
+    "conjugations": {
+      "perfect": {
+        "label": "Past",
+        "usage": "Completed actions",
+        "forms": [
+          {
+            "person": "ána",
+            "arabic": "غفيت",
+            "translit": "ghifīt",
+            "english": "ána fell asleep"
+          },
+          {
+            "person": "ní7na",
+            "arabic": "غفينا",
+            "translit": "ghifīna",
+            "english": "ní7na fell asleep"
+          },
+          {
+            "person": "ínta",
+            "arabic": "غفيت",
+            "translit": "ghifīt",
+            "english": "ínta fell asleep"
+          },
+          {
+            "person": "ínti",
+            "arabic": "غفيتي",
+            "translit": "ghifīti",
+            "english": "ínti fell asleep"
+          },
+          {
+            "person": "íntu",
+            "arabic": "غفيتوا",
+            "translit": "ghifītu",
+            "english": "íntu fell asleep"
+          },
+          {
+            "person": "húwwi",
+            "arabic": "غفي",
+            "translit": "ghify",
+            "english": "húwwi fell asleep"
+          },
+          {
+            "person": "híyyi",
+            "arabic": "غفيت",
+            "translit": "ghifyit",
+            "english": "híyyi fell asleep"
+          },
+          {
+            "person": "hínni",
+            "arabic": "غفيوا",
+            "translit": "ghifyu",
+            "english": "hínni fell asleep"
+          }
+        ]
+      },
+      "imperfect": {
+        "label": "Subjunctive/Base",
+        "usage": "Used with particles (bedde, raḥ, 3am, la-, etc.)",
+        "forms": [
+          {
+            "person": "ána",
+            "arabic": "أغفى",
+            "translit": "ághfa",
+            "english": "ána fall asleep"
+          },
+          {
+            "person": "ní7na",
+            "arabic": "نغفى",
+            "translit": "nághfa",
+            "english": "ní7na fall asleep"
+          },
+          {
+            "person": "ínta",
+            "arabic": "تغفى",
+            "translit": "tághfa",
+            "english": "ínta fall asleep"
+          },
+          {
+            "person": "ínti",
+            "arabic": "تغفي",
+            "translit": "tághfi",
+            "english": "ínti fall asleep"
+          },
+          {
+            "person": "íntu",
+            "arabic": "تغفوا",
+            "translit": "tághfu",
+            "english": "íntu fall asleep"
+          },
+          {
+            "person": "húwwi",
+            "arabic": "يغفى",
+            "translit": "yághfa",
+            "english": "húwwi fall asleep"
+          },
+          {
+            "person": "híyyi",
+            "arabic": "تغفى",
+            "translit": "tághfa",
+            "english": "híyyi fall asleep"
+          },
+          {
+            "person": "hínni",
+            "arabic": "يغفوا",
+            "translit": "yághfu",
+            "english": "hínni fall asleep"
+          }
+        ]
+      },
+      "bi_imperfect": {
+        "label": "Habitual Present",
+        "usage": "Regular/habitual actions, general truths",
+        "forms": [
+          {
+            "person": "ána",
+            "arabic": "بغفى",
+            "translit": "bághfa",
+            "english": "ána fall asleeps"
+          },
+          {
+            "person": "ní7na",
+            "arabic": "منغفى",
+            "translit": "mnághfa",
+            "english": "ní7na fall asleep"
+          },
+          {
+            "person": "ínta",
+            "arabic": "بتغفى",
+            "translit": "btághfa",
+            "english": "ínta fall asleep"
+          },
+          {
+            "person": "ínti",
+            "arabic": "بتغفي",
+            "translit": "btághfi",
+            "english": "ínti fall asleep"
+          },
+          {
+            "person": "íntu",
+            "arabic": "بتغفوا",
+            "translit": "btághfu",
+            "english": "íntu fall asleep"
+          },
+          {
+            "person": "húwwi",
+            "arabic": "بيغفى",
+            "translit": "byághfa",
+            "english": "húwwi fall asleeps"
+          },
+          {
+            "person": "híyyi",
+            "arabic": "بتغفى",
+            "translit": "btághfa",
+            "english": "híyyi fall asleeps"
+          },
+          {
+            "person": "hínni",
+            "arabic": "بيغفوا",
+            "translit": "byághfu",
+            "english": "hínni fall asleep"
+          }
+        ]
+      },
+      "imperative": {
+        "label": "Command",
+        "usage": "Direct commands",
+        "forms": [
+          {
+            "person": "ínta",
+            "arabic": "غفى",
+            "translit": "ghfa",
+            "english": "fall asleep! ()"
+          },
+          {
+            "person": "ínti",
+            "arabic": "غفي",
+            "translit": "ghfi",
+            "english": "fall asleep! ()"
+          },
+          {
+            "person": "íntu",
+            "arabic": "غفوا",
+            "translit": "ghfu",
+            "english": "fall asleep! ()"
+          }
+        ]
+      }
+    },
     "root_letters": [
       "gh",
       "f",
@@ -56224,7 +56613,194 @@
     },
     "difficulty": "BA",
     "form": "Form IC, Irr., medial weak",
-    "conjugations": null,
+    "conjugations": {
+      "perfect": {
+        "label": "Past",
+        "usage": "Completed actions",
+        "forms": [
+          {
+            "person": "ána",
+            "arabic": "فقت",
+            "translit": "fī2it",
+            "english": "ána wake uped"
+          },
+          {
+            "person": "ní7na",
+            "arabic": "فقنا",
+            "translit": "fī2na",
+            "english": "ní7na wake uped"
+          },
+          {
+            "person": "ínta",
+            "arabic": "فقت",
+            "translit": "fī2it",
+            "english": "ínta wake uped"
+          },
+          {
+            "person": "ínti",
+            "arabic": "فقتي",
+            "translit": "fī2ti",
+            "english": "ínti wake uped"
+          },
+          {
+            "person": "íntu",
+            "arabic": "فقتوا",
+            "translit": "fī2tu",
+            "english": "íntu wake uped"
+          },
+          {
+            "person": "huwwe",
+            "arabic": "فاق",
+            "translit": "fē2",
+            "english": "he wake uped"
+          },
+          {
+            "person": "híyye",
+            "arabic": "فاقت",
+            "translit": "fē2it",
+            "english": "híyye wake uped"
+          },
+          {
+            "person": "hínne",
+            "arabic": "فاقوا",
+            "translit": "fē2u",
+            "english": "hínne wake uped"
+          }
+        ]
+      },
+      "imperfect": {
+        "label": "Subjunctive/Base",
+        "usage": "Used with particles (bedde, raḥ, 3am, la-, etc.)",
+        "forms": [
+          {
+            "person": "ána",
+            "arabic": "فيق",
+            "translit": "fī2",
+            "english": "ána wake up"
+          },
+          {
+            "person": "ní7na",
+            "arabic": "نفيق",
+            "translit": "nfī2",
+            "english": "ní7na wake up"
+          },
+          {
+            "person": "ínta",
+            "arabic": "تفيق",
+            "translit": "tfī2",
+            "english": "ínta wake up"
+          },
+          {
+            "person": "ínti",
+            "arabic": "تفيقي",
+            "translit": "tfī2i",
+            "english": "ínti wake up"
+          },
+          {
+            "person": "íntu",
+            "arabic": "تفيقوا",
+            "translit": "tfī2u",
+            "english": "íntu wake up"
+          },
+          {
+            "person": "huwwe",
+            "arabic": "يفيق",
+            "translit": "yfī2",
+            "english": "he wake up"
+          },
+          {
+            "person": "híyye",
+            "arabic": "تفيق",
+            "translit": "tfī2",
+            "english": "híyye wake up"
+          },
+          {
+            "person": "hínne",
+            "arabic": "يفيقوا",
+            "translit": "yfī2u",
+            "english": "hínne wake up"
+          }
+        ]
+      },
+      "bi_imperfect": {
+        "label": "Habitual Present",
+        "usage": "Regular/habitual actions, general truths",
+        "forms": [
+          {
+            "person": "ána",
+            "arabic": "بفيق",
+            "translit": "bfī2",
+            "english": "ána wake up"
+          },
+          {
+            "person": "ní7na",
+            "arabic": "منفيق",
+            "translit": "minfī2",
+            "english": "ní7na wake up"
+          },
+          {
+            "person": "ínta",
+            "arabic": "بتفيق",
+            "translit": "bitfī2",
+            "english": "ínta wake up"
+          },
+          {
+            "person": "ínti",
+            "arabic": "بتفيقي",
+            "translit": "bitfī2i",
+            "english": "ínti wake up"
+          },
+          {
+            "person": "íntu",
+            "arabic": "بتفيقوا",
+            "translit": "bitfī2u",
+            "english": "íntu wake up"
+          },
+          {
+            "person": "huwwe",
+            "arabic": "بيفيق",
+            "translit": "bifī2",
+            "english": "he wake ups"
+          },
+          {
+            "person": "híyye",
+            "arabic": "بتفيق",
+            "translit": "bitfī2",
+            "english": "híyye wake up"
+          },
+          {
+            "person": "hínne",
+            "arabic": "بيفيقوا",
+            "translit": "bifī2u",
+            "english": "hínne wake up"
+          }
+        ]
+      },
+      "imperative": {
+        "label": "Command",
+        "usage": "Direct commands",
+        "forms": [
+          {
+            "person": "ínta",
+            "arabic": "فيق",
+            "translit": "fī2",
+            "english": "wake up! ()"
+          },
+          {
+            "person": "ínti",
+            "arabic": "فيقي",
+            "translit": "fī2i",
+            "english": "wake up! ()"
+          },
+          {
+            "person": "íntu",
+            "arabic": "فيقوا",
+            "translit": "fī2u",
+            "english": "wake up! ()"
+          }
+        ]
+      }
+    },
     "citation": {
       "past": "fei2",
       "present": "bfii2"
@@ -57307,7 +57883,194 @@
     },
     "difficulty": "A",
     "form": "Form IB, Irr., medial weak",
-    "conjugations": null,
+    "conjugations": {
+      "perfect": {
+        "label": "Past",
+        "usage": "Completed actions",
+        "forms": [
+          {
+            "person": "ána",
+            "arabic": "قمت",
+            "translit": "2ímit",
+            "english": "ána got up"
+          },
+          {
+            "person": "ní7na",
+            "arabic": "قمنا",
+            "translit": "2ímna",
+            "english": "ní7na got up"
+          },
+          {
+            "person": "ínta",
+            "arabic": "قمت",
+            "translit": "2ímit",
+            "english": "ínta got up"
+          },
+          {
+            "person": "ínti",
+            "arabic": "قمتي",
+            "translit": "2ímti",
+            "english": "ínti got up"
+          },
+          {
+            "person": "íntu",
+            "arabic": "قمتوا",
+            "translit": "2ímtu",
+            "english": "íntu got up"
+          },
+          {
+            "person": "húwwi",
+            "arabic": "قام",
+            "translit": "2aam",
+            "english": "húwwi got up"
+          },
+          {
+            "person": "híyyi",
+            "arabic": "قامت",
+            "translit": "2aamit",
+            "english": "híyyi got up"
+          },
+          {
+            "person": "hínni",
+            "arabic": "قاموا",
+            "translit": "2aamu",
+            "english": "hínni got up"
+          }
+        ]
+      },
+      "imperfect": {
+        "label": "Subjunctive/Base",
+        "usage": "Used with particles (bedde, raḥ, 3am, la-, etc.)",
+        "forms": [
+          {
+            "person": "ána",
+            "arabic": "قوم",
+            "translit": "2ūm",
+            "english": "ána get up"
+          },
+          {
+            "person": "ní7na",
+            "arabic": "نقوم",
+            "translit": "n2ūm",
+            "english": "ní7na get up"
+          },
+          {
+            "person": "ínta",
+            "arabic": "تقوم",
+            "translit": "t2ūm",
+            "english": "ínta get up"
+          },
+          {
+            "person": "ínti",
+            "arabic": "تقومي",
+            "translit": "t2ūmi",
+            "english": "ínti get up"
+          },
+          {
+            "person": "íntu",
+            "arabic": "تقوموا",
+            "translit": "t2ūmu",
+            "english": "íntu get up"
+          },
+          {
+            "person": "húwwi",
+            "arabic": "يقوم",
+            "translit": "y2ūm",
+            "english": "húwwi get up"
+          },
+          {
+            "person": "híyyi",
+            "arabic": "تقوم",
+            "translit": "t2ūm",
+            "english": "híyyi get up"
+          },
+          {
+            "person": "hínni",
+            "arabic": "يقوموا",
+            "translit": "y2ūmu",
+            "english": "hínni get up"
+          }
+        ]
+      },
+      "bi_imperfect": {
+        "label": "Habitual Present",
+        "usage": "Regular/habitual actions, general truths",
+        "forms": [
+          {
+            "person": "ána",
+            "arabic": "بقوم",
+            "translit": "b2ūm",
+            "english": "ána get ups"
+          },
+          {
+            "person": "ní7na",
+            "arabic": "منقوم",
+            "translit": "min2ūm",
+            "english": "ní7na get up"
+          },
+          {
+            "person": "ínta",
+            "arabic": "بتقوم",
+            "translit": "bit2ūm",
+            "english": "ínta get up"
+          },
+          {
+            "person": "ínti",
+            "arabic": "بتقومي",
+            "translit": "bit2ūmi",
+            "english": "ínti get up"
+          },
+          {
+            "person": "íntu",
+            "arabic": "بتقوموا",
+            "translit": "bit2ūmu",
+            "english": "íntu get up"
+          },
+          {
+            "person": "húwwi",
+            "arabic": "بيقوم",
+            "translit": "bi2ūm",
+            "english": "húwwi get ups"
+          },
+          {
+            "person": "híyyi",
+            "arabic": "بتقوم",
+            "translit": "bit2ūm",
+            "english": "híyyi get ups"
+          },
+          {
+            "person": "hínni",
+            "arabic": "بيقوموا",
+            "translit": "bi2ūmu",
+            "english": "hínni get up"
+          }
+        ]
+      },
+      "imperative": {
+        "label": "Command",
+        "usage": "Direct commands",
+        "forms": [
+          {
+            "person": "ínta",
+            "arabic": "قوم",
+            "translit": "2ūm",
+            "english": "get up! ()"
+          },
+          {
+            "person": "ínti",
+            "arabic": "قومي",
+            "translit": "2ūmi",
+            "english": "get up! ()"
+          },
+          {
+            "person": "íntu",
+            "arabic": "قوموا",
+            "translit": "2ūmu",
+            "english": "get up! ()"
+          }
+        ]
+      }
+    },
     "citation": {
       "past": "2aam",
       "present": "b2uum"
@@ -60116,7 +60879,194 @@
     },
     "difficulty": "A",
     "form": "Form IA, Irr., medial weak",
-    "conjugations": null,
+    "conjugations": {
+      "perfect": {
+        "label": "Past",
+        "usage": "Completed actions",
+        "forms": [
+          {
+            "person": "ána",
+            "arabic": "نمت",
+            "translit": "nimit",
+            "english": "ána sleeped"
+          },
+          {
+            "person": "ní7na",
+            "arabic": "نمنا",
+            "translit": "nimna",
+            "english": "ní7na sleeped"
+          },
+          {
+            "person": "ínta",
+            "arabic": "نمت",
+            "translit": "nimit",
+            "english": "ínta sleeped"
+          },
+          {
+            "person": "ínti",
+            "arabic": "نمتي",
+            "translit": "nimti",
+            "english": "ínti sleeped"
+          },
+          {
+            "person": "íntu",
+            "arabic": "نمتوا",
+            "translit": "nimtu",
+            "english": "íntu sleeped"
+          },
+          {
+            "person": "huwwe",
+            "arabic": "نام",
+            "translit": "nēm",
+            "english": "he sleeped"
+          },
+          {
+            "person": "híyye",
+            "arabic": "نامت",
+            "translit": "nēmit",
+            "english": "híyye sleeped"
+          },
+          {
+            "person": "hínne",
+            "arabic": "ناموا",
+            "translit": "nēmu",
+            "english": "hínne sleeped"
+          }
+        ]
+      },
+      "imperfect": {
+        "label": "Subjunctive/Base",
+        "usage": "Used with particles (bedde, raḥ, 3am, la-, etc.)",
+        "forms": [
+          {
+            "person": "ána",
+            "arabic": "نام",
+            "translit": "nēm",
+            "english": "ána sleep"
+          },
+          {
+            "person": "ní7na",
+            "arabic": "ننام",
+            "translit": "nnēm",
+            "english": "ní7na sleep"
+          },
+          {
+            "person": "ínta",
+            "arabic": "تنام",
+            "translit": "tnēm",
+            "english": "ínta sleep"
+          },
+          {
+            "person": "ínti",
+            "arabic": "تنامي",
+            "translit": "tnēmi",
+            "english": "ínti sleep"
+          },
+          {
+            "person": "íntu",
+            "arabic": "تناموا",
+            "translit": "tnēmu",
+            "english": "íntu sleep"
+          },
+          {
+            "person": "huwwe",
+            "arabic": "ينام",
+            "translit": "ynēm",
+            "english": "he sleep"
+          },
+          {
+            "person": "híyye",
+            "arabic": "تنام",
+            "translit": "tnēm",
+            "english": "híyye sleep"
+          },
+          {
+            "person": "hínne",
+            "arabic": "يناموا",
+            "translit": "ynēmu",
+            "english": "hínne sleep"
+          }
+        ]
+      },
+      "bi_imperfect": {
+        "label": "Habitual Present",
+        "usage": "Regular/habitual actions, general truths",
+        "forms": [
+          {
+            "person": "ána",
+            "arabic": "بنام",
+            "translit": "bnēm",
+            "english": "ána sleep"
+          },
+          {
+            "person": "ní7na",
+            "arabic": "مننام",
+            "translit": "minnēm",
+            "english": "ní7na sleep"
+          },
+          {
+            "person": "ínta",
+            "arabic": "بتنام",
+            "translit": "bitnēm",
+            "english": "ínta sleep"
+          },
+          {
+            "person": "ínti",
+            "arabic": "بتنامي",
+            "translit": "bitnēmi",
+            "english": "ínti sleep"
+          },
+          {
+            "person": "íntu",
+            "arabic": "بتناموا",
+            "translit": "bitnēmu",
+            "english": "íntu sleep"
+          },
+          {
+            "person": "huwwe",
+            "arabic": "بينام",
+            "translit": "binēm",
+            "english": "he sleeps"
+          },
+          {
+            "person": "híyye",
+            "arabic": "بتنام",
+            "translit": "bitnēm",
+            "english": "híyye sleep"
+          },
+          {
+            "person": "hínne",
+            "arabic": "بيناموا",
+            "translit": "binēmu",
+            "english": "hínne sleep"
+          }
+        ]
+      },
+      "imperative": {
+        "label": "Command",
+        "usage": "Direct commands",
+        "forms": [
+          {
+            "person": "ínta",
+            "arabic": "نام",
+            "translit": "nēm",
+            "english": "sleep! ()"
+          },
+          {
+            "person": "ínti",
+            "arabic": "نامي",
+            "translit": "nēmi",
+            "english": "sleep! ()"
+          },
+          {
+            "person": "íntu",
+            "arabic": "ناموا",
+            "translit": "nēmu",
+            "english": "sleep! ()"
+          }
+        ]
+      }
+    },
     "citation": {
       "past": "neim",
       "present": "bneim"
