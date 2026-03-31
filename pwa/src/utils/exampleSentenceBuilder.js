@@ -45,7 +45,7 @@ export function buildExampleSentence({ tense, person, correctTranslit, verbEngli
     sentence = `${pronoun} ra7 ${correctTranslit} ${comp.translit}.`;
     english = `${pronounEn} will ${baseVerb} ${comp.english}.`;
   } else if (tense === 'imperfect' && particle === 'lezim') {
-    sentence = `lēzim ${correctTranslit} ${comp.translit}.`;
+    sentence = `${pronoun} lēzim ${correctTranslit} ${comp.translit}.`;
     english = `${pronounEn} must ${baseVerb} ${comp.english}.`;
   } else if (tense === 'imperative') {
     // imperative: omit pronoun
