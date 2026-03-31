@@ -666,6 +666,53 @@ input[type="range"] {
   font-style: italic;
 }
 
+/* Quick Reference sections (inside drawer) */
+.qr-divider {
+  border: none;
+  border-top: 1px solid #2a2a4a;
+  margin: 1rem 0;
+}
+.quick-reference {
+  padding-bottom: 1rem;
+}
+.qr-heading {
+  color: #aaf;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 1rem 0 0.4rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.qr-group {
+  margin-bottom: 0.5rem;
+}
+.qr-group-label {
+  color: #888;
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0.4rem 0 0.15rem 0;
+}
+.qr-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+}
+.qr-table td {
+  padding: 0.2rem 0.4rem;
+  border-bottom: 1px solid #1d1d30;
+}
+.qr-translit {
+  color: #aaf;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.qr-english {
+  color: #999;
+}
+
 .drawer-edge-tab {
   position: fixed;
   right: 0;

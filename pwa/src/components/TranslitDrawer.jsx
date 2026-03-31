@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
+import QuickReference from './QuickReference';
 
 export default function TranslitDrawer() {
   const [open, setOpen] = useState(false);
@@ -174,6 +175,8 @@ export default function TranslitDrawer() {
               <tr><td>õ</td><td>U+00F5</td><td>O with Tilde</td></tr>
             </tbody>
           </table>
+          <hr className="qr-divider" />
+          <QuickReference />
         </div>
       </div>
 

@@ -15,7 +15,7 @@ import { TENSES, PERSONS } from './constants.js';
  *
  * @param {Array} verbs - All verb objects
  * @param {Object} lastItem - Previous quiz item { verbId, tense } or null
- * @param {Object} options - { selectedTenses, selectedPersons, excludeVerbId, excludeTenses }
+ * @param {Object} options - { selectedTenses, selectedPersons, excludeVerbIds, excludeVerbId, excludeTenses }
  * @returns {{ verb, tense, person } | null} Next item to quiz, or null if nothing due
  */
 export function getNextSRSItem(verbs, lastItem = null, options = {}) {
@@ -24,7 +24,11 @@ export function getNextSRSItem(verbs, lastItem = null, options = {}) {
 
   const selectedTenses = options.selectedTenses || TENSES;
   const selectedPersons = options.selectedPersons || PERSONS;
-  const excludeVerbId = options.excludeVerbId || null;
+  // Support both array (excludeVerbIds) and legacy single (excludeVerbId)
+  let excludeVerbIds = options.excludeVerbIds || [];
+  if (options.excludeVerbId) {
+    excludeVerbIds = [...excludeVerbIds, options.excludeVerbId];
+  }
   const excludeTenses = options.excludeTenses || null;
 
   // Filter to verbs in unlocked tiers with available conjugations
@@ -75,13 +79,13 @@ export function getNextSRSItem(verbs, lastItem = null, options = {}) {
   });
 
   // Pick a tense and person, avoiding the same verb/tense as last time
-  // If excludeVerbId filters out the only option, we'll retry without it
+  // If excludeVerbIds filters out all options, we'll retry without them
   for (let attempt = 0; attempt < 2; attempt++) {
-    const skipVerbId = attempt === 0 ? excludeVerbId : null;
+    const skipIds = attempt === 0 ? excludeVerbIds : [];
 
     for (const { verb } of scored) {
-      // Skip excluded verb (interleaving cap reached or "New Verb" skip)
-      if (skipVerbId && verb.id === skipVerbId) continue;
+      // Skip excluded verbs (interleaving cap reached or "New Verb" skip)
+      if (skipIds.length > 0 && skipIds.includes(verb.id)) continue;
 
       const availableTenses = selectedTenses.filter(t => {
         if (!verb.conjugations?.[t]) return false;
@@ -129,7 +133,7 @@ export function getNextSRSItem(verbs, lastItem = null, options = {}) {
     }
 
     // If first attempt (with exclusion) found nothing, retry without excluding
-    if (attempt === 0 && excludeVerbId) continue;
+    if (attempt === 0 && excludeVerbIds.length > 0) continue;
     break;
   }
 

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { generateRemedialItems } from '../utils/scheduler';
 import { PERSON_LABELS, TENSE_LABELS } from '../utils/constants';
 import { getTenseLabel } from '../utils/tenseLabels';
+import { buildQuizPrompt } from '../utils/quizPromptBuilder';
 
 /**
  * RemedialSequence — Confident error remedial path UI.
@@ -57,12 +58,8 @@ export default function RemedialSequence({ verb, originalTense, originalPerson, 
         .filter(v => v !== answer);
       const shuffled = [...distractors].sort(() => Math.random() - 0.5).slice(0, 3);
       const options = [answer, ...shuffled].sort(() => Math.random() - 0.5);
-      const personLabel = PERSON_LABELS[currentFollowUp.person] || currentFollowUp.person;
-      const { label: tenseLabel } = getTenseLabel(currentFollowUp.tense);
-
-      const prompt = currentFollowUp.tense === 'imperative'
-        ? `${tenseLabel} — to ${personLabel}`
-        : `${personLabel} — ${tenseLabel}`;
+      const { label: tenseLabel, particle } = getTenseLabel(currentFollowUp.tense);
+      const { prompt } = buildQuizPrompt(verb, currentFollowUp.tense, currentFollowUp.person, particle);
 
       followUpQuestion = {
         prompt,
