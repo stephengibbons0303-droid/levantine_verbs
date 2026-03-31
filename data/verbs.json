@@ -385,7 +385,8 @@
     ],
     "difficulty": "A",
     "essential": true,
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "intr"
   },
   {
     "id": 2,
@@ -773,7 +774,13 @@
     ],
     "difficulty": "A",
     "essential": true,
-    "topic": "shopping"
+    "topic": "shopping",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "is-sayyāra",
+      "il-dáwa",
+      "il-maSāri"
+    ]
   },
   {
     "id": 3,
@@ -1543,7 +1550,13 @@
     ],
     "difficulty": "A",
     "essential": true,
-    "topic": "daily_routine"
+    "topic": "daily_routine",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-akil",
+      "is-sandwīsh",
+      "il-bītza"
+    ]
   },
   {
     "id": 5,
@@ -2308,7 +2321,8 @@
       }
     ],
     "difficulty": "A",
-    "topic": "shopping"
+    "topic": "shopping",
+    "transitivity": "intr"
   },
   {
     "id": 7,
@@ -3456,7 +3470,13 @@
     ],
     "difficulty": "A",
     "essential": true,
-    "topic": "actions"
+    "topic": "actions",
+    "transitivity": "both",
+    "quiz_objects": [
+      "ish-shúghul",
+      "id-dirāse",
+      "it-tamārīn"
+    ]
   },
   {
     "id": 10,
@@ -3839,7 +3859,13 @@
       }
     ],
     "difficulty": "A",
-    "topic": "home_life"
+    "topic": "home_life",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "is-sayyāra",
+      "il-shánTa",
+      "il-miftē7"
+    ]
   },
   {
     "id": 11,
@@ -5028,7 +5054,8 @@
       }
     ],
     "difficulty": "A",
-    "topic": "daily_routine"
+    "topic": "daily_routine",
+    "transitivity": "intr"
   },
   {
     "id": 14,
@@ -7026,7 +7053,8 @@
       }
     ],
     "difficulty": "A",
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "intr"
   },
   {
     "id": 19,
@@ -7822,7 +7850,13 @@
     ],
     "difficulty": "A",
     "essential": true,
-    "topic": "wants_feelings"
+    "topic": "wants_feelings",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-akil",
+      "il-2ahwe",
+      "il-fīlm"
+    ]
   },
   {
     "id": 21,
@@ -9406,7 +9440,13 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-ijtimē3",
+      "il-fīlm",
+      "il-match"
+    ]
   },
   {
     "id": 25,
@@ -9801,7 +9841,13 @@
       }
     ],
     "difficulty": "A",
-    "topic": "home_life"
+    "topic": "home_life",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-akil",
+      "il-miftē7",
+      "il-shánTa"
+    ]
   },
   {
     "id": 26,
@@ -10199,7 +10245,8 @@
     ],
     "difficulty": "A",
     "essential": true,
-    "topic": "communication"
+    "topic": "communication",
+    "transitivity": "intr"
   },
   {
     "id": 27,
@@ -11784,7 +11831,13 @@
       }
     ],
     "difficulty": "A",
-    "topic": "home_life"
+    "topic": "home_life",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "bayyo",
+      "ukhto",
+      "Sa7bo"
+    ]
   },
   {
     "id": 31,
@@ -12177,7 +12230,13 @@
     ],
     "difficulty": "A",
     "essential": true,
-    "topic": "actions"
+    "topic": "actions",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-ktēb",
+      "id-dirāse",
+      "id-dars"
+    ]
   },
   {
     "id": 32,
@@ -12574,7 +12633,12 @@
       }
     ],
     "difficulty": "A",
-    "topic": "shopping"
+    "topic": "shopping",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-fātūra",
+      "il-maSāri"
+    ]
   },
   {
     "id": 33,
@@ -13368,7 +13432,8 @@
     ],
     "difficulty": "A",
     "essential": true,
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "intr"
   },
   {
     "id": 35,
@@ -14558,7 +14623,8 @@
     ],
     "difficulty": "A",
     "essential": true,
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "intr"
   },
   {
     "id": 38,
@@ -16148,7 +16214,8 @@
       }
     ],
     "difficulty": "A",
-    "topic": "social"
+    "topic": "social",
+    "transitivity": "intr"
   },
   {
     "id": 42,
@@ -16545,7 +16612,11 @@
       }
     ],
     "difficulty": "A",
-    "topic": "communication"
+    "topic": "communication",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "is-su2āl"
+    ]
   },
   {
     "id": 43,
@@ -16947,7 +17018,13 @@
       }
     ],
     "difficulty": "A",
-    "topic": "actions"
+    "topic": "actions",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "telefōn",
+      "il-kambiyūtar",
+      "is-sayyāra"
+    ]
   },
   {
     "id": 44,
@@ -17740,7 +17817,13 @@
       }
     ],
     "difficulty": "A",
-    "topic": "actions"
+    "topic": "actions",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-bēb",
+      "il-shánTa",
+      "il-kambiyūtar"
+    ]
   },
   {
     "id": 46,
@@ -18137,7 +18220,8 @@
       }
     ],
     "difficulty": "BA",
-    "topic": "home_life"
+    "topic": "home_life",
+    "transitivity": "intr"
   },
   {
     "id": 47,
@@ -18535,7 +18619,13 @@
     ],
     "difficulty": "A",
     "essential": true,
-    "topic": "communication"
+    "topic": "communication",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-akhbēr",
+      "in-níkte",
+      "il-mushkle"
+    ]
   },
   {
     "id": 48,
@@ -19328,7 +19418,13 @@
       }
     ],
     "difficulty": "A",
-    "topic": "shopping"
+    "topic": "shopping",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-akil",
+      "il-khuDra",
+      "il-hadīye"
+    ]
   },
   {
     "id": 50,
@@ -19731,7 +19827,8 @@
     ],
     "difficulty": "A",
     "essential": true,
-    "topic": "daily_routine"
+    "topic": "daily_routine",
+    "transitivity": "both"
   },
   {
     "id": 51,
@@ -20128,7 +20225,13 @@
       }
     ],
     "difficulty": "A",
-    "topic": "daily_routine"
+    "topic": "daily_routine",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-2ahwe",
+      "il-máyy",
+      "il-7alīb"
+    ]
   },
   {
     "id": 52,
@@ -20921,7 +21024,8 @@
       }
     ],
     "difficulty": "A",
-    "topic": "home_life"
+    "topic": "home_life",
+    "transitivity": "intr"
   },
   {
     "id": 54,
@@ -21318,7 +21422,8 @@
       }
     ],
     "difficulty": "A",
-    "topic": "wants_feelings"
+    "topic": "wants_feelings",
+    "transitivity": "intr"
   },
   {
     "id": 55,
@@ -21721,7 +21826,8 @@
     ],
     "difficulty": "A",
     "essential": true,
-    "topic": "home_life"
+    "topic": "home_life",
+    "transitivity": "intr"
   },
   {
     "id": 56,
@@ -22118,7 +22224,13 @@
       }
     ],
     "difficulty": "A",
-    "topic": "home_life"
+    "topic": "home_life",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-akil",
+      "il-khuDra",
+      "il-khíbiz"
+    ]
   },
   {
     "id": 57,
@@ -22921,7 +23033,8 @@
       }
     ],
     "difficulty": "A",
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "intr"
   },
   {
     "id": 59,
@@ -23331,7 +23444,13 @@
     ],
     "difficulty": "A",
     "essential": true,
-    "topic": "communication"
+    "topic": "communication",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-7a2ī2a",
+      "il-3inwēn",
+      "ir-rá2im"
+    ]
   },
   {
     "id": 60,
@@ -25707,7 +25826,8 @@
       }
     ],
     "difficulty": "BA",
-    "topic": "daily_routine"
+    "topic": "daily_routine",
+    "transitivity": "intr"
   },
   {
     "id": 66,
@@ -26105,7 +26225,13 @@
     ],
     "difficulty": "A",
     "essential": true,
-    "topic": "actions"
+    "topic": "actions",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-bēb",
+      "il-ktēb",
+      "il-shánTa"
+    ]
   },
   {
     "id": 67,
@@ -27295,7 +27421,13 @@
     ],
     "difficulty": "A",
     "essential": true,
-    "topic": "communication"
+    "topic": "communication",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "id-dars",
+      "il-mushkle",
+      "is-su2āl"
+    ]
   },
   {
     "id": 70,
@@ -27693,7 +27825,8 @@
     ],
     "difficulty": "A",
     "essential": true,
-    "topic": "communication"
+    "topic": "communication",
+    "transitivity": "intr"
   },
   {
     "id": 71,
@@ -28884,7 +29017,8 @@
       }
     ],
     "difficulty": "A",
-    "topic": "shopping"
+    "topic": "shopping",
+    "transitivity": "intr"
   },
   {
     "id": 74,
@@ -29283,7 +29417,13 @@
       }
     ],
     "difficulty": "A",
-    "topic": "communication"
+    "topic": "communication",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-ktēb",
+      "ij-jarīde",
+      "il-akhbēr"
+    ]
   },
   {
     "id": 75,
@@ -30080,7 +30220,8 @@
     ],
     "difficulty": "A",
     "essential": true,
-    "topic": "social"
+    "topic": "social",
+    "transitivity": "intr"
   },
   {
     "id": 77,
@@ -30478,7 +30619,13 @@
     ],
     "difficulty": "A",
     "essential": true,
-    "topic": "communication"
+    "topic": "communication",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "ir-rá2im",
+      "il-3inwēn",
+      "il-ktēb"
+    ]
   },
   {
     "id": 78,
@@ -31272,7 +31419,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "transitivity": "intr"
   },
   {
     "id": 80,
@@ -31670,7 +31818,12 @@
     ],
     "difficulty": "A",
     "essential": true,
-    "topic": "daily_routine"
+    "topic": "daily_routine",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "it-tiyēb",
+      "iS-Sabbāt"
+    ]
   },
   {
     "id": 81,
@@ -32067,7 +32220,8 @@
       }
     ],
     "difficulty": "A",
-    "topic": "social"
+    "topic": "social",
+    "transitivity": "intr"
   },
   {
     "id": 82,
@@ -32862,7 +33016,8 @@
       }
     ],
     "difficulty": "A",
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "intr"
   },
   {
     "id": 84,
@@ -33260,7 +33415,8 @@
     ],
     "difficulty": "A",
     "essential": true,
-    "topic": "daily_routine"
+    "topic": "daily_routine",
+    "transitivity": "intr"
   },
   {
     "id": 85,
@@ -33657,7 +33813,8 @@
       }
     ],
     "difficulty": "A",
-    "topic": "wants_feelings"
+    "topic": "wants_feelings",
+    "transitivity": "intr"
   },
   {
     "id": 86,
@@ -34054,7 +34211,8 @@
       }
     ],
     "difficulty": "A",
-    "topic": "wants_feelings"
+    "topic": "wants_feelings",
+    "transitivity": "intr"
   },
   {
     "id": 87,
@@ -34847,7 +35005,13 @@
       }
     ],
     "difficulty": "A",
-    "topic": "shopping"
+    "topic": "shopping",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "Sa7bo",
+      "ukhto",
+      "il-bāS"
+    ]
   },
   {
     "id": 89,
@@ -36310,7 +36474,8 @@
       }
     ],
     "difficulty": "A",
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "intr"
   },
   {
     "id": 93,
@@ -37494,7 +37659,8 @@
       }
     ],
     "difficulty": "A",
-    "topic": "social"
+    "topic": "social",
+    "transitivity": "intr"
   },
   {
     "id": 96,
@@ -38543,7 +38709,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "transitivity": "intr"
   },
   {
     "id": 99,
@@ -38911,7 +39078,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "transitivity": "intr"
   },
   {
     "id": 100,
@@ -39269,7 +39437,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "transitivity": "intr"
   },
   {
     "id": 101,
@@ -39634,7 +39803,8 @@
         "translit": ""
       }
     ],
-    "difficulty": "A"
+    "difficulty": "A",
+    "transitivity": "intr"
   },
   {
     "id": 102,
@@ -40011,7 +40181,8 @@
       }
     ],
     "difficulty": "A",
-    "topic": "wants_feelings"
+    "topic": "wants_feelings",
+    "transitivity": "intr"
   },
   {
     "id": 103,
@@ -40378,7 +40549,8 @@
       }
     ],
     "difficulty": "A",
-    "topic": "wants_feelings"
+    "topic": "wants_feelings",
+    "transitivity": "intr"
   },
   {
     "id": 104,
@@ -40414,7 +40586,8 @@
       "past": "2assar",
       "present": "b2assir"
     },
-    "topic": "social"
+    "topic": "social",
+    "transitivity": "intr"
   },
   {
     "id": 106,
@@ -40430,7 +40603,8 @@
       "past": "2ija",
       "present": "bijy"
     },
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "intr"
   },
   {
     "id": 107,
@@ -40993,7 +41167,8 @@
       "past": "barad",
       "present": "bibrod"
     },
-    "topic": "wants_feelings"
+    "topic": "wants_feelings",
+    "transitivity": "intr"
   },
   {
     "id": 137,
@@ -41597,7 +41772,8 @@
       "past": "t2akhkhar",
       "present": "bit2akhkhar"
     },
-    "topic": "daily_routine"
+    "topic": "daily_routine",
+    "transitivity": "intr"
   },
   {
     "id": 168,
@@ -41813,7 +41989,8 @@
       "past": "ttaSal",
       "present": "bittiSil/bottoSil"
     },
-    "topic": "communication"
+    "topic": "communication",
+    "transitivity": "intr"
   },
   {
     "id": 182,
@@ -42165,7 +42342,8 @@
       "past": "t7ammam",
       "present": "bit7ammam"
     },
-    "topic": "daily_routine"
+    "topic": "daily_routine",
+    "transitivity": "intr"
   },
   {
     "id": 205,
@@ -42396,7 +42574,13 @@
       "past": "tzakkar",
       "present": "bitzakkar"
     },
-    "topic": "communication"
+    "topic": "communication",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-3inwēn",
+      "ir-rá2im",
+      "il-miftē7"
+    ]
   },
   {
     "id": 220,
@@ -42549,7 +42733,13 @@
       "past": "trawwa2",
       "present": "bitrawwa2"
     },
-    "topic": "daily_routine"
+    "topic": "daily_routine",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-khíbiz",
+      "is-sandwīsh",
+      "il-2ahwe"
+    ]
   },
   {
     "id": 230,
@@ -42670,7 +42860,8 @@
       "past": "tsalla",
       "present": "bitsalla"
     },
-    "topic": "wants_feelings"
+    "topic": "wants_feelings",
+    "transitivity": "intr"
   },
   {
     "id": 238,
@@ -43006,7 +43197,8 @@
       "past": "ti3ib",
       "present": "bit3ab"
     },
-    "topic": "wants_feelings"
+    "topic": "wants_feelings",
+    "transitivity": "intr"
   },
   {
     "id": 260,
@@ -43112,7 +43304,8 @@
       "past": "t3ashsha",
       "present": "bit3ashsha"
     },
-    "topic": "daily_routine"
+    "topic": "daily_routine",
+    "transitivity": "intr"
   },
   {
     "id": 267,
@@ -43293,7 +43486,8 @@
       "past": "tfaDDal",
       "present": "bitfaDDal"
     },
-    "topic": "social"
+    "topic": "social",
+    "transitivity": "intr"
   },
   {
     "id": 279,
@@ -43864,7 +44058,13 @@
       "past": "jeib",
       "present": "bjiib"
     },
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-akil",
+      "il-2ahwe",
+      "il-miftē7"
+    ]
   },
   {
     "id": 315,
@@ -43900,7 +44100,8 @@
       "past": "jei3",
       "present": "bjuu3"
     },
-    "topic": "wants_feelings"
+    "topic": "wants_feelings",
+    "transitivity": "intr"
   },
   {
     "id": 317,
@@ -43936,7 +44137,12 @@
       "past": "jeiwab",
       "present": "bjeiwib"
     },
-    "topic": "communication"
+    "topic": "communication",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "is-su2āl",
+      "telefōn"
+    ]
   },
   {
     "id": 319,
@@ -44249,7 +44455,11 @@
       "past": "jala",
       "present": "bijly"
     },
-    "topic": "home_life"
+    "topic": "home_life",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-jāT"
+    ]
   },
   {
     "id": 335,
@@ -45159,7 +45369,13 @@
       "past": "7aDDar",
       "present": "b7aDDir"
     },
-    "topic": "actions"
+    "topic": "actions",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-akil",
+      "id-dars",
+      "il-ghada"
+    ]
   },
   {
     "id": 383,
@@ -45179,7 +45395,13 @@
     "citation": {
       "past": "7iDir",
       "present": "bo7Dar"
-    }
+    },
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-ijtimē3",
+      "il-fīlm",
+      "il-match"
+    ]
   },
   {
     "id": 384,
@@ -45396,7 +45618,13 @@
       "past": "7aka",
       "present": "bi7ky"
     },
-    "topic": "communication"
+    "topic": "communication",
+    "transitivity": "both",
+    "quiz_objects": [
+      "in-níkte",
+      "il-7a2ī2a",
+      "il-akhbēr"
+    ]
   },
   {
     "id": 395,
@@ -45832,7 +46060,13 @@
       "past": "khabbar",
       "present": "bkhabbir"
     },
-    "topic": "communication"
+    "topic": "communication",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "bayyo",
+      "ukhto",
+      "Sa7bo"
+    ]
   },
   {
     "id": 418,
@@ -46563,7 +46797,13 @@
       "past": "khalaS",
       "present": "bokhlaS"
     },
-    "topic": "actions"
+    "topic": "actions",
+    "transitivity": "both",
+    "quiz_objects": [
+      "ish-shúghul",
+      "id-dirāse",
+      "il-akil"
+    ]
   },
   {
     "id": 455,
@@ -46859,7 +47099,13 @@
       "past": "dei2",
       "present": "bduu2"
     },
-    "topic": "shopping"
+    "topic": "shopping",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-akil",
+      "il-2ahwe",
+      "il-7alīb"
+    ]
   },
   {
     "id": 471,
@@ -47197,7 +47443,12 @@
       "past": "da22",
       "present": "bdi22"
     },
-    "topic": "actions"
+    "topic": "actions",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-bēb",
+      "telefōn"
+    ]
   },
   {
     "id": 488,
@@ -47611,7 +47862,8 @@
       "past": "raa7",
       "present": "bruu7"
     },
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "intr"
   },
   {
     "id": 509,
@@ -48527,7 +48779,8 @@
       "past": "rakaD",
       "present": "birkoD"
     },
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "intr"
   },
   {
     "id": 557,
@@ -48824,7 +49077,8 @@
       "past": "zabaT",
       "present": "bozbaT"
     },
-    "topic": "actions"
+    "topic": "actions",
+    "transitivity": "intr"
   },
   {
     "id": 573,
@@ -49325,7 +49579,13 @@
       "past": "sei3ad",
       "present": "bsei3id"
     },
-    "topic": "social"
+    "topic": "social",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "ukhto",
+      "Sa7bo",
+      "il-jīrēn"
+    ]
   },
   {
     "id": 598,
@@ -49361,7 +49621,12 @@
       "past": "sei2",
       "present": "bsuu2"
     },
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "is-sayyāra",
+      "il-bāS"
+    ]
   },
   {
     "id": 600,
@@ -50222,7 +50487,11 @@
       "past": "sa7ab",
       "present": "bis7ab"
     },
-    "topic": "shopping"
+    "topic": "shopping",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-maSāri"
+    ]
   },
   {
     "id": 653,
@@ -50554,7 +50823,8 @@
       "past": "sallam",
       "present": "bsallim"
     },
-    "topic": "social"
+    "topic": "social",
+    "transitivity": "intr"
   },
   {
     "id": 670,
@@ -50971,7 +51241,13 @@
       "past": "sheif",
       "present": "bshuuf"
     },
-    "topic": "social"
+    "topic": "social",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-fīlm",
+      "iS-Súwar",
+      "il-match"
+    ]
   },
   {
     "id": 692,
@@ -50987,7 +51263,13 @@
       "past": "sheil",
       "present": "bshiil"
     },
-    "topic": "home_life"
+    "topic": "home_life",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "iz-zbēle",
+      "il-shánTa",
+      "iS-Sabbāt"
+    ]
   },
   {
     "id": 693,
@@ -51796,7 +52078,12 @@
       "past": "shala7",
       "present": "bishla7"
     },
-    "topic": "daily_routine"
+    "topic": "daily_routine",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "it-tiyēb",
+      "iS-Sabbāt"
+    ]
   },
   {
     "id": 735,
@@ -52049,7 +52336,8 @@
       "past": "Saar",
       "present": "bSiir"
     },
-    "topic": "home_life"
+    "topic": "home_life",
+    "transitivity": "intr"
   },
   {
     "id": 748,
@@ -52216,7 +52504,12 @@
       "past": "Sadda2",
       "present": "bSaddi2"
     },
-    "topic": "actions"
+    "topic": "actions",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-7a2ī2a",
+      "il-akhbēr"
+    ]
   },
   {
     "id": 757,
@@ -52938,7 +53231,8 @@
       "past": "Dahar",
       "present": "boDhar"
     },
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "intr"
   },
   {
     "id": 794,
@@ -53029,7 +53323,8 @@
       "past": "Taar",
       "present": "bTiir"
     },
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "intr"
   },
   {
     "id": 799,
@@ -53592,7 +53887,8 @@
       "past": "Toli3",
       "present": "boTla3"
     },
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "intr"
   },
   {
     "id": 828,
@@ -53953,7 +54249,13 @@
       "past": "3aaz",
       "present": "b3uuz"
     },
-    "topic": "wants_feelings"
+    "topic": "wants_feelings",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-maSāri",
+      "il-dáwa",
+      "il-miftē7"
+    ]
   },
   {
     "id": 847,
@@ -53969,7 +54271,8 @@
       "past": "3aash",
       "present": "b3iish"
     },
-    "topic": "home_life"
+    "topic": "home_life",
+    "transitivity": "intr"
   },
   {
     "id": 848,
@@ -54366,7 +54669,8 @@
       "past": "3ajab",
       "present": "bi3job"
     },
-    "topic": "wants_feelings"
+    "topic": "wants_feelings",
+    "transitivity": "intr"
   },
   {
     "id": 868,
@@ -54387,7 +54691,8 @@
       "past": "3ajjal",
       "present": "b3ajjil"
     },
-    "topic": "social"
+    "topic": "social",
+    "transitivity": "intr"
   },
   {
     "id": 869,
@@ -54689,7 +54994,8 @@
       "past": "3aSSab",
       "present": "b3aSSib"
     },
-    "topic": "wants_feelings"
+    "topic": "wants_feelings",
+    "transitivity": "intr"
   },
   {
     "id": 884,
@@ -54986,7 +55292,13 @@
       "past": "3allam",
       "present": "b3allim"
     },
-    "topic": "actions"
+    "topic": "actions",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "3árabi",
+      "id-dars",
+      "it-tamārīn"
+    ]
   },
   {
     "id": 899,
@@ -55082,7 +55394,13 @@
       "past": "3imil",
       "present": "ba3mil/ba3mol"
     },
-    "topic": "actions"
+    "topic": "actions",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-akil",
+      "it-tamārīn",
+      "il-ghada"
+    ]
   },
   {
     "id": 904,
@@ -55547,7 +55865,8 @@
       "past": "ghify",
       "present": "bighfa"
     },
-    "topic": "daily_routine"
+    "topic": "daily_routine",
+    "transitivity": "intr"
   },
   {
     "id": 930,
@@ -55778,7 +56097,8 @@
       "past": "feit",
       "present": "bfuut"
     },
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "intr"
   },
   {
     "id": 942,
@@ -55909,7 +56229,8 @@
       "past": "fei2",
       "present": "bfii2"
     },
-    "topic": "daily_routine"
+    "topic": "daily_routine",
+    "transitivity": "intr"
   },
   {
     "id": 950,
@@ -56670,7 +56991,8 @@
       "past": "fall",
       "present": "bfill"
     },
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "intr"
   },
   {
     "id": 988,
@@ -56973,7 +57295,8 @@
       "past": "2aal",
       "present": "b2uul"
     },
-    "topic": "communication"
+    "topic": "communication",
+    "transitivity": "intr"
   },
   {
     "id": 1004,
@@ -56989,7 +57312,8 @@
       "past": "2aam",
       "present": "b2uum"
     },
-    "topic": "daily_routine"
+    "topic": "daily_routine",
+    "transitivity": "intr"
   },
   {
     "id": 1005,
@@ -57903,7 +58227,8 @@
       "past": "kein",
       "present": "bkuun"
     },
-    "topic": "social"
+    "topic": "social",
+    "transitivity": "intr"
   },
   {
     "id": 1051,
@@ -58204,7 +58529,13 @@
       "past": "kasar",
       "present": "biksor"
     },
-    "topic": "home_life"
+    "topic": "home_life",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "telefōn",
+      "is-sayyāra",
+      "il-kambiyūtar"
+    ]
   },
   {
     "id": 1066,
@@ -58758,7 +59089,8 @@
       "past": "li3ib",
       "present": "bil3ab"
     },
-    "topic": "social"
+    "topic": "social",
+    "transitivity": "intr"
   },
   {
     "id": 1095,
@@ -59168,7 +59500,8 @@
       "past": "meit",
       "present": "bmuut"
     },
-    "topic": "social"
+    "topic": "social",
+    "transitivity": "intr"
   },
   {
     "id": 1116,
@@ -59380,7 +59713,8 @@
       "past": "mara2",
       "present": "bimro2"
     },
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "intr"
   },
   {
     "id": 1127,
@@ -59540,7 +59874,8 @@
       "past": "mishy",
       "present": "bimshy"
     },
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "intr"
   },
   {
     "id": 1135,
@@ -59786,7 +60121,8 @@
       "past": "neim",
       "present": "bneim"
     },
-    "topic": "daily_routine"
+    "topic": "daily_routine",
+    "transitivity": "intr"
   },
   {
     "id": 1148,
@@ -60481,7 +60817,8 @@
       "past": "nizil",
       "present": "binzal"
     },
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "intr"
   },
   {
     "id": 1184,
@@ -60538,7 +60875,13 @@
       "past": "nisy",
       "present": "binsa"
     },
-    "topic": "wants_feelings"
+    "topic": "wants_feelings",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-miftē7",
+      "il-3inwēn",
+      "ir-rá2im"
+    ]
   },
   {
     "id": 1187,
@@ -61988,7 +62331,8 @@
       "past": "hilik",
       "present": "bihlak"
     },
-    "topic": "wants_feelings"
+    "topic": "wants_feelings",
+    "transitivity": "intr"
   },
   {
     "id": 1262,
@@ -62567,7 +62911,13 @@
       "past": "waSSal",
       "present": "bwaSSil"
     },
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "tr",
+    "quiz_objects": [
+      "il-akil",
+      "il-shánTa",
+      "il-hadīye"
+    ]
   },
   {
     "id": 1291,
@@ -62588,7 +62938,8 @@
       "past": "wiSil",
       "present": "buuSal"
     },
-    "topic": "movement"
+    "topic": "movement",
+    "transitivity": "intr"
   },
   {
     "id": 1292,

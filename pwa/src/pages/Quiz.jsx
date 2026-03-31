@@ -3,6 +3,7 @@ import { generateQuiz } from '../utils/quizGenerator';
 import { PERSONS, PERSON_LABELS, TOPICS } from '../utils/constants';
 import { getTenseLabel } from '../utils/tenseLabels';
 import { buildExampleSentence } from '../utils/exampleSentenceBuilder';
+import { buildQuizPrompt } from '../utils/quizPromptBuilder';
 import { mapConfidenceOutcome, updateCard } from '../utils/fsrs';
 import { getCard, saveCard } from '../utils/srsState';
 import { getNextSRSItem, getDueCount as getDueCountFromScheduler, getNewCount } from '../utils/scheduler';
@@ -62,8 +63,8 @@ export default function Quiz({ verbs }) {
   );
 
   // Interleaving tracking (session-only)
+  const [verbSessionCounts, setVerbSessionCounts] = useState({});
   const [currentVerbId, setCurrentVerbId] = useState(null);
-  const [questionsOnCurrentVerb, setQuestionsOnCurrentVerb] = useState(0);
   const [recentTensesForVerb, setRecentTensesForVerb] = useState([]);
 
   // Free practice state
@@ -188,12 +189,8 @@ export default function Quiz({ verbs }) {
       .filter(v => v !== answer);
     const shuffled = [...distractors].sort(() => Math.random() - 0.5).slice(0, 3);
     const options = [answer, ...shuffled].sort(() => Math.random() - 0.5);
-    const personLabel = PERSON_LABELS[person] || person;
     const { label: tenseLabel, particle } = getTenseLabel(t);
-
-    const prompt = t === 'imperative'
-      ? `${tenseLabel} — to ${personLabel}`
-      : `${personLabel} — ${tenseLabel}`;
+    const { prompt } = buildQuizPrompt(verb, t, person, particle);
 
     return {
       prompt,
@@ -229,8 +226,8 @@ export default function Quiz({ verbs }) {
     setLastItem(null);
     setRemedialState(null);
     // Initialize interleaving tracking
+    setVerbSessionCounts({ [item.verb.id]: 1 });
     setCurrentVerbId(item.verb.id);
-    setQuestionsOnCurrentVerb(1);
     setRecentTensesForVerb([item.tense]);
   }, [filteredVerbs, selectedPersons, buildSRSQuestion]);
 
@@ -281,22 +278,18 @@ export default function Quiz({ verbs }) {
   const nextSRSQuestion = () => {
     const newLastItem = srsItem ? { verbId: srsItem.verb.id, tense: srsQuestion?.tense } : null;
 
-    // Interleaving: determine exclusions
-    let excludeVerbId = null;
-    let excludeTenses = null;
-    const nextCount = questionsOnCurrentVerb + 1;
+    // Interleaving: exclude verbs that have hit the per-verb session cap
+    const exhaustedVerbIds = Object.entries(verbSessionCounts)
+      .filter(([, count]) => count >= maxQuestionsPerVerb)
+      .map(([id]) => Number(id));
 
-    if (nextCount > maxQuestionsPerVerb) {
-      // Cap reached — force verb switch
-      excludeVerbId = currentVerbId;
-    } else {
-      // Same verb allowed — but vary tense
-      excludeTenses = [...recentTensesForVerb];
-    }
+    // If current verb hasn't hit cap, vary tense within it
+    const currentCount = verbSessionCounts[currentVerbId] || 0;
+    const excludeTenses = currentCount < maxQuestionsPerVerb ? [...recentTensesForVerb] : null;
 
     const item = getNextSRSItem(filteredVerbs, newLastItem, {
       selectedPersons,
-      excludeVerbId,
+      excludeVerbIds: exhaustedVerbIds,
       excludeTenses,
     });
     if (!item) {
@@ -306,12 +299,14 @@ export default function Quiz({ verbs }) {
     }
 
     // Update interleaving tracking
+    setVerbSessionCounts(prev => ({
+      ...prev,
+      [item.verb.id]: (prev[item.verb.id] || 0) + 1,
+    }));
     if (item.verb.id === currentVerbId) {
-      setQuestionsOnCurrentVerb(nextCount);
       setRecentTensesForVerb(prev => [...prev, item.tense]);
     } else {
       setCurrentVerbId(item.verb.id);
-      setQuestionsOnCurrentVerb(1);
       setRecentTensesForVerb([item.tense]);
     }
 
@@ -329,17 +324,25 @@ export default function Quiz({ verbs }) {
 
   const skipToNewVerb = () => {
     const newLastItem = srsItem ? { verbId: srsItem.verb.id, tense: srsQuestion?.tense } : null;
+    // Exclude current verb + all exhausted verbs
+    const exhaustedVerbIds = Object.entries(verbSessionCounts)
+      .filter(([, count]) => count >= maxQuestionsPerVerb)
+      .map(([id]) => Number(id));
+    const excludeIds = [...new Set([...exhaustedVerbIds, currentVerbId].filter(Boolean))];
     const item = getNextSRSItem(filteredVerbs, newLastItem, {
       selectedPersons,
-      excludeVerbId: currentVerbId, // Force different verb
+      excludeVerbIds: excludeIds,
     });
     if (!item) return;
 
     const q = buildSRSQuestion(item);
     setSrsItem(item);
     setSrsQuestion(q);
+    setVerbSessionCounts(prev => ({
+      ...prev,
+      [item.verb.id]: (prev[item.verb.id] || 0) + 1,
+    }));
     setCurrentVerbId(item.verb.id);
-    setQuestionsOnCurrentVerb(1);
     setRecentTensesForVerb([item.tense]);
     setSelectedAnswer(null);
     setConfidence(3);
