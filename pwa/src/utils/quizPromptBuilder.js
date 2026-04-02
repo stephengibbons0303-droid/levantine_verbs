@@ -17,7 +17,7 @@ const BLANK = '_______';
  * @param {string} tense - Internal tense key (perfect, bi_imperfect, imperfect, imperative, participle)
  * @param {string} person - Person key (ana, inta, etc.)
  * @param {string|null} particle - For imperfect: "bedde", "ra7", or "lezim". Null for other tenses.
- * @returns {{ prompt: string, timeAdverb: string, object: string|null }}
+ * @returns {{ prompt: string, timeAdverb: string, object: string|null, parts: Object }}
  */
 export function buildQuizPrompt(verb, tense, person, particle) {
   // 1. Determine object (transitive verbs only)
@@ -42,26 +42,40 @@ export function buildQuizPrompt(verb, tense, person, particle) {
   // 3. Build the object + time portion
   const tail = object ? `${object} ${timeAdverb}` : timeAdverb;
 
-  // 4. Assemble prompt by tense
+  // 4. Assemble prompt by tense, tracking parts for post-answer reconstruction
   const pronoun = PROMPT_PRONOUNS[person] || person;
   let prompt;
+  // parts.pronoun = display pronoun, parts.particle = display particle
+  // parts.person = always the person key (for English pronoun lookup)
+  let displayPronoun = pronoun;
+  let displayParticle = '';
 
   if (tense === 'imperfect' && particle === 'bedde') {
-    // bedde: use person-specific bedde form, no separate pronoun
     const bedde = BEDDE_FORMS[person] || 'bedde';
     prompt = `${bedde} ${BLANK} ${tail}`;
+    displayPronoun = '';
+    displayParticle = bedde;
   } else if (tense === 'imperfect' && particle === 'ra7') {
     prompt = `${pronoun} ra7 ${BLANK} ${tail}`;
+    displayParticle = 'ra7';
   } else if (tense === 'imperfect' && particle === 'lezim') {
-    // lēzim is invariable — pronoun needed to identify person
     prompt = `${pronoun} lēzim ${BLANK} ${tail}`;
+    displayParticle = 'lēzim';
   } else if (tense === 'imperative') {
-    // Comma after pronoun, exclamation at end
     prompt = `${pronoun}, ${BLANK} ${tail}!`;
   } else {
     // perfect, bi_imperfect, participle
     prompt = `${pronoun} ${BLANK} ${tail}`;
   }
 
-  return { prompt, timeAdverb, object };
+  const parts = {
+    pronoun: displayPronoun,
+    particle: displayParticle,
+    object: object || '',
+    timeAdverb,
+    tense,
+    person,
+  };
+
+  return { prompt, timeAdverb, object, parts };
 }

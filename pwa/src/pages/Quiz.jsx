@@ -4,6 +4,7 @@ import { PERSONS, PERSON_LABELS, TOPICS } from '../utils/constants';
 import { getTenseLabel } from '../utils/tenseLabels';
 import { buildExampleSentence } from '../utils/exampleSentenceBuilder';
 import { buildQuizPrompt } from '../utils/quizPromptBuilder';
+import { buildFilledSentence, buildEnglishSentence } from '../utils/englishSentenceBuilder';
 import { mapConfidenceOutcome, updateCard } from '../utils/fsrs';
 import { getCard, saveCard } from '../utils/srsState';
 import { getNextSRSItem, getDueCount as getDueCountFromScheduler, getNewCount } from '../utils/scheduler';
@@ -190,10 +191,11 @@ export default function Quiz({ verbs }) {
     const shuffled = [...distractors].sort(() => Math.random() - 0.5).slice(0, 3);
     const options = [answer, ...shuffled].sort(() => Math.random() - 0.5);
     const { label: tenseLabel, particle } = getTenseLabel(t);
-    const { prompt } = buildQuizPrompt(verb, t, person, particle);
+    const { prompt, parts } = buildQuizPrompt(verb, t, person, particle);
 
     return {
       prompt,
+      parts,
       verb_info: { translit: verb.verb.translit, arabic: verb.verb.arabic, english: verb.verb.english },
       answer,
       answer_alt: useArabic ? correctForm.translit : correctForm.arabic,
@@ -250,10 +252,15 @@ export default function Quiz({ verbs }) {
     setSrsTotal(t => t + 1);
     if (isCorrect) setSrsScore(s => s + 1);
 
-    // Build example sentence
+    // Build filled sentence + English translation from quiz prompt parts
     const correctForm = srsItem.verb.conjugations?.[srsQuestion.tense]?.forms
       ?.find(f => f.person === srsQuestion.person);
-    if (correctForm) {
+    if (correctForm && srsQuestion.parts) {
+      const filled = buildFilledSentence(srsQuestion.parts, correctForm.translit);
+      const english = buildEnglishSentence(srsQuestion.parts, srsItem.verb);
+      setSrsExampleSentence({ sentence: filled, english });
+    } else if (correctForm) {
+      // Fallback to old builder if parts not available
       setSrsExampleSentence(buildExampleSentence({
         tense: srsQuestion.tense,
         person: srsQuestion.person,
