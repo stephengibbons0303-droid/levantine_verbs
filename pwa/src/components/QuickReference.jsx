@@ -1,4 +1,4 @@
-import { TIME_ADVERBS, OBJECTS, PEOPLE, ACTIVITIES } from '../utils/vocabPool';
+import { TIME_ADVERBS, OBJECTS, ACTIVITIES, FAMILY_CONJUGATIONS, POSSESSIVE_LABELS, PEOPLE_NOUNS } from '../utils/vocabPool';
 
 const TIME_SECTIONS = [
   { key: 'past', label: 'Past' },
@@ -8,6 +8,7 @@ const TIME_SECTIONS = [
 ];
 
 function VocabTable({ items }) {
+  const hasArabic = items.some(item => item.arabic);
   return (
     <table className="qr-table">
       <tbody>
@@ -15,6 +16,7 @@ function VocabTable({ items }) {
           <tr key={i}>
             <td className="qr-translit">{item.translit}</td>
             <td className="qr-english">{item.english}</td>
+            {hasArabic && <td className="qr-arabic">{item.arabic || ''}</td>}
           </tr>
         ))}
       </tbody>
@@ -22,25 +24,137 @@ function VocabTable({ items }) {
   );
 }
 
-export default function QuickReference() {
+function ConjugationTable({ entry }) {
+  return (
+    <div className="conjugation-block">
+      <h4>{entry.base}</h4>
+      <table className="qr-table">
+        <tbody>
+          {POSSESSIVE_LABELS.map((label, i) => (
+            <tr key={i}>
+              <td className="qr-english">{label}</td>
+              <td className="qr-translit">{entry.forms[i]}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function CollapsibleSection({ id, title, collapsed, onToggle, hidden, children }) {
+  if (hidden) return null;
+  const isCollapsed = collapsed[id] !== false; // default collapsed
+  return (
+    <div className="collapsible-section">
+      <h3 className="qr-heading collapsible-heading" onClick={() => onToggle(id)}>
+        <span className="collapse-chevron">{isCollapsed ? '▸' : '▾'}</span>
+        {title}
+      </h3>
+      {!isCollapsed && children}
+    </div>
+  );
+}
+
+function matchesSearch(text, term) {
+  return text && text.toLowerCase().includes(term);
+}
+
+function filterItems(items, term) {
+  if (!term) return items;
+  return items.filter(item =>
+    matchesSearch(item.translit, term) ||
+    matchesSearch(item.english, term) ||
+    matchesSearch(item.arabic, term)
+  );
+}
+
+function familyMatchesSearch(entry, term) {
+  if (!term) return true;
+  if (matchesSearch(entry.base, term)) return true;
+  return entry.forms.some(f => matchesSearch(f, term));
+}
+
+export default function QuickReference({ searchTerm, collapsed, onToggleSection }) {
+  const term = (searchTerm || '').toLowerCase();
+  const isSearching = term.length > 0;
+
+  // Filter time adverbs by section
+  const filteredTime = TIME_SECTIONS.map(({ key, label }) => {
+    const items = filterItems(TIME_ADVERBS[key], term);
+    return { key, label, items };
+  }).filter(s => s.items.length > 0);
+
+  const filteredObjects = filterItems(OBJECTS, term);
+  const filteredActivities = filterItems(ACTIVITIES, term);
+  const filteredPeopleNouns = filterItems(PEOPLE_NOUNS, term);
+  const filteredFamily = FAMILY_CONJUGATIONS.filter(e => familyMatchesSearch(e, term));
+
+  const hasTimeMatches = filteredTime.length > 0;
+  const hasObjectMatches = filteredObjects.length > 0;
+  const hasPeopleMatches = filteredFamily.length > 0 || filteredPeopleNouns.length > 0;
+  const hasActivityMatches = filteredActivities.length > 0;
+
+  // When searching, force-expand sections with matches
+  const getCollapsed = (id, hasMatches) => {
+    if (isSearching) return { ...collapsed, [id]: !hasMatches };
+    return collapsed;
+  };
+
   return (
     <div className="quick-reference">
-      <h3 className="qr-heading">Time Phrases</h3>
-      {TIME_SECTIONS.map(({ key, label }) => (
-        <div key={key} className="qr-group">
-          <div className="qr-group-label">{label}</div>
-          <VocabTable items={TIME_ADVERBS[key]} />
-        </div>
-      ))}
+      <CollapsibleSection
+        id="timePhrases"
+        title="Time Phrases"
+        collapsed={isSearching ? getCollapsed('timePhrases', hasTimeMatches) : collapsed}
+        onToggle={onToggleSection}
+        hidden={isSearching && !hasTimeMatches}
+      >
+        {filteredTime.map(({ key, label, items }) => (
+          <div key={key} className="qr-group">
+            <div className="qr-group-label">{label}</div>
+            <VocabTable items={items} />
+          </div>
+        ))}
+      </CollapsibleSection>
 
-      <h3 className="qr-heading">Common Objects</h3>
-      <VocabTable items={OBJECTS} />
+      <CollapsibleSection
+        id="commonObjects"
+        title="Common Objects"
+        collapsed={isSearching ? getCollapsed('commonObjects', hasObjectMatches) : collapsed}
+        onToggle={onToggleSection}
+        hidden={isSearching && !hasObjectMatches}
+      >
+        <VocabTable items={filteredObjects} />
+      </CollapsibleSection>
 
-      <h3 className="qr-heading">People</h3>
-      <VocabTable items={PEOPLE} />
+      <CollapsibleSection
+        id="people"
+        title="People"
+        collapsed={isSearching ? getCollapsed('people', hasPeopleMatches) : collapsed}
+        onToggle={onToggleSection}
+        hidden={isSearching && !hasPeopleMatches}
+      >
+        {filteredFamily.map((entry, i) => (
+          <ConjugationTable key={i} entry={entry} />
+        ))}
+        {filteredPeopleNouns.length > 0 && (
+          <>
+            <h4 className="conjugation-sub-heading">Other People</h4>
+            <VocabTable items={filteredPeopleNouns} />
+          </>
+        )}
+      </CollapsibleSection>
 
-      <h3 className="qr-heading">Activities</h3>
-      <VocabTable items={ACTIVITIES} />
+      <CollapsibleSection
+        id="activities"
+        title="Activities"
+        collapsed={isSearching ? getCollapsed('activities', hasActivityMatches) : collapsed}
+        onToggle={onToggleSection}
+        hidden={isSearching && !hasActivityMatches}
+      >
+        <VocabTable items={filteredActivities} />
+      </CollapsibleSection>
     </div>
   );
 }
