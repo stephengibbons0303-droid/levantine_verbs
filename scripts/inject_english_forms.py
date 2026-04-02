@@ -132,6 +132,11 @@ IRREGULAR = {
     "be able to": {"past": "was able to", "present_3s": "is able to"},
 }
 
+# Verbs whose primary English meaning doesn't work well in quiz context
+ENGLISH_OVERRIDES = {
+    "undress": {"base": "take off", "past": "took off", "present_3s": "takes off"},
+}
+
 
 def extract_base(english):
     """Extract base verb form from the verb's English field."""
@@ -141,6 +146,10 @@ def extract_base(english):
     first = re.sub(r'\[.*?\]', '', first).strip()
     # Remove parenthetical
     first = re.sub(r'\(.*?\)', '', first).strip()
+    # Split on comma and take first variant ("pass, pass by" -> "pass")
+    first = first.split(",")[0].strip()
+    # Strip reflexive "oneself" ("bathe oneself" -> "bathe")
+    first = re.sub(r'\s+oneself$', '', first)
     # Strip leading "to "
     first = re.sub(r'^to\s+', '', first, flags=re.IGNORECASE)
     return first.strip().lower()
@@ -176,6 +185,11 @@ def get_english_forms(english):
     base = extract_base(english)
     if not base:
         return {"base": "...", "past": "...", "present_3s": "..."}
+
+    # Check overrides first (verbs whose primary meaning doesn't fit quiz context)
+    if base in ENGLISH_OVERRIDES:
+        ov = ENGLISH_OVERRIDES[base]
+        return {"base": ov["base"], "past": ov["past"], "present_3s": ov["present_3s"]}
 
     # Check irregular table
     if base in IRREGULAR:

@@ -6,12 +6,16 @@
  */
 
 import { PERSON_LABELS } from './constants';
-import { OBJECTS, TIME_ADVERBS } from './vocabPool';
+import { OBJECTS, ACTIVITIES, TIME_ADVERBS } from './vocabPool';
 
 // Build lookup maps from vocabPool data at import time
+// Include both OBJECTS and ACTIVITIES since quiz_objects can reference either
 const OBJECT_EN = {};
 for (const obj of OBJECTS) {
   OBJECT_EN[obj.translit] = obj.english;
+}
+for (const act of ACTIVITIES) {
+  OBJECT_EN[act.translit] = act.english;
 }
 
 const TIME_EN = {};
