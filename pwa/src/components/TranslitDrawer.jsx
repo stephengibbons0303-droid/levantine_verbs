@@ -1,16 +1,95 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import QuickReference from './QuickReference';
 
+const ALL_SECTIONS = [
+  'consonants', 'shortVowels', 'longVowels', 'nasalVowels',
+  'timePhrases', 'commonObjects', 'people', 'activities',
+];
+
+function initCollapsed() {
+  return Object.fromEntries(ALL_SECTIONS.map(s => [s, true]));
+}
+
+// Transliteration guide row data for search filtering
+const CONSONANT_ROWS = [
+  ["2", "ء / ق", "hamza / 2āf", "glottal stop", "2akhad (أخد)"],
+  ["7", "ح", "7ā2", "emphatic h", "7abb (حب)"],
+  ["kh", "خ", "khā2", 'kh ("loch")', "khāf"],
+  ["sh", "ش", "shīn", 'sh ("ship")', "shāf (شاف)"],
+  ["3", "ع", "3ayn", "pharyngeal fricative", "bi3raf (بعرف)"],
+  ["gh", "غ", "ghayn", "French r", "gharīb (غریب)"],
+  ["S", "ص", "Sād", "emphatic s", "Subu7 (صُبُح)"],
+  ["T", "ط", "Tā2", "emphatic t", "Tálab (طَلَب)"],
+  ["D", "ض", "Dād", "emphatic d", "Dárab (ضَرَب)"],
+  ["Z", "ظ", "Zā2", "emphatic z", "būZa (بوظة)"],
+];
+
+const SHORT_VOWEL_ROWS = [
+  ["á", 'short stressed "a"', "Tálab"],
+  ["í", 'short stressed "i"', "bíji"],
+  ["ú", 'short stressed "u"', "Súbu7"],
+];
+
+const LONG_VOWEL_ROWS = [
+  ["ā", 'long "a"', "shāf"],
+  ["ē", 'long "e"', "jēy"],
+  ["ī", 'long "i"', "jīt"],
+  ["ō", 'long "o"', "béddo"],
+  ["ū", 'long "u"', "Tlūb"],
+];
+
+const NASAL_VOWEL_ROWS = [
+  ["ã", 'nasalized "a"'],
+  ["õ", 'nasalized "o"'],
+];
+
+function rowsMatch(rows, term) {
+  if (!term) return true;
+  return rows.some(row => row.some(cell => cell.toLowerCase().includes(term)));
+}
+
+function filterRows(rows, term) {
+  if (!term) return rows;
+  return rows.filter(row => row.some(cell => cell.toLowerCase().includes(term)));
+}
+
+function CollapsibleSection({ id, title, isCollapsed, onToggle, hidden, children }) {
+  if (hidden) return null;
+  return (
+    <div className="collapsible-section">
+      <h3 className="collapsible-heading" onClick={() => onToggle(id)}>
+        <span className="collapse-chevron">{isCollapsed ? '▸' : '▾'}</span>
+        {title}
+      </h3>
+      {!isCollapsed && <div className="collapsible-content">{children}</div>}
+    </div>
+  );
+}
+
 export default function TranslitDrawer() {
   const [open, setOpen] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [dragX, setDragX] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [collapsed, setCollapsed] = useState(initCollapsed);
   const touchStart = useRef(null);
   const touchStartY = useRef(null);
   const drawerRef = useRef(null);
 
-  const EDGE_ZONE = 30; // px from right edge to start swipe-open
+  const EDGE_ZONE = 30;
   const SWIPE_THRESHOLD = 60;
+
+  // Reset state when drawer opens
+  useEffect(() => {
+    if (open) {
+      setCollapsed(initCollapsed());
+      setSearchTerm('');
+    }
+  }, [open]);
+
+  const toggleSection = useCallback((id) => {
+    setCollapsed(prev => ({ ...prev, [id]: !prev[id] }));
+  }, []);
 
   const handleTouchStart = useCallback((e) => {
     const touch = e.touches[0];
@@ -32,7 +111,6 @@ export default function TranslitDrawer() {
     const deltaX = touch.clientX - touchStart.current;
     const deltaY = Math.abs(touch.clientY - touchStartY.current);
 
-    // If vertical scroll dominates, cancel drag
     if (deltaY > Math.abs(deltaX) + 10 && Math.abs(deltaX) < 20) {
       setDragging(false);
       setDragX(null);
@@ -40,10 +118,8 @@ export default function TranslitDrawer() {
     }
 
     if (open) {
-      // Dragging to close (swipe right)
       setDragX(Math.max(0, deltaX));
     } else {
-      // Dragging to open (swipe left from right edge)
       setDragX(Math.min(0, deltaX));
     }
   }, [dragging, open]);
@@ -76,13 +152,11 @@ export default function TranslitDrawer() {
     };
   }, [handleTouchStart, handleTouchMove, handleTouchEnd]);
 
-  // Calculate transform for drag preview
   let transform = open ? 'translateX(0)' : 'translateX(100%)';
   if (dragging && dragX !== null) {
     if (open) {
       transform = `translateX(${dragX}px)`;
     } else {
-      // dragX is negative when swiping left to open
       const drawerWidth = window.innerWidth * 0.8;
       const offset = Math.max(0, drawerWidth + dragX);
       transform = `translateX(${offset}px)`;
@@ -90,6 +164,30 @@ export default function TranslitDrawer() {
   }
 
   const transition = dragging ? 'none' : 'transform 0.3s ease';
+
+  // Search logic for transliteration guide sections
+  const term = searchTerm.toLowerCase();
+  const isSearching = term.length > 0;
+
+  const consonantMatches = rowsMatch(CONSONANT_ROWS, term);
+  const shortVowelMatches = rowsMatch(SHORT_VOWEL_ROWS, term);
+  const longVowelMatches = rowsMatch(LONG_VOWEL_ROWS, term);
+  const nasalVowelMatches = rowsMatch(NASAL_VOWEL_ROWS, term);
+
+  // Also match on the note text for consonants
+  const consonantNoteMatch = !term || "all other consonants b t d f j k l m n r s w y z h use standard latin equivalents".includes(term);
+  const hasConsonantMatches = consonantMatches || consonantNoteMatch;
+
+  const filteredConsonants = filterRows(CONSONANT_ROWS, term);
+  const filteredShortVowels = filterRows(SHORT_VOWEL_ROWS, term);
+  const filteredLongVowels = filterRows(LONG_VOWEL_ROWS, term);
+  const filteredNasalVowels = filterRows(NASAL_VOWEL_ROWS, term);
+
+  // When searching, force sections open if they have matches
+  const getSectionCollapsed = (id, hasMatches) => {
+    if (isSearching) return !hasMatches;
+    return collapsed[id] !== false; // default collapsed
+  };
 
   return (
     <>
@@ -102,81 +200,102 @@ export default function TranslitDrawer() {
         style={{ transform, transition }}
       >
         <div className="drawer-header">
-          <h2>Transliteration Guide</h2>
+          <h2>Reference</h2>
           <button className="drawer-close" onClick={() => setOpen(false)}>✕</button>
         </div>
         <div className="drawer-body">
-          <p className="drawer-subtitle">Quick reference for the transliteration system used throughout the app.</p>
+          <input
+            type="text"
+            className="drawer-search"
+            placeholder="Search (English, transliteration, or Arabic)..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
 
-          <h3>Consonants</h3>
-          <table className="guide-table">
-            <thead>
-              <tr><th>Char</th><th>Arabic</th><th>Name</th><th>Sound</th><th>Example</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>2</td><td>ء / ق</td><td>hamza / 2āf</td><td>glottal stop</td><td>2akhad (أخد)</td></tr>
-              <tr><td>7</td><td>ح</td><td>7ā2</td><td>emphatic h</td><td>7abb (حب)</td></tr>
-              <tr><td>kh</td><td>خ</td><td>khā2</td><td>kh ("loch")</td><td>khāf</td></tr>
-              <tr><td>sh</td><td>ش</td><td>shīn</td><td>sh ("ship")</td><td>shāf (شاف)</td></tr>
-              <tr><td>3</td><td>ع</td><td>3ayn</td><td>pharyngeal fricative</td><td>bi3raf (بعرف)</td></tr>
-              <tr><td>gh</td><td>غ</td><td>ghayn</td><td>French r</td><td>gharīb (غریب)</td></tr>
-              <tr><td>S</td><td>ص</td><td>Sād</td><td>emphatic s</td><td>Subu7 (صُبُح)</td></tr>
-              <tr><td>T</td><td>ط</td><td>Tā2</td><td>emphatic t</td><td>Tálab (طَلَب)</td></tr>
-              <tr><td>D</td><td>ض</td><td>Dād</td><td>emphatic d</td><td>Dárab (ضَرَب)</td></tr>
-              <tr><td>Z</td><td>ظ</td><td>Zā2</td><td>emphatic z</td><td>būZa (بوظة)</td></tr>
-            </tbody>
-          </table>
-          <p className="guide-note">All other consonants (b, t, d, f, j, k, l, m, n, r, s, w, y, z, h) use standard Latin equivalents.</p>
+          <CollapsibleSection
+            id="consonants"
+            title="Consonants"
+            isCollapsed={getSectionCollapsed('consonants', hasConsonantMatches)}
+            onToggle={toggleSection}
+            hidden={isSearching && !hasConsonantMatches}
+          >
+            <table className="guide-table">
+              <thead>
+                <tr><th>Char</th><th>Arabic</th><th>Name</th><th>Sound</th><th>Example</th></tr>
+              </thead>
+              <tbody>
+                {(isSearching ? filteredConsonants : CONSONANT_ROWS).map((row, i) => (
+                  <tr key={i}>
+                    {row.map((cell, j) => <td key={j}>{cell}</td>)}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="guide-note">All other consonants (b, t, d, f, j, k, l, m, n, r, s, w, y, z, h) use standard Latin equivalents.</p>
+          </CollapsibleSection>
 
-          <h3>Short Stressed Vowels</h3>
-          <table className="guide-table">
-            <thead><tr><th>Char</th><th>Sound</th><th>Example</th></tr></thead>
-            <tbody>
-              <tr><td>á</td><td>short stressed "a"</td><td>Tálab</td></tr>
-              <tr><td>í</td><td>short stressed "i"</td><td>bíji</td></tr>
-              <tr><td>ú</td><td>short stressed "u"</td><td>Súbu7</td></tr>
-            </tbody>
-          </table>
+          <CollapsibleSection
+            id="shortVowels"
+            title="Short Stressed Vowels"
+            isCollapsed={getSectionCollapsed('shortVowels', shortVowelMatches)}
+            onToggle={toggleSection}
+            hidden={isSearching && !shortVowelMatches}
+          >
+            <table className="guide-table">
+              <thead><tr><th>Char</th><th>Sound</th><th>Example</th></tr></thead>
+              <tbody>
+                {(isSearching ? filteredShortVowels : SHORT_VOWEL_ROWS).map((row, i) => (
+                  <tr key={i}>
+                    {row.map((cell, j) => <td key={j}>{cell}</td>)}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CollapsibleSection>
 
-          <h3>Long Vowels</h3>
-          <table className="guide-table">
-            <thead><tr><th>Char</th><th>Sound</th><th>Example</th></tr></thead>
-            <tbody>
-              <tr><td>ā</td><td>long "a"</td><td>shāf</td></tr>
-              <tr><td>ē</td><td>long "e"</td><td>jēy</td></tr>
-              <tr><td>ī</td><td>long "i"</td><td>jīt</td></tr>
-              <tr><td>ō</td><td>long "o"</td><td>béddo</td></tr>
-              <tr><td>ū</td><td>long "u"</td><td>Tlūb</td></tr>
-            </tbody>
-          </table>
+          <CollapsibleSection
+            id="longVowels"
+            title="Long Vowels"
+            isCollapsed={getSectionCollapsed('longVowels', longVowelMatches)}
+            onToggle={toggleSection}
+            hidden={isSearching && !longVowelMatches}
+          >
+            <table className="guide-table">
+              <thead><tr><th>Char</th><th>Sound</th><th>Example</th></tr></thead>
+              <tbody>
+                {(isSearching ? filteredLongVowels : LONG_VOWEL_ROWS).map((row, i) => (
+                  <tr key={i}>
+                    {row.map((cell, j) => <td key={j}>{cell}</td>)}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CollapsibleSection>
 
-          <h3>Nasal Vowels</h3>
-          <table className="guide-table">
-            <thead><tr><th>Char</th><th>Sound</th></tr></thead>
-            <tbody>
-              <tr><td>ã</td><td>nasalized "a"</td></tr>
-              <tr><td>õ</td><td>nasalized "o"</td></tr>
-            </tbody>
-          </table>
+          <CollapsibleSection
+            id="nasalVowels"
+            title="Nasal Vowels"
+            isCollapsed={getSectionCollapsed('nasalVowels', nasalVowelMatches)}
+            onToggle={toggleSection}
+            hidden={isSearching && !nasalVowelMatches}
+          >
+            <table className="guide-table">
+              <thead><tr><th>Char</th><th>Sound</th></tr></thead>
+              <tbody>
+                {(isSearching ? filteredNasalVowels : NASAL_VOWEL_ROWS).map((row, i) => (
+                  <tr key={i}>
+                    {row.map((cell, j) => <td key={j}>{cell}</td>)}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CollapsibleSection>
 
-          <h3>Unicode Reference</h3>
-          <p className="guide-note">Consonants are now plain ASCII — only vowel diacritics need special characters.</p>
-          <table className="guide-table unicode-table">
-            <thead><tr><th>Char</th><th>Unicode</th><th>Description</th></tr></thead>
-            <tbody>
-              <tr><td>á</td><td>U+00E1</td><td>A with Acute</td></tr>
-              <tr><td>í</td><td>U+00ED</td><td>I with Acute</td></tr>
-              <tr><td>ā</td><td>U+0101</td><td>A with Macron</td></tr>
-              <tr><td>ē</td><td>U+0113</td><td>E with Macron</td></tr>
-              <tr><td>ī</td><td>U+012B</td><td>I with Macron</td></tr>
-              <tr><td>ō</td><td>U+014D</td><td>O with Macron</td></tr>
-              <tr><td>ū</td><td>U+016B</td><td>U with Macron</td></tr>
-              <tr><td>ã</td><td>U+00E3</td><td>A with Tilde</td></tr>
-              <tr><td>õ</td><td>U+00F5</td><td>O with Tilde</td></tr>
-            </tbody>
-          </table>
-          <hr className="qr-divider" />
-          <QuickReference />
+          <QuickReference
+            searchTerm={searchTerm}
+            collapsed={collapsed}
+            onToggleSection={toggleSection}
+          />
         </div>
       </div>
 

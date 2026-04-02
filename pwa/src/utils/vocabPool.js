@@ -22,6 +22,10 @@ export const TIME_ADVERBS = {
     { translit: "lēlit mbēri7", english: "last night" },
     { translit: "2abil yomēn", english: "two days ago" },
     { translit: "il-joum3a il-maDiye", english: "last week" },
+    { translit: "2awwil mbēri7", english: "day before yesterday", arabic: "أول مبارح" },
+    { translit: "al-shahr al-maDi", english: "last month", arabic: "الشهر الماضي" },
+    { translit: "al-sini al-maDiye", english: "last year", arabic: "السنة الماضية" },
+    { translit: "min shwayy", english: "a little while ago", arabic: "من شوي" },
   ],
   present: [
     { translit: "kil yom", english: "every day" },
@@ -29,6 +33,12 @@ export const TIME_ADVERBS = {
     { translit: "3ēdatan", english: "usually" },
     { translit: "kil joum3a", english: "every week" },
     { translit: "kil marra", english: "every time" },
+    { translit: "halla2", english: "now", arabic: "هلق" },
+    { translit: "halla2 halla2", english: "right now", arabic: "هلق هلق" },
+    { translit: "aw2at", english: "sometimes", arabic: "أوقات" },
+    { translit: "hal-iyyam", english: "nowadays", arabic: "هالأيام" },
+    { translit: "nādiran", english: "rarely", arabic: "نادراً" },
+    { translit: "abadan", english: "never", arabic: "أبداً" },
   ],
   future: [
     { translit: "bukra", english: "tomorrow" },
@@ -37,6 +47,11 @@ export const TIME_ADVERBS = {
     { translit: "hal-joum3a", english: "this week" },
     { translit: "ba3d shwayy", english: "in a little while" },
     { translit: "il-yōm", english: "today" },
+    { translit: "al-joum3a al-jāye", english: "next week", arabic: "الجمعة الجاية" },
+    { translit: "al-shahr al-jāye", english: "next month", arabic: "الشهر الجاي" },
+    { translit: "al-layli", english: "tonight", arabic: "الليلة" },
+    { translit: "ba3dēn", english: "later", arabic: "بعدين" },
+    { translit: "2arīban", english: "soon", arabic: "قريباً" },
   ],
   imperative: [
     { translit: "halla2", english: "now" },
@@ -101,14 +116,34 @@ export const OBJECTS = [
   { key: "il-bāS", translit: "il-bāS", english: "the bus" },
 ];
 
-// --- People objects (direct person objects for people-taking verbs) ---
+// --- Family words with possessive conjugations ---
 
-export const PEOPLE = [
-  { key: "bayyo", translit: "bayyo", english: "his dad" },
-  { key: "ukhto", translit: "ukhto", english: "his sister" },
-  { key: "Sa7bo", translit: "Sa7bo", english: "his friend" },
-  { key: "il-mu3allme", translit: "il-mu3allme", english: "the teacher (f)" },
-  { key: "il-jīrēn", translit: "il-jīrēn", english: "the neighbors" },
+export const POSSESSIVE_LABELS = [
+  "My (-ī)", "Your(m) (-ak)", "Your(f) (-ik)", "His (-o)",
+  "Her (-a)", "Our (-nā)", "Your(pl) (-kon)", "Their (-on)",
+];
+
+export const FAMILY_CONJUGATIONS = [
+  { base: "Dad", forms: ["bayyī", "bayyak", "bayyik", "bayyo", "bayya", "bayynā", "bayykon", "bayyon"] },
+  { base: "Mother", forms: ["immī", "immak", "immik", "immo", "imma", "immnā", "immkon", "immon"] },
+  { base: "Brother", forms: ["khayyī", "khayyak", "khayyik", "khayyo", "khayya", "khayynā", "khayykon", "khayyon"] },
+  { base: "Sister", forms: ["ukhtī", "ukhtak", "ukhtik", "ukhto", "ukhta", "ukhtnā", "ukhtkon", "ukhton"] },
+  { base: "Wife", forms: ["martī", "martak", "martik", "marto", "marta", "martnā", "martkon", "marton"] },
+  { base: "Husband", forms: ["jōzī", "jōzak", "jōzik", "jōzo", "jōza", "jōznā", "jōzkon", "jōzon"] },
+  { base: "Son", forms: ["ibnī", "ibnak", "ibnik", "ibno", "ibna", "ibnnā", "ibnkon", "ibnon"] },
+  { base: "Daughter", forms: ["bintī", "bintak", "bintik", "binto", "binta", "bintnā", "bintkon", "binton"] },
+  { base: "Friend (m)", forms: ["sā7bī", "sā7bak", "sā7bik", "sā7bo", "sā7ba", "sā7bnā", "sā7bkon", "sā7bon"] },
+  { base: "Friend (f)", forms: ["sā7bitī", "sā7bitak", "sā7bitik", "sā7bito", "sā7bita", "sā7bitnā", "sā7bitkon", "sā7biton"] },
+];
+
+// --- People nouns ---
+
+export const PEOPLE_NOUNS = [
+  { translit: "il-7akīm", english: "the doctor", arabic: "الحكيم" },
+  { translit: "il-mdīr", english: "the manager / boss", arabic: "المدير" },
+  { translit: "il-shōfēr", english: "the driver", arabic: "الشوفير" },
+  { translit: "il-mowazzaf", english: "the employee", arabic: "الموظف" },
+  { translit: "il-gharīb", english: "the stranger", arabic: "الغريب" },
 ];
 
 // --- Activities (sidebar reference) ---

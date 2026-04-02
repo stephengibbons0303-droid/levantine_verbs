@@ -651,13 +651,64 @@ input[type="range"] {
 .guide-table td:nth-child(2) {
   font-family: 'Noto Sans Arabic', 'Segoe UI', sans-serif;
 }
-.unicode-table td:first-child {
-  font-size: 1rem;
+/* Search input in drawer */
+.drawer-search {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+  background: #1a1a3a;
+  border: 1px solid #2a2a4a;
+  border-radius: 6px;
+  color: #e0e0ff;
+  font-size: 0.85rem;
+  outline: none;
+  box-sizing: border-box;
 }
-.unicode-table td:nth-child(2) {
-  color: #888;
-  font-family: monospace;
+.drawer-search:focus {
+  border-color: #00a0ff;
+}
+.drawer-search::placeholder {
+  color: #555;
+}
+
+/* Collapsible section headings */
+.collapsible-heading {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.collapse-chevron {
   font-size: 0.75rem;
+  width: 1em;
+  display: inline-block;
+}
+
+/* Arabic text column */
+.qr-arabic {
+  color: #ccc;
+  font-family: 'Noto Sans Arabic', 'Segoe UI', sans-serif;
+  direction: rtl;
+  text-align: right;
+  font-size: 0.9rem;
+}
+
+/* Conjugation tables */
+.conjugation-block {
+  margin-bottom: 0.75rem;
+}
+.conjugation-block h4 {
+  color: #aaf;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin: 0.5rem 0 0.25rem 0;
+}
+.conjugation-sub-heading {
+  color: #aaf;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin: 0.75rem 0 0.25rem 0;
 }
 .guide-note {
   color: #777;
