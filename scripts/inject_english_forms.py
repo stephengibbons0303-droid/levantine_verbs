@@ -135,8 +135,9 @@ IRREGULAR = {
 # Verbs whose primary English meaning doesn't work well in quiz context
 ENGLISH_OVERRIDES = {
     "undress": {"base": "take off", "past": "took off", "present_3s": "takes off"},
-    "enjoy": {"base": "have fun", "past": "had fun", "present_3s": "has fun"},
+    "enjoy": {"base": "enjoy", "past": "enjoyed", "present_3s": "enjoys", "reflexive": True},
     "be able to": {"base": "be able", "past": "was able", "present_3s": "is able"},
+    "bathe": {"base": "bathe", "past": "bathed", "present_3s": "bathes", "reflexive": True},
 }
 
 
@@ -191,7 +192,10 @@ def get_english_forms(english):
     # Check overrides first (verbs whose primary meaning doesn't fit quiz context)
     if base in ENGLISH_OVERRIDES:
         ov = ENGLISH_OVERRIDES[base]
-        return {"base": ov["base"], "past": ov["past"], "present_3s": ov["present_3s"]}
+        result = {"base": ov["base"], "past": ov["past"], "present_3s": ov["present_3s"]}
+        if ov.get("reflexive"):
+            result["reflexive"] = True
+        return result
 
     # Check irregular table
     if base in IRREGULAR:

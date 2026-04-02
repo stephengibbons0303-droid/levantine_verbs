@@ -25,6 +25,18 @@ for (const pool of Object.values(TIME_ADVERBS)) {
   }
 }
 
+// Reflexive pronouns by person key
+const REFLEXIVE_PRONOUNS = {
+  ana: 'myself',
+  inta: 'yourself',
+  inti: 'yourself',
+  huwwe: 'himself',
+  hiyye: 'herself',
+  ni7na: 'ourselves',
+  intu: 'yourselves',
+  hinne: 'themselves',
+};
+
 // Frequency adverbs that go BEFORE the verb in English
 const FREQ_ADVERBS = new Set([
   'always', 'usually', 'every time', 'never', 'rarely',
@@ -81,9 +93,14 @@ export function buildEnglishSentence(parts, verb) {
     return `${pEn} ${base}.`;
   }
 
-  const objEn = object ? (OBJECT_EN[object] || object) : '';
+  let objEn = object ? (OBJECT_EN[object] || object) : '';
   let timeEn = timeAdverb ? (TIME_EN[timeAdverb] || timeAdverb) : '';
   const is3s = (person === 'huwwe' || person === 'hiyye');
+
+  // For reflexive verbs with no object, add reflexive pronoun
+  if (forms.reflexive && !object) {
+    objEn = REFLEXIVE_PRONOUNS[person] || 'themselves';
+  }
 
   if (tense === 'imperative') {
     const cap = forms.base.charAt(0).toUpperCase() + forms.base.slice(1);

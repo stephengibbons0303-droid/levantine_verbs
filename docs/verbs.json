@@ -17671,9 +17671,10 @@
     ],
     "difficulty": "C",
     "english_forms": {
-      "base": "have fun",
-      "past": "had fun",
-      "present_3s": "has fun"
+      "base": "enjoy",
+      "past": "enjoyed",
+      "present_3s": "enjoys",
+      "reflexive": true
     }
   },
   {
@@ -34304,9 +34305,10 @@
     "topic": "wants_feelings",
     "transitivity": "intr",
     "english_forms": {
-      "base": "have fun",
-      "past": "had fun",
-      "present_3s": "has fun"
+      "base": "enjoy",
+      "past": "enjoyed",
+      "present_3s": "enjoys",
+      "reflexive": true
     }
   },
   {
@@ -43458,7 +43460,8 @@
     "english_forms": {
       "base": "bathe",
       "past": "bathed",
-      "present_3s": "bathes"
+      "present_3s": "bathes",
+      "reflexive": true
     }
   },
   {
@@ -45682,9 +45685,10 @@
       "present": "bithanna"
     },
     "english_forms": {
-      "base": "have fun",
-      "past": "had fun",
-      "present_3s": "has fun"
+      "base": "enjoy",
+      "past": "enjoyed",
+      "present_3s": "enjoys",
+      "reflexive": true
     }
   },
   {
