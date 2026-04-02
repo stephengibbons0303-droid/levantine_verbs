@@ -135,6 +135,8 @@ IRREGULAR = {
 # Verbs whose primary English meaning doesn't work well in quiz context
 ENGLISH_OVERRIDES = {
     "undress": {"base": "take off", "past": "took off", "present_3s": "takes off"},
+    "enjoy": {"base": "have fun", "past": "had fun", "present_3s": "has fun"},
+    "be able to": {"base": "be able", "past": "was able", "present_3s": "is able"},
 }
 
 

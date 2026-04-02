@@ -17671,9 +17671,9 @@
     ],
     "difficulty": "C",
     "english_forms": {
-      "base": "enjoy",
-      "past": "enjoyed",
-      "present_3s": "enjoys"
+      "base": "have fun",
+      "past": "had fun",
+      "present_3s": "has fun"
     }
   },
   {
@@ -29444,9 +29444,9 @@
     "topic": "shopping",
     "transitivity": "intr",
     "english_forms": {
-      "base": "be able to",
-      "past": "was able to",
-      "present_3s": "is able to"
+      "base": "be able",
+      "past": "was able",
+      "present_3s": "is able"
     }
   },
   {
@@ -34304,9 +34304,9 @@
     "topic": "wants_feelings",
     "transitivity": "intr",
     "english_forms": {
-      "base": "enjoy",
-      "past": "enjoyed",
-      "present_3s": "enjoys"
+      "base": "have fun",
+      "past": "had fun",
+      "present_3s": "has fun"
     }
   },
   {
@@ -41139,9 +41139,9 @@
     "topic": "wants_feelings",
     "transitivity": "intr",
     "english_forms": {
-      "base": "be able to",
-      "past": "was able to",
-      "present_3s": "is able to"
+      "base": "be able",
+      "past": "was able",
+      "present_3s": "is able"
     }
   },
   {
@@ -45682,9 +45682,9 @@
       "present": "bithanna"
     },
     "english_forms": {
-      "base": "enjoy",
-      "past": "enjoyed",
-      "present_3s": "enjoys"
+      "base": "have fun",
+      "past": "had fun",
+      "present_3s": "has fun"
     }
   },
   {
