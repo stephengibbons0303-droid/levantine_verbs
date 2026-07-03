@@ -1,6 +1,7 @@
 import { PERSON_LABELS, PERSON_TRANSLIT } from './constants';
 import { VERB_TEMPLATES, GENERIC_TEMPLATES, IMPERFECT_TEMPLATES } from './templates';
 import { getTenseLabel } from './tenseLabels';
+import { getBlankedExamples } from './quizExamples';
 
 function pick(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -16,6 +17,11 @@ function shuffle(arr) {
 }
 
 export function generateQuiz(verbs, quizType, num, useArabicScript = false, selectedTense = "all", selectedPersons = null) {
+  // New sentence-based types are generated separately (they don't use the per-verb loop).
+  if (quizType === "listening") return generateListening(verbs, num);
+  if (quizType === "inverse_mcq") return generateInverseMcq(verbs, num, useArabicScript);
+  if (quizType === "gap_fill") return generateGapFill(verbs, num, useArabicScript);
+
   const questions = [];
 
   let quizVerbs;
@@ -197,4 +203,97 @@ function generateStandardQuestion(verb, forms, allForms, tense, useArabicScript)
     person: form.person,
     particle: null,
   };
+}
+
+// --- Listening (all verbs): hear a Lebanese sentence/word, pick the meaning ---
+function generateListening(verbs, num) {
+  const pool = verbs.filter(v => v.verb?.arabic && v.verb?.english);
+  const qs = [];
+  for (let i = 0; i < num && pool.length >= 4; i++) {
+    const verb = pick(pool);
+    const ex = verb.examples || [];
+    const useEx = ex.length ? pick(ex) : null; // full sentence if available, else the verb word
+    const wrong = shuffle(
+      [...new Set(pool.filter(v => v.verb.english !== verb.verb.english).map(v => v.verb.english))]
+    ).slice(0, 3);
+    if (wrong.length < 3) continue;
+    qs.push({
+      type: 'listening',
+      audioArabic: useEx ? useEx.arabic : verb.verb.arabic,
+      audioTranslit: useEx ? useEx.translit : verb.verb.translit,
+      sentenceEnglish: useEx ? useEx.english : null,
+      options: shuffle([verb.verb.english, ...wrong]),
+      answer: verb.verb.english,
+      reveal: { translit: verb.verb.translit, arabic: verb.verb.arabic, english: verb.verb.english },
+    });
+  }
+  return qs;
+}
+
+// --- Inverse MCQ (103 example verbs): given the verb, pick the sentence it completes ---
+function generateInverseMcq(verbs, num, useArabic) {
+  const ex = getBlankedExamples(verbs);
+  const qs = [];
+  const distinctVerbs = new Set(ex.map(e => e.verbId)).size;
+  if (distinctVerbs < 4) return qs;
+  for (let i = 0; i < num; i++) {
+    const target = pick(ex);
+    const others = shuffle(ex.filter(e => e.verbId !== target.verbId));
+    const chosen = [];
+    const used = new Set([target.verbId]);
+    for (const o of others) {
+      if (used.has(o.verbId)) continue; // one sentence per verb, so no accidental twins
+      used.add(o.verbId);
+      chosen.push(o);
+      if (chosen.length === 3) break;
+    }
+    if (chosen.length < 3) continue;
+    const options = shuffle([target, ...chosen]).map(e => ({
+      value: e.blankTranslit,
+      translit: e.blankTranslit,
+      arabic: e.blankArabic,
+    }));
+    qs.push({
+      type: 'inverse_mcq',
+      verb_info: target.verbInfo,
+      prompt_hint: 'Which sentence uses this verb?',
+      options,
+      answer: target.blankTranslit,
+      answer_english: target.english,
+      answer_fill: useArabic ? target.answerArabic : target.answerTranslit,
+    });
+  }
+  return qs;
+}
+
+// --- Gap-fill (103 example verbs): read the Lebanese sentence, pick the verb that fills the blank ---
+function generateGapFill(verbs, num, useArabic) {
+  const ex = getBlankedExamples(verbs);
+  const qs = [];
+  if (new Set(ex.map(e => e.verbId)).size < 4) return qs;
+  for (let i = 0; i < num; i++) {
+    const target = pick(ex);
+    const answer = useArabic ? target.answerArabic : target.answerTranslit;
+    if (!answer) continue;
+    const distract = [];
+    const seen = new Set([answer]);
+    for (const o of shuffle(ex.filter(e => e.verbId !== target.verbId))) {
+      const f = useArabic ? o.answerArabic : o.answerTranslit;
+      if (!f || seen.has(f)) continue;
+      seen.add(f);
+      distract.push(f);
+      if (distract.length === 3) break;
+    }
+    if (distract.length < 3) continue;
+    qs.push({
+      type: 'gap_fill',
+      prompt: useArabic ? target.blankArabic : target.blankTranslit,
+      prompt_alt: useArabic ? target.blankTranslit : target.blankArabic,
+      options: shuffle([answer, ...distract]),
+      answer,
+      answer_english: target.english,
+      reveal: target.verbInfo,
+    });
+  }
+  return qs;
 }

@@ -1243,6 +1243,35 @@ input[type="range"] {
   font-size: 0.82rem; line-height: 1.4; margin-bottom: 0.8rem;
 }
 
+/* --- new quiz question types: listening / inverse MCQ / gap-fill --- */
+.listen-block { text-align: center; margin: 0.5rem 0 1rem; }
+.listen-play, .listen-replay {
+  background: #00a0ff; color: #fff; border: none; border-radius: 10px;
+  font-weight: 600; cursor: pointer;
+}
+.listen-play { font-size: 1.15rem; padding: 0.85rem 2rem; }
+.listen-play:hover, .listen-replay:hover { background: #1ab0ff; }
+.listen-instr { color: #888; font-size: 0.9rem; margin-top: 0.6rem; }
+.listen-replay { margin-top: 0.5rem; font-size: 0.85rem; padding: 0.4rem 0.9rem; }
+
+.quiz-prompt-hint { color: #8ab4f8; font-size: 0.95rem; margin-bottom: 0.6rem; }
+.gap-prompt { font-size: 1.5rem; line-height: 1.5; }
+.quiz-prompt-alt { color: #888; font-size: 1.05rem; margin-bottom: 0.6rem; }
+
+.options-sentences .sentence-opt {
+  display: flex; flex-direction: column; gap: 0.2rem; padding: 0.7rem 0.9rem;
+}
+.sentence-tr { color: #e0e0ff; font-size: 0.95rem; line-height: 1.4; }
+.sentence-ar { color: #cfe8ff; font-size: 1.25rem; line-height: 1.5; text-align: right; }
+.option-btn.correct .sentence-tr, .option-btn.correct .sentence-ar { color: #0f0; }
+.option-btn.wrong .sentence-tr, .option-btn.wrong .sentence-ar { color: #f88; }
+
+.reveal-block { margin: 0.5rem 0; }
+.reveal-sentence { margin-top: 0.5rem; color: #bbb; font-size: 0.9rem; }
+.reveal-sentence p { margin: 0.2rem 0; }
+.reveal-sentence [dir="rtl"] { font-size: 1.25rem; color: #cfe8ff; }
+.reveal-fill { color: #ffd166; }
+
 /* your-turn cue */
 .dlg-cue {
   background: #12122a;

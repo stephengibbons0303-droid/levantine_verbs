@@ -1,5 +1,6 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { generateQuiz } from '../utils/quizGenerator';
+import { speak, stopSpeaking } from '../voice/speech';
 import { PERSONS, PERSON_LABELS, TOPICS } from '../utils/constants';
 import { getTenseLabel } from '../utils/tenseLabels';
 import { buildExampleSentence } from '../utils/exampleSentenceBuilder';
@@ -16,7 +17,12 @@ const QUIZ_TYPES = [
   { value: 'conjugation', label: 'Conjugation' },
   { value: 'ar2en', label: 'Arabic \u2192 English' },
   { value: 'en2ar', label: 'English \u2192 Arabic' },
+  { value: 'listening', label: 'Listening' },
+  { value: 'inverse_mcq', label: 'Inverse MCQ' },
+  { value: 'gap_fill', label: 'Gap-fill' },
 ];
+
+const QUIZ_VOICE = 'Haneen'; // Leva voice for spoken quiz audio
 
 const TENSE_OPTIONS = [
   { value: 'all', label: 'All tenses' },
@@ -172,6 +178,14 @@ export default function Quiz({ verbs }) {
     setExampleSentence(null);
     setIdx(i => i + 1);
   };
+
+  // Auto-play the audio when a listening question appears.
+  useEffect(() => {
+    if (!questions || idx >= questions.length) return;
+    const q = questions[idx];
+    if (q?.type === 'listening') speak(q.audioArabic, { speaker: QUIZ_VOICE });
+    return () => stopSpeaking();
+  }, [idx, questions]);
 
   // --- SRS Mode ---
   const buildSRSQuestion = useCallback((item) => {
@@ -686,6 +700,9 @@ export default function Quiz({ verbs }) {
   }
 
   const q = questions[idx];
+  const isListening = q.type === 'listening';
+  const isInverse = q.type === 'inverse_mcq';
+  const isGap = q.type === 'gap_fill';
 
   return (
     <div className="page quiz-page">
@@ -701,52 +718,112 @@ export default function Quiz({ verbs }) {
         </div>
       )}
 
-      <div className="quiz-prompt" dir={useArabic ? "rtl" : "ltr"}>{q.prompt}</div>
-      {q.prompt_english && <div className="quiz-prompt-en">{q.prompt_english}</div>}
-
-      {q.hint && <div className="quiz-hint">Hint: {q.hint}</div>}
-
-      {q.example && (
-        <div className="quiz-example">
-          <p dir="rtl">{q.example.arabic}</p>
-          {q.example.translit && <p className="quiz-example-translit">{q.example.translit}</p>}
-          <p>{q.example.english}</p>
+      {isListening && (
+        <div className="listen-block">
+          <button className="listen-play" onClick={() => speak(q.audioArabic, { speaker: QUIZ_VOICE })}>
+            🔊 Play
+          </button>
+          <div className="listen-instr">Listen, then choose the meaning</div>
         </div>
       )}
 
-      <div className="options">
-        {q.options.map((opt, i) => (
-          <button
-            key={i}
-            className={`option-btn ${
-              feedback
-                ? opt === q.answer
-                  ? 'correct'
-                  : feedback.correct
-                    ? ''
-                    : 'wrong'
-                : ''
-            }`}
-            onClick={() => !feedback && handleAnswer(opt)}
-            disabled={!!feedback}
-          >
-            {opt}
-          </button>
-        ))}
-      </div>
+      {isInverse && <div className="quiz-prompt-hint">{q.prompt_hint}</div>}
+
+      {isGap && (
+        <>
+          <div className="quiz-prompt gap-prompt" dir={useArabic ? 'rtl' : 'ltr'}>{q.prompt}</div>
+          <div className="quiz-prompt-alt" dir={useArabic ? 'ltr' : 'rtl'}>{q.prompt_alt}</div>
+        </>
+      )}
+
+      {!isListening && !isInverse && !isGap && (
+        <>
+          <div className="quiz-prompt" dir={useArabic ? 'rtl' : 'ltr'}>{q.prompt}</div>
+          {q.prompt_english && <div className="quiz-prompt-en">{q.prompt_english}</div>}
+          {q.hint && <div className="quiz-hint">Hint: {q.hint}</div>}
+          {q.example && (
+            <div className="quiz-example">
+              <p dir="rtl">{q.example.arabic}</p>
+              {q.example.translit && <p className="quiz-example-translit">{q.example.translit}</p>}
+              <p>{q.example.english}</p>
+            </div>
+          )}
+        </>
+      )}
+
+      {isInverse ? (
+        <div className="options options-sentences">
+          {q.options.map((opt, i) => (
+            <button
+              key={i}
+              className={`option-btn sentence-opt ${
+                feedback ? (opt.value === q.answer ? 'correct' : feedback.correct ? '' : 'wrong') : ''
+              }`}
+              onClick={() => !feedback && handleAnswer(opt.value)}
+              disabled={!!feedback}
+            >
+              <span className="sentence-tr">{opt.translit}</span>
+              <span className="sentence-ar" dir="rtl">{opt.arabic}</span>
+            </button>
+          ))}
+        </div>
+      ) : (
+        <div className="options">
+          {q.options.map((opt, i) => (
+            <button
+              key={i}
+              className={`option-btn ${
+                feedback ? (opt === q.answer ? 'correct' : feedback.correct ? '' : 'wrong') : ''
+              }`}
+              onClick={() => !feedback && handleAnswer(opt)}
+              disabled={!!feedback}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
 
       {feedback && (
         <div className={`feedback ${feedback.correct ? 'correct' : 'wrong'}`}>
           <div className="feedback-header">
-            {feedback.correct ? '✓ Correct!' : `✗ The answer was: ${feedback.answer}`}
-            {feedback.alt && <span className="feedback-alt"> = {feedback.alt}</span>}
+            {feedback.correct
+              ? '✓ Correct!'
+              : isInverse
+                ? '✗ See the highlighted sentence'
+                : `✗ The answer was: ${feedback.answer}`}
+            {!isInverse && feedback.alt && <span className="feedback-alt"> = {feedback.alt}</span>}
           </div>
-          {exampleSentence && (
+
+          {(isListening || isGap) && q.reveal && (
+            <div className="reveal-block verb-info-bar">
+              <span className="vi-translit">{q.reveal.translit}</span>
+              <span className="vi-arabic" dir="rtl">{q.reveal.arabic}</span>
+              <span className="vi-english">{q.reveal.english}</span>
+            </div>
+          )}
+          {isListening && q.sentenceEnglish && (
+            <div className="reveal-sentence">
+              <p dir="rtl">{q.audioArabic}</p>
+              <p className="quiz-example-translit">{q.audioTranslit}</p>
+              <p>{q.sentenceEnglish}</p>
+              <button className="listen-replay" onClick={() => speak(q.audioArabic, { speaker: QUIZ_VOICE })}>🔊 Replay</button>
+            </div>
+          )}
+          {isInverse && (
+            <div className="reveal-sentence">
+              <p>{q.answer_english}</p>
+              <p className="reveal-fill">missing word: <b>{q.answer_fill}</b></p>
+            </div>
+          )}
+          {isGap && (
+            <div className="reveal-sentence">
+              <p>{q.answer_english}</p>
+            </div>
+          )}
+          {!isListening && !isInverse && !isGap && exampleSentence && (
             <div className="example-sentence">
-              <p className="example-translit">
-                {exampleSentence.sentence}
-                <span className="speaker-icon disabled" title="Audio coming soon">🔊</span>
-              </p>
+              <p className="example-translit">{exampleSentence.sentence}</p>
               <p className="example-english">{exampleSentence.english}</p>
             </div>
           )}
