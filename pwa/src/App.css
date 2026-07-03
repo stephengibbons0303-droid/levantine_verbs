@@ -1097,3 +1097,177 @@ input[type="range"] {
   color: #f44;
   font-size: 0.75rem;
 }
+
+/* ===== Dialogues (Talk) ===== */
+.dlg-page { padding: 1rem; }
+.dlg-eyebrow {
+  color: #00a0ff;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem;
+}
+.dlg-title { margin: 0 0 0.5rem; font-size: 1.3rem; color: #e0e0ff; }
+.dlg-blurb { color: #aaa; font-size: 0.95rem; line-height: 1.5; margin: 0 0 1.25rem; }
+.dlg-picklabel {
+  color: #888;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0 0 0.6rem;
+}
+.dlg-picks { display: flex; flex-direction: column; gap: 0.6rem; }
+.dlg-pick {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  text-align: left;
+  background: #1a1a2e;
+  border: 1px solid #2a2a4a;
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  color: #aaa;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.1s;
+}
+.dlg-pick:hover { border-color: #00a0ff; transform: translateY(-1px); }
+.dlg-pick-name { font-size: 1.15rem; font-weight: 600; color: #e0e0ff; }
+.dlg-pick-role { font-size: 0.85rem; color: #888; }
+.dlg-pick-go { margin-top: 0.5rem; font-size: 0.8rem; color: #00a0ff; }
+.dlg-hint-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  color: #888;
+  font-size: 0.9rem;
+}
+.dlg-hint-toggle input, .dlg-hint-inline input { accent-color: #00a0ff; }
+
+/* top bar */
+.dlg-topbar { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem; }
+.dlg-role-chip {
+  font-size: 0.72rem;
+  color: #00a0ff;
+  border: 1px solid #2a5a7a;
+  border-radius: 20px;
+  padding: 0.2rem 0.6rem;
+  margin-right: auto;
+  white-space: nowrap;
+}
+.dlg-hint-inline {
+  display: flex; align-items: center; gap: 0.3rem;
+  color: #888; font-size: 0.8rem;
+}
+.dlg-restart {
+  background: none; border: 1px solid #333; color: #888;
+  border-radius: 6px; padding: 0.25rem 0.6rem; font-size: 0.75rem; cursor: pointer;
+}
+.dlg-restart:hover { color: #00a0ff; border-color: #00a0ff; }
+
+/* progress */
+.dlg-progress { height: 3px; background: #2a2a4a; border-radius: 2px; overflow: hidden; margin-bottom: 0.9rem; }
+.dlg-progress > i { display: block; height: 100%; background: #00a0ff; transition: width 0.3s ease; }
+
+/* log + bubbles */
+.dlg-log { display: flex; flex-direction: column; gap: 0.55rem; }
+.dlg-row { display: flex; }
+.dlg-row.you { justify-content: flex-end; }
+.dlg-bubble {
+  max-width: 85%;
+  border-radius: 12px;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid #2a2a4a;
+  background: #1a1a2e;
+}
+.dlg-row.you .dlg-bubble {
+  background: #14243a;
+  border-color: #2a5a7a;
+  border-bottom-right-radius: 4px;
+}
+.dlg-row.them .dlg-bubble { border-bottom-left-radius: 4px; }
+.dlg-spk {
+  display: flex; align-items: center; gap: 0.35rem;
+  font-size: 0.68rem; color: #666; margin-bottom: 0.2rem;
+}
+.dlg-row.you .dlg-spk { color: #00a0ff; justify-content: flex-end; }
+.dlg-leb { color: #e0e0ff; font-size: 1.05rem; line-height: 1.4; }
+.dlg-en { color: #888; font-size: 0.85rem; margin-top: 0.2rem; }
+
+/* stub audio buttons (voice + STT land here) */
+.dlg-speak, .dlg-mic {
+  background: none; border: none; cursor: not-allowed;
+  opacity: 0.35; font-size: 0.85rem; padding: 0; line-height: 1;
+}
+.dlg-mic {
+  border: 1px solid #333; border-radius: 8px; padding: 0 0.7rem;
+  font-size: 1.1rem; opacity: 0.4;
+}
+
+/* your-turn cue */
+.dlg-cue {
+  background: #12122a;
+  border: 1px solid #2a2a4a;
+  border-radius: 12px;
+  padding: 0.85rem 0.95rem;
+  margin-top: 0.3rem;
+}
+.dlg-cue-who { font-size: 0.72rem; color: #00a0ff; margin-bottom: 0.3rem; }
+.dlg-cue-say { color: #e0e0ff; font-size: 1rem; line-height: 1.4; }
+.dlg-cue-say b { color: #ffd166; font-weight: 600; }
+.dlg-cue-tip { color: #777; font-size: 0.78rem; margin-top: 0.35rem; }
+.dlg-actions { display: flex; gap: 0.5rem; margin-top: 0.7rem; }
+.dlg-btn {
+  flex: 1;
+  background: #00a0ff;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.dlg-btn:hover { background: #1ab0ff; }
+.dlg-btn-soft {
+  background: #1a1a2e; color: #ddd; border: 1px solid #333;
+  border-radius: 10px; padding: 0.7rem 1.2rem; font-size: 0.95rem; cursor: pointer;
+}
+
+/* done */
+.dlg-done { text-align: center; padding-top: 2rem; }
+.dlg-done-emoji { font-size: 2.6rem; }
+.dlg-done h2 { color: #e0e0ff; margin: 0.5rem 0; }
+.dlg-done p { color: #aaa; max-width: 42ch; margin: 0 auto 1.4rem; }
+.dlg-done-actions { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+
+/* dialogue library */
+.dlg-lib-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.7rem;
+}
+.dlg-lib-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  text-align: left;
+  background: #1a1a2e;
+  border: 1px solid #2a2a4a;
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.1s;
+}
+.dlg-lib-card:hover { border-color: #00a0ff; transform: translateY(-1px); }
+.dlg-lib-num { color: #00a0ff; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.dlg-lib-title { color: #e0e0ff; font-size: 1.15rem; font-weight: 600; }
+.dlg-lib-blurb { color: #888; font-size: 0.85rem; line-height: 1.4; margin-top: 0.15rem; }
+.dlg-lib-meta { color: #666; font-size: 0.72rem; margin-top: 0.5rem; }
+.dlg-back {
+  background: none; border: none; color: #00a0ff; cursor: pointer;
+  font-size: 0.85rem; padding: 0; margin-bottom: 0.6rem;
+}
+.dlg-topbar .dlg-back {
+  margin-bottom: 0; font-size: 1.1rem; line-height: 1; padding: 0 0.2rem 0 0;
+}
