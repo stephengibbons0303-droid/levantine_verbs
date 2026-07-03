@@ -1192,16 +1192,55 @@ input[type="range"] {
 }
 .dlg-row.you .dlg-spk { color: #00a0ff; justify-content: flex-end; }
 .dlg-leb { color: #e0e0ff; font-size: 1.05rem; line-height: 1.4; }
+.dlg-ar {
+  color: #cfe8ff; font-size: 1.35rem; line-height: 1.6; margin-top: 0.25rem;
+  font-family: 'Segoe UI', 'Noto Naskh Arabic', 'Arial', sans-serif;
+}
 .dlg-en { color: #888; font-size: 0.85rem; margin-top: 0.2rem; }
 
-/* stub audio buttons (voice + STT land here) */
-.dlg-speak, .dlg-mic {
-  background: none; border: none; cursor: not-allowed;
-  opacity: 0.35; font-size: 0.85rem; padding: 0; line-height: 1;
+/* hear-this-line button (TTS) */
+.dlg-speak {
+  background: none; border: none; cursor: pointer;
+  opacity: 0.6; font-size: 0.85rem; padding: 0; line-height: 1;
+  transition: opacity 0.15s ease, transform 0.15s ease;
 }
+.dlg-speak:hover { opacity: 1; }
+.dlg-speak.live { opacity: 1; animation: dlg-pulse 1s ease-in-out infinite; }
+
+/* say-your-line button (STT) */
 .dlg-mic {
-  border: 1px solid #333; border-radius: 8px; padding: 0 0.7rem;
-  font-size: 1.1rem; opacity: 0.4;
+  background: none; color: #cfe8ff; cursor: pointer;
+  border: 1px solid #2a5a7a; border-radius: 8px; padding: 0 0.7rem;
+  font-size: 1.05rem; line-height: 2.1; transition: all 0.15s ease;
+}
+.dlg-mic:hover:not(:disabled) { border-color: #00a0ff; color: #fff; }
+.dlg-mic:disabled { opacity: 0.35; cursor: not-allowed; }
+.dlg-mic.live {
+  border-color: #ff5a7a; color: #ff9db1; font-size: 0.8rem;
+  animation: dlg-pulse 1s ease-in-out infinite;
+}
+@keyframes dlg-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.45; } }
+
+/* mic feedback */
+.dlg-mic-fb {
+  display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+  margin-top: 0.6rem; font-size: 0.82rem;
+}
+.dlg-mic-verdict { font-weight: 600; padding: 0.15rem 0.55rem; border-radius: 20px; }
+.dlg-mic-fb.match .dlg-mic-verdict { color: #0c2; background: rgba(0,204,102,0.14); }
+.dlg-mic-fb.close .dlg-mic-verdict { color: #ffd166; background: rgba(255,209,102,0.14); }
+.dlg-mic-fb.off .dlg-mic-verdict { color: #ff9db1; background: rgba(255,90,122,0.14); }
+.dlg-mic-heard { color: #cfe8ff; font-size: 1.05rem; }
+
+/* setup toggles */
+.dlg-setup-toggles { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1.25rem; }
+.dlg-setup-toggles .dlg-hint-toggle { margin-top: 0; }
+
+/* no-arabic-voice hint */
+.dlg-voice-note {
+  background: rgba(255,209,102,0.10); border: 1px solid rgba(255,209,102,0.35);
+  color: #ffd8a0; border-radius: 8px; padding: 0.5rem 0.75rem;
+  font-size: 0.82rem; line-height: 1.4; margin-bottom: 0.8rem;
 }
 
 /* your-turn cue */
