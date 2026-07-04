@@ -855,3 +855,171 @@ body {
   margin-left: auto;
   text-align: right;
 }
+
+/* ============================================================
+   Reference drawer (side panel) — retokened to Sanober.
+   Overrides the old navy drawer-*/qr-*/guide-* rules in App.css.
+   ============================================================ */
+.drawer-overlay {
+  background: rgba(0, 0, 0, 0.45);
+}
+.translit-drawer {
+  width: 86%;
+  max-width: 360px;
+  background: var(--bg);
+  border-left: 1px solid var(--hairline);
+  box-shadow: -14px 0 44px -14px rgba(0, 0, 0, 0.5);
+}
+.drawer-header {
+  border-bottom: 1px solid var(--hairline);
+  padding: 16px 20px;
+}
+.drawer-header h2 {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: 19px;
+  color: var(--text-primary);
+}
+.drawer-close {
+  color: var(--text-muted);
+}
+.drawer-close:hover {
+  color: var(--text-primary);
+}
+.drawer-body {
+  padding: 14px 18px 24px;
+}
+.drawer-search {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 11px;
+  color: var(--text-primary);
+  font-family: var(--f-mono);
+  font-size: 13px;
+  padding: 10px 12px;
+}
+.drawer-search::placeholder {
+  color: var(--text-faint);
+}
+.drawer-search:focus {
+  border-color: var(--voice-red-border);
+}
+
+/* section headings → Sanober mono eyebrow */
+.drawer-body h3,
+.collapsible-heading,
+.qr-heading {
+  font-family: var(--f-mono);
+  color: var(--eyebrow);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.collapse-chevron {
+  color: var(--text-faint);
+}
+
+/* tables */
+.guide-table th {
+  color: var(--text-faint);
+  font-family: var(--f-mono);
+  border-bottom: 1px solid var(--hairline);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.guide-table td {
+  border-bottom: 1px solid var(--hairline);
+  color: var(--text-secondary);
+}
+.qr-table td {
+  border-bottom: 1px solid var(--hairline);
+}
+.guide-table td:first-child {
+  color: var(--translit);
+  font-family: var(--f-mono);
+  font-weight: 600;
+}
+/* semantic glossary cells — scoped to beat the generic .qr-table td */
+.qr-table td.qr-translit {
+  color: var(--translit);
+  font-family: var(--f-mono);
+  white-space: normal;
+  vertical-align: top;
+}
+.qr-table td.qr-english {
+  color: var(--text-muted);
+  font-family: var(--f-serif);
+  vertical-align: top;
+}
+/* two-line glossary entries (Arabic + play on top, translit · english below) */
+.qr-entry {
+  padding: 9px 2px;
+  border-bottom: 1px solid var(--hairline);
+}
+.qr-entry:last-child {
+  border-bottom: none;
+}
+.qr-entry-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.qr-entry-ar {
+  font-family: var(--f-ar);
+  font-size: 1.4rem;
+  line-height: 1.3;
+  color: var(--text-primary);
+  direction: rtl;
+  min-width: 0;
+}
+.qr-entry-top .sn-play {
+  flex: 0 0 28px;
+}
+.qr-entry-sub {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 3px;
+}
+.qr-entry-tr {
+  font-family: var(--f-mono);
+  font-size: 0.82rem;
+  color: var(--translit);
+}
+.qr-entry-sep {
+  color: var(--text-faint);
+  font-size: 0.75rem;
+}
+.qr-entry-en {
+  font-family: var(--f-serif);
+  font-size: 0.92rem;
+  color: var(--text-muted);
+}
+.guide-note {
+  color: var(--text-faint);
+  font-family: var(--f-serif);
+  font-style: italic;
+}
+.conjugation-block h4,
+.conjugation-sub-heading {
+  color: var(--eyebrow);
+  font-family: var(--f-mono);
+}
+.qr-group-label {
+  color: var(--text-faint);
+  font-family: var(--f-mono);
+}
+.qr-divider {
+  border-top: 1px solid var(--hairline);
+}
+
+/* pull tab on the right edge */
+.drawer-edge-tab {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-right: none;
+  color: var(--voice-red);
+}

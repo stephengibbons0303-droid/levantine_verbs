@@ -1,4 +1,5 @@
 import { TIME_ADVERBS, OBJECTS, ACTIVITIES, FAMILY_CONJUGATIONS, POSSESSIVE_LABELS, PEOPLE_NOUNS } from '../utils/vocabPool';
+import PlayButton from './PlayButton';
 
 const TIME_SECTIONS = [
   { key: 'past', label: 'Past' },
@@ -8,19 +9,24 @@ const TIME_SECTIONS = [
 ];
 
 function VocabTable({ items }) {
-  const hasArabic = items.some(item => item.arabic);
   return (
-    <table className="qr-table">
-      <tbody>
-        {items.map((item, i) => (
-          <tr key={i}>
-            <td className="qr-translit">{item.translit}</td>
-            <td className="qr-english">{item.english}</td>
-            {hasArabic && <td className="qr-arabic">{item.arabic || ''}</td>}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div className="qr-entries">
+      {items.map((item, i) => (
+        <div key={i} className="qr-entry">
+          {item.arabic && (
+            <div className="qr-entry-top">
+              <span className="qr-entry-ar" dir="rtl">{item.arabic}</span>
+              <PlayButton text={item.arabic} size="sm" label={`Hear ${item.translit}`} />
+            </div>
+          )}
+          <div className="qr-entry-sub">
+            <span className="qr-entry-tr">{item.translit}</span>
+            {item.english && <span className="qr-entry-sep">·</span>}
+            {item.english && <span className="qr-entry-en">{item.english}</span>}
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
 
