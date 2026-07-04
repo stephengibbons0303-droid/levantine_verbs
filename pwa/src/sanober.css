@@ -1027,3 +1027,194 @@ body {
   border-right: none;
   color: var(--voice-red);
 }
+
+/* ============================================================
+   SRS mastery screen
+   ============================================================ */
+.sn-srs {
+  position: relative;
+  padding: 16px 26px 24px;
+  min-height: 100%;
+}
+.sn-srs::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: linear-gradient(180deg, var(--glow) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+.sn-srs > * {
+  position: relative;
+  z-index: 1;
+}
+.sn-srs-eyebrow {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--eyebrow);
+  margin-bottom: 8px;
+}
+.sn-srs-head {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.sn-srs-title {
+  font-family: var(--f-ar);
+  font-size: 38px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1;
+  direction: rtl;
+}
+.sn-srs-sub {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 20px;
+  color: var(--text-muted-2);
+  padding-bottom: 4px;
+}
+.sn-srs-stats {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.sn-srs-card {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+  padding: 16px 14px;
+  text-align: center;
+}
+.sn-srs-num {
+  font-family: var(--f-ar);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1;
+}
+.sn-srs-num.gold {
+  color: var(--gold);
+}
+.sn-srs-num.green {
+  color: var(--green);
+}
+.sn-srs-card-label {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--text-muted-2);
+  margin-top: 8px;
+}
+.sn-srs-section-label {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin: 6px 0 14px;
+}
+.sn-srs-tier {
+  padding-bottom: 16px;
+}
+.sn-srs-tier.locked {
+  opacity: 0.6;
+}
+.sn-srs-tier-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 9px;
+}
+.sn-srs-tier-lead {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+.sn-srs-tier-badge {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--tier-text);
+  border-radius: 6px;
+  padding: 3px 8px;
+  flex-shrink: 0;
+}
+.sn-srs-tier-name {
+  font-family: var(--f-serif);
+  font-size: 15px;
+  color: var(--text-primary);
+}
+.sn-srs-tier-locked {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+}
+.sn-srs-tier-count {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.sn-srs-tier-count .dim {
+  color: var(--text-faint);
+}
+.sn-srs-bar {
+  position: relative;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+.sn-srs-bar-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  border-radius: 3px;
+}
+.sn-srs-tier-note {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  color: var(--text-faint);
+  margin-top: 6px;
+}
+.sn-srs-trouble {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sn-srs-trouble-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+}
+.sn-srs-trouble-item .tr-translit {
+  font-family: var(--f-mono);
+  color: var(--translit);
+}
+.sn-srs-trouble-item .tr-en {
+  font-family: var(--f-serif);
+  font-style: italic;
+  color: var(--text-muted);
+}
+.sn-srs-trouble-item .tr-err {
+  margin-left: auto;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--voice-red);
+  white-space: nowrap;
+}
