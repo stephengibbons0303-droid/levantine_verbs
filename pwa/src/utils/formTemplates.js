@@ -290,3 +290,24 @@ export function normalizeFormLabel(formLabel) {
 
   return null;
 }
+
+/**
+ * True if a form label carries an irregular/weak/geminate/hamza qualifier that the
+ * base sound-root templates cannot honor. `normalizeFormLabel` reaches a template for
+ * these ONLY by discarding the qualifier, which produces phonologically wrong forms
+ * (SAD §8.3). Such verbs must be withheld from generation until a native-speaker-signed
+ * static table exists — teaching nothing beats teaching a wrong conjugation.
+ */
+export function isRiskyForm(formLabel) {
+  if (!formLabel) return false;
+  if (FORM_TEMPLATES[formLabel]) return false; // exact template exists → honored, not risky
+  const base = formLabel
+    .split(',')[0]
+    .split(' Irr.')[0]
+    .split(' Final')[0]
+    .split(' Medial')[0]
+    .split(' Geminate')[0]
+    .trim();
+  // Reached a template only by stripping a qualifier off the label → the irregularity is lost.
+  return base !== formLabel && Boolean(FORM_TEMPLATES[base]);
+}

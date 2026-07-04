@@ -7,7 +7,7 @@
  * - Cache generated conjugations in-memory on the verb object (RAM only)
  */
 
-import { FORM_TEMPLATES, normalizeFormLabel } from './formTemplates.js';
+import { FORM_TEMPLATES, normalizeFormLabel, isRiskyForm } from './formTemplates.js';
 
 /**
  * Get a specific conjugation form for a verb.
@@ -43,6 +43,12 @@ export function ensureConjugations(verb) {
   if (verb.conjugations !== null) return;
   if (!verb.root_letters || !verb.form) return;
 
+  // Correctness gate (SAD §8.3): verbs whose form label carries an irregular/weak/
+  // geminate qualifier are generated WRONG by the sound-root templates (the qualifier
+  // is stripped). Withhold them — an empty paradigm is safer than a wrong one — until a
+  // signed static table is authored. See isRiskyForm.
+  if (isRiskyForm(verb.form)) return;
+
   const templateKey = normalizeFormLabel(verb.form);
   if (!templateKey) return;
 
@@ -61,6 +67,7 @@ export function ensureConjugations(verb) {
 export function canGenerate(verb) {
   if (verb.conjugations !== null) return false; // Already has static
   if (!verb.root_letters || !verb.form) return false;
+  if (isRiskyForm(verb.form)) return false; // withheld — would generate a wrong irregular form
   const templateKey = normalizeFormLabel(verb.form);
   return templateKey !== null && FORM_TEMPLATES[templateKey] !== undefined;
 }
