@@ -101,30 +101,22 @@ async function speakLeva(text, { speaker = 'Haneen', language = 'ar' } = {}) {
 
 // speak(text, opts) -> Promise that resolves when playback finishes (or is cancelled).
 // Prefers the local Leva-TTS service; falls back to a browser Arabic voice.
-export async function speak(text, { lang = 'ar', rate = 0.85, speaker = 'Haneen' } = {}) {
+// Levantine-only, on purpose. We do NOT fall back to the browser's MSA Arabic
+// voice: an MSA reading of a dialect word (qaf as "q", no imāla, wrong vowels) is
+// misleading, so we prefer silence. If leva isn't reachable, nothing plays.
+// (The deployed phone app can't see the local leva service; audio there is being
+// moved to pre-rendered leva clips rather than a live call.)
+export async function speak(text, { lang = 'ar', speaker = 'Haneen' } = {}) {
   if (!text) return { spoken: false, reason: 'empty' };
   stopSpeaking(); // never overlap
   if (await levaAvailable()) {
     try {
       return await speakLeva(text, { speaker, language: lang });
     } catch {
-      /* service dropped mid-session — fall through to the browser voice */
+      return { spoken: false, reason: 'leva-error' };
     }
   }
-  if (!ttsAvailable()) return { spoken: false, reason: 'unavailable' };
-  const synth = window.speechSynthesis;
-  const voice = await pickArabicVoice();
-  // Refuse to read Arabic script through a non-Arabic voice — garbage or silence.
-  if (!voice) return { spoken: false, reason: 'no-voice' };
-  return new Promise((resolve) => {
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = voice.lang;
-    u.voice = voice;
-    u.rate = rate;
-    u.onend = () => resolve({ spoken: true, engine: 'browser', usedVoice: voice.name });
-    u.onerror = (e) => resolve({ spoken: false, reason: e.error || 'error' });
-    synth.speak(u);
-  });
+  return { spoken: false, reason: 'no-leva' };
 }
 
 export function stopSpeaking() {
