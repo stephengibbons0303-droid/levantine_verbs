@@ -391,172 +391,176 @@ export default function Quiz({ verbs }) {
   // Setup screen
   if (!questions && !srsActive) {
     return (
-      <div className="page quiz-page">
-        <h2>Quiz Settings</h2>
-        <div className="quiz-setup">
-          {/* SRS Mode Toggle */}
-          <label className="toggle-label srs-toggle">
-            <input
-              type="checkbox"
-              checked={srsMode}
-              onChange={toggleSrsMode}
-            />
-            SRS Mode (spaced repetition)
-          </label>
+      <div className="sn-qz">
+        <div className="sn-qz-eyebrow">Set up your session</div>
+        <div className="sn-qz-head">
+          <h1 className="sn-qz-title" dir="rtl">اختبار</h1>
+          <span className="sn-qz-sub">Quiz</span>
+          <span className="sn-qz-target" aria-hidden="true" />
+        </div>
 
-          {srsMode && (
-            <>
-              {/* Verb Range */}
-              <fieldset className="srs-fieldset">
-                <legend>Verb range</legend>
-                <label className="radio-label">
-                  <input type="radio" name="verbRange" value="essential"
-                    checked={verbRange === 'essential'} onChange={() => updateVerbRange('essential')} />
-                  Top 20 essentials
-                </label>
-                <label className="radio-label">
-                  <input type="radio" name="verbRange" value="topic"
-                    checked={verbRange === 'topic'} onChange={() => updateVerbRange('topic')} />
-                  Topic
-                  {verbRange === 'topic' && (
-                    <select value={selectedTopic} onChange={e => updateSelectedTopic(e.target.value)}
-                      className="topic-select">
-                      {TOPICS.map(t => {
-                        const count = verbs.filter(v => v.topic === t.key).length;
-                        return <option key={t.key} value={t.key}>{t.label} ({count})</option>;
-                      })}
-                    </select>
-                  )}
-                </label>
-                <label className="radio-label">
-                  <input type="radio" name="verbRange" value="full_tier"
-                    checked={verbRange === 'full_tier'} onChange={() => updateVerbRange('full_tier')} />
-                  Full tier
-                </label>
-              </fieldset>
+        {/* SRS Mode Toggle */}
+        <label className="sn-qz-toggle-row">
+          <div>
+            <div className="sn-qz-toggle-text">SRS mode</div>
+            <div className="sn-qz-toggle-sub">spaced repetition</div>
+          </div>
+          <span className="sn-switch">
+            <input type="checkbox" checked={srsMode} onChange={toggleSrsMode} />
+            <span className="sn-switch-track"><span className="sn-switch-knob" /></span>
+          </span>
+        </label>
 
-              {/* Questions per verb slider */}
-              <fieldset className="srs-fieldset">
-                <legend>Session</legend>
-                <label>
-                  Questions per verb: {maxQuestionsPerVerb}
-                  <input
-                    type="range"
-                    min={1}
-                    max={10}
-                    value={maxQuestionsPerVerb}
-                    onChange={e => updateMaxQuestionsPerVerb(+e.target.value)}
-                  />
-                  <div className="slider-labels">
-                    <span>1 max interleaving</span>
-                    <span>10 drill deeper</span>
-                  </div>
-                </label>
-              </fieldset>
-            </>
-          )}
+        {srsMode && (
+          <>
+            <fieldset className="sn-qz-fieldset">
+              <div className="sn-qz-fieldset-legend">Verb range</div>
+              <label className="sn-qz-radio">
+                <input type="radio" name="verbRange" value="essential"
+                  checked={verbRange === 'essential'} onChange={() => updateVerbRange('essential')} />
+                Top 20 essentials
+              </label>
+              <label className="sn-qz-radio">
+                <input type="radio" name="verbRange" value="topic"
+                  checked={verbRange === 'topic'} onChange={() => updateVerbRange('topic')} />
+                Topic
+                {verbRange === 'topic' && (
+                  <select value={selectedTopic} onChange={e => updateSelectedTopic(e.target.value)}
+                    className="topic-select">
+                    {TOPICS.map(t => {
+                      const count = verbs.filter(v => v.topic === t.key).length;
+                      return <option key={t.key} value={t.key}>{t.label} ({count})</option>;
+                    })}
+                  </select>
+                )}
+              </label>
+              <label className="sn-qz-radio">
+                <input type="radio" name="verbRange" value="full_tier"
+                  checked={verbRange === 'full_tier'} onChange={() => updateVerbRange('full_tier')} />
+                Full tier
+              </label>
+            </fieldset>
 
-          {!srsMode && (
-            <>
-              <label>
-                Quiz type
-                <div className="chip-group">
-                  {QUIZ_TYPES.map(t => (
+            <fieldset className="sn-qz-fieldset">
+              <div className="sn-qz-fieldset-legend">Session</div>
+              <div className="sn-qz-slider-head">
+                <span className="sn-qz-label" style={{ margin: 0 }}>Questions per verb</span>
+                <span className="sn-qz-slider-val">{maxQuestionsPerVerb}</span>
+              </div>
+              <input
+                type="range"
+                className="sn-range"
+                min={1}
+                max={10}
+                value={maxQuestionsPerVerb}
+                style={{ '--pct': `${((maxQuestionsPerVerb - 1) / 9) * 100}%` }}
+                onChange={e => updateMaxQuestionsPerVerb(+e.target.value)}
+              />
+            </fieldset>
+          </>
+        )}
+
+        {!srsMode && (
+          <div className="sn-qz-group">
+            <div className="sn-qz-label">Quiz type</div>
+            <div className="sn-qz-chips">
+              {QUIZ_TYPES.map(t => (
+                <button
+                  key={t.value}
+                  className={`sn-qz-chip ${quizType === t.value ? 'active go' : ''}`}
+                  onClick={() => setQuizType(t.value)}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {(quizType === 'conjugation' || srsMode) && (
+          <>
+            {!srsMode && (
+              <div className="sn-qz-group">
+                <div className="sn-qz-label">Tense</div>
+                <div className="sn-qz-chips">
+                  {TENSE_OPTIONS.map(t => (
                     <button
                       key={t.value}
-                      className={`chip ${quizType === t.value ? 'active' : ''}`}
-                      onClick={() => setQuizType(t.value)}
+                      className={`sn-qz-chip ${tense === t.value ? 'active' : ''}`}
+                      onClick={() => setTense(t.value)}
                     >
                       {t.label}
                     </button>
                   ))}
                 </div>
-              </label>
-            </>
-          )}
+              </div>
+            )}
 
-          {(quizType === 'conjugation' || srsMode) && (
-            <>
-              {!srsMode && (
-                <label>
-                  Tense
-                  <div className="chip-group">
-                    {TENSE_OPTIONS.map(t => (
-                      <button
-                        key={t.value}
-                        className={`chip ${tense === t.value ? 'active' : ''}`}
-                        onClick={() => setTense(t.value)}
-                      >
-                        {t.label}
-                      </button>
-                    ))}
-                  </div>
-                </label>
-              )}
-
-              <label>
-                Subjects
-                <button
-                  className="subject-toggle-btn"
-                  onClick={() => setShowPersons(s => !s)}
-                >
+            <div className="sn-qz-group">
+              <div className="sn-qz-label">Subjects</div>
+              <button className="sn-qz-dropdown" onClick={() => setShowPersons(s => !s)}>
+                <span className="sn-qz-dropdown-text">
                   {selectedPersons.length === PERSONS.length
                     ? 'All subjects'
                     : `${selectedPersons.length} of ${PERSONS.length} selected`}
-                  <span className={`subject-arrow ${showPersons ? 'open' : ''}`}>&#9662;</span>
-                </button>
-                {showPersons && (
-                  <div className="chip-group person-chips">
-                    {PERSONS.map(p => (
-                      <button
-                        key={p}
-                        className={`chip ${selectedPersons.includes(p) ? 'active' : ''}`}
-                        onClick={() => togglePerson(p)}
-                      >
-                        {PERSON_LABELS[p]}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </label>
-            </>
-          )}
-
-          {srsMode && (
-            <div className="srs-stats-bar">
-              <span className="srs-stat">{dueCount} due</span>
-              <span className="srs-stat">{newCount} new</span>
+                </span>
+                <span className="sn-qz-dropdown-caret">▾</span>
+              </button>
+              {showPersons && (
+                <div className="sn-qz-chips" style={{ marginTop: '10px' }}>
+                  {PERSONS.map(p => (
+                    <button
+                      key={p}
+                      className={`sn-qz-chip ${selectedPersons.includes(p) ? 'active' : ''}`}
+                      onClick={() => togglePerson(p)}
+                    >
+                      {PERSON_LABELS[p]}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
+          </>
+        )}
 
-          {!srsMode && (
-            <>
-              <label>
-                Questions: {numQuestions}
-                <input
-                  type="range"
-                  min={5}
-                  max={20}
-                  value={numQuestions}
-                  onChange={e => setNumQuestions(+e.target.value)}
-                />
-              </label>
+        {srsMode && (
+          <div className="sn-qz-stats">
+            <span className="st">{dueCount} due</span>
+            <span className="st">{newCount} new</span>
+          </div>
+        )}
 
-              <label className="toggle-label">
-                <input
-                  type="checkbox"
-                  checked={useArabic}
-                  onChange={e => setUseArabic(e.target.checked)}
-                />
-                Arabic script prompts
-              </label>
-            </>
-          )}
+        {!srsMode && (
+          <>
+            <div className="sn-qz-group">
+              <div className="sn-qz-slider-head">
+                <span className="sn-qz-label" style={{ margin: 0 }}>Questions</span>
+                <span className="sn-qz-slider-val">{numQuestions}</span>
+              </div>
+              <input
+                type="range"
+                className="sn-range"
+                min={5}
+                max={20}
+                value={numQuestions}
+                style={{ '--pct': `${((numQuestions - 5) / 15) * 100}%` }}
+                onChange={e => setNumQuestions(+e.target.value)}
+              />
+            </div>
 
-          <button className="start-btn" onClick={srsMode ? startSRS : startQuiz}>
-            {srsMode ? 'Start SRS Review' : 'Start Quiz'}
-          </button>
-        </div>
+            <label className="sn-qz-toggle-row" style={{ borderBottom: 'none' }}>
+              <div className="sn-qz-toggle-text">Arabic-script prompts</div>
+              <span className="sn-switch">
+                <input type="checkbox" checked={useArabic} onChange={e => setUseArabic(e.target.checked)} />
+                <span className="sn-switch-track"><span className="sn-switch-knob" /></span>
+              </span>
+            </label>
+          </>
+        )}
+
+        <button className="sn-qz-start" onClick={srsMode ? startSRS : startQuiz}>
+          {srsMode ? 'Start SRS Review' : 'Start Quiz'}
+        </button>
       </div>
     );
   }
