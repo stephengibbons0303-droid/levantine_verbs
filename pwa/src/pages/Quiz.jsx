@@ -1,5 +1,4 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import { generateQuiz } from '../utils/quizGenerator';
 import { speak, stopSpeaking } from '../voice/speech';
 import { PERSONS, PERSON_LABELS, TOPICS } from '../utils/constants';
 import { getTenseLabel } from '../utils/tenseLabels';
@@ -9,27 +8,41 @@ import { buildFilledSentence, buildEnglishSentence } from '../utils/englishSente
 import { mapConfidenceOutcome, updateCard } from '../utils/fsrs';
 import { getCard, saveCard } from '../utils/srsState';
 import { getNextSRSItem, getDueCount as getDueCountFromScheduler, getNewCount } from '../utils/scheduler';
-import Lightsaber from '../components/Lightsaber';
-import ConfidenceSlider from '../components/ConfidenceSlider';
+import { getBlankedExamples } from '../utils/quizExamples';
 import RemedialSequence from '../components/RemedialSequence';
 
-const QUIZ_TYPES = [
+const QUIZ_VOICE = 'Haneen'; // Leva voice for spoken quiz audio
+
+// FSRS grade row — doubles as the submit action (picking one grades + advances).
+// Colours follow the Sanober tier palette (Again red, Hard gold, Good green, Easy blue).
+const GRADES = [
+  { value: 1, label: 'Again', mod: 'again' },
+  { value: 2, label: 'Hard', mod: 'hard' },
+  { value: 3, label: 'Good', mod: 'good' },
+  { value: 4, label: 'Easy', mod: 'easy' },
+];
+
+// Question-type choice for the review session ('mixed' = auto-pick per verb).
+const QUESTION_TYPES = [
+  { value: 'mixed', label: 'Mixed (recommended)' },
   { value: 'conjugation', label: 'Conjugation' },
-  { value: 'ar2en', label: 'Arabic \u2192 English' },
-  { value: 'en2ar', label: 'English \u2192 Arabic' },
   { value: 'listening', label: 'Listening' },
   { value: 'inverse_mcq', label: 'Inverse MCQ' },
   { value: 'gap_fill', label: 'Gap-fill' },
 ];
 
-const QUIZ_VOICE = 'Haneen'; // Leva voice for spoken quiz audio
+function pick(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
 
-const TENSE_OPTIONS = [
-  { value: 'all', label: 'All tenses' },
-  { value: 'perfect', label: 'Past' },
-  { value: 'bi_imperfect', label: 'Present' },
-  { value: 'imperfect', label: 'Dependent' },
-];
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 function loadPersons() {
   try {
@@ -42,21 +55,18 @@ function loadPersons() {
   return [...PERSONS];
 }
 
-function loadSRSMode() {
-  try {
-    return localStorage.getItem('srs_mode') === 'true';
-  } catch {}
-  return false;
-}
-
 export default function Quiz({ verbs }) {
-  const [quizType, setQuizType] = useState('conjugation');
-  const [tense, setTense] = useState('all');
-  const [numQuestions, setNumQuestions] = useState(10);
   const [useArabic, setUseArabic] = useState(false);
   const [selectedPersons, setSelectedPersons] = useState(loadPersons);
   const [showPersons, setShowPersons] = useState(false);
-  const [srsMode, setSrsMode] = useState(loadSRSMode);
+  const [showInverseEn, setShowInverseEn] = useState(() =>
+    localStorage.getItem('srs_inverse_en') === 'true'
+  );
+  const toggleInverseEn = () => setShowInverseEn(v => {
+    const next = !v;
+    localStorage.setItem('srs_inverse_en', String(next));
+    return next;
+  });
 
   // SRS verb range & interleaving settings (persisted)
   const [verbRange, setVerbRange] = useState(() =>
@@ -68,26 +78,20 @@ export default function Quiz({ verbs }) {
   const [maxQuestionsPerVerb, setMaxQuestionsPerVerb] = useState(() =>
     parseInt(localStorage.getItem('srs_max_per_verb') || '3')
   );
+  const [questionType, setQuestionType] = useState(() =>
+    localStorage.getItem('srs_question_type') || 'mixed'
+  );
 
   // Interleaving tracking (session-only)
   const [verbSessionCounts, setVerbSessionCounts] = useState({});
   const [currentVerbId, setCurrentVerbId] = useState(null);
   const [recentTensesForVerb, setRecentTensesForVerb] = useState([]);
 
-  // Free practice state
-  const [questions, setQuestions] = useState(null);
-  const [idx, setIdx] = useState(0);
-  const [score, setScore] = useState(0);
-  const [level, setLevel] = useState(0);
-  const [feedback, setFeedback] = useState(null);
-  const [exampleSentence, setExampleSentence] = useState(null);
-
-  // SRS mode state
+  // SRS session state
   const [srsActive, setSrsActive] = useState(false);
   const [srsItem, setSrsItem] = useState(null);
   const [srsQuestion, setSrsQuestion] = useState(null);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const [confidence, setConfidence] = useState(3);
   const [srsSubmitted, setSrsSubmitted] = useState(false);
   const [srsFeedback, setSrsFeedback] = useState(null);
   const [srsScore, setSrsScore] = useState(0);
@@ -95,12 +99,6 @@ export default function Quiz({ verbs }) {
   const [lastItem, setLastItem] = useState(null);
   const [remedialState, setRemedialState] = useState(null);
   const [srsExampleSentence, setSrsExampleSentence] = useState(null);
-
-  const toggleSrsMode = () => {
-    const next = !srsMode;
-    setSrsMode(next);
-    localStorage.setItem('srs_mode', String(next));
-  };
 
   const togglePerson = (person) => {
     setSelectedPersons(prev => {
@@ -115,11 +113,10 @@ export default function Quiz({ verbs }) {
 
   // Verb filtering based on SRS verb range selection
   const filteredVerbs = useMemo(() => {
-    if (!srsMode) return verbs;
     if (verbRange === 'essential') return verbs.filter(v => v.essential);
     if (verbRange === 'topic') return verbs.filter(v => v.topic === selectedTopic);
     return verbs; // 'full_tier' — scheduler handles tier gating internally
-  }, [verbs, srsMode, verbRange, selectedTopic]);
+  }, [verbs, verbRange, selectedTopic]);
 
   const updateVerbRange = (val) => {
     setVerbRange(val);
@@ -133,62 +130,26 @@ export default function Quiz({ verbs }) {
     setMaxQuestionsPerVerb(val);
     localStorage.setItem('srs_max_per_verb', String(val));
   };
-
-  // --- Free Practice ---
-  const startQuiz = useCallback(() => {
-    const qs = generateQuiz(verbs, quizType, numQuestions, useArabic, tense, selectedPersons);
-    setQuestions(qs);
-    setIdx(0);
-    setScore(0);
-    setLevel(0);
-    setFeedback(null);
-  }, [verbs, quizType, numQuestions, useArabic, tense, selectedPersons]);
-
-  const handleAnswer = (opt) => {
-    const q = questions[idx];
-    const correct = opt === q.answer;
-    if (correct) {
-      setScore(s => s + 1);
-      setLevel(l => Math.min(questions.length, l + 1));
-    } else {
-      setLevel(l => Math.max(0, l - 1));
-    }
-    setFeedback({ correct, answer: q.answer, alt: q.answer_alt });
-
-    // Build example sentence if we have enough info (conjugation questions)
-    if (q.tense && q.person && q.verb_info) {
-      const verb = verbs.find(v => v.verb.translit === q.verb_info.translit);
-      if (verb) {
-        const correctForm = verb.conjugations?.[q.tense]?.forms?.find(f => f.person === q.person);
-        if (correctForm) {
-          setExampleSentence(buildExampleSentence({
-            tense: q.tense,
-            person: q.person,
-            correctTranslit: correctForm.translit,
-            verbEnglish: verb.verb.english,
-            particle: q.particle || null,
-          }));
-        }
-      }
-    }
+  const updateQuestionType = (val) => {
+    setQuestionType(val);
+    localStorage.setItem('srs_question_type', val);
   };
 
-  const nextQuestion = () => {
-    setFeedback(null);
-    setExampleSentence(null);
-    setIdx(i => i + 1);
-  };
+  // --- Blanked-example pool (drives inverse_mcq + gap_fill; only ~103 verbs qualify) ---
+  const blanked = useMemo(() => getBlankedExamples(verbs), [verbs]);
+  const blankedByVerb = useMemo(() => {
+    const m = new Map();
+    for (const e of blanked) {
+      if (!m.has(e.verbId)) m.set(e.verbId, []);
+      m.get(e.verbId).push(e);
+    }
+    return m;
+  }, [blanked]);
 
-  // Auto-play the audio when a listening question appears.
-  useEffect(() => {
-    if (!questions || idx >= questions.length) return;
-    const q = questions[idx];
-    if (q?.type === 'listening') speak(q.audioArabic, { speaker: QUIZ_VOICE });
-    return () => stopSpeaking();
-  }, [idx, questions]);
+  // --- Per-verb question builders (one question for a specific scheduled verb) ---
 
-  // --- SRS Mode ---
-  const buildSRSQuestion = useCallback((item) => {
+  // Conjugation MCQ — the core drill; also the guaranteed fallback for any verb.
+  const buildConjugationQ = useCallback((item) => {
     if (!item) return null;
     const { verb, tense: t, person } = item;
     const tenseData = verb.conjugations?.[t];
@@ -202,12 +163,13 @@ export default function Quiz({ verbs }) {
     const distractors = forms
       .map(f => f[key])
       .filter(v => v !== answer);
-    const shuffled = [...distractors].sort(() => Math.random() - 0.5).slice(0, 3);
-    const options = [answer, ...shuffled].sort(() => Math.random() - 0.5);
-    const { label: tenseLabel, particle } = getTenseLabel(t);
+    const shuffled = shuffle(distractors).slice(0, 3);
+    const options = shuffle([answer, ...shuffled]);
+    const { particle } = getTenseLabel(t);
     const { prompt, parts } = buildQuizPrompt(verb, t, person, particle);
 
     return {
+      type: 'conjugation',
       prompt,
       parts,
       verb_info: { translit: verb.verb.translit, arabic: verb.verb.arabic, english: verb.verb.english },
@@ -221,6 +183,119 @@ export default function Quiz({ verbs }) {
     };
   }, [useArabic]);
 
+  // Listening (all verbs): hear the Lebanese, pick the English meaning.
+  const buildListeningQ = useCallback((verb) => {
+    const pool = verbs.filter(v => v.verb?.arabic && v.verb?.english);
+    const ex = verb.examples || [];
+    const useEx = ex.length ? pick(ex) : null; // full sentence if available, else the verb word
+    const wrong = shuffle(
+      [...new Set(pool.filter(v => v.verb.english !== verb.verb.english).map(v => v.verb.english))]
+    ).slice(0, 3);
+    if (wrong.length < 3) return null;
+    return {
+      type: 'listening',
+      audioArabic: useEx ? useEx.arabic : verb.verb.arabic,
+      audioTranslit: useEx ? useEx.translit : verb.verb.translit,
+      sentenceEnglish: useEx ? useEx.english : null,
+      options: shuffle([verb.verb.english, ...wrong]),
+      answer: verb.verb.english,
+      reveal: { translit: verb.verb.translit, arabic: verb.verb.arabic, english: verb.verb.english },
+      verbId: verb.id,
+    };
+  }, [verbs]);
+
+  // Inverse MCQ (example verbs): given the verb, pick the sentence it completes.
+  const buildInverseQ = useCallback((verb) => {
+    const mine = blankedByVerb.get(verb.id);
+    if (!mine?.length) return null;
+    const target = pick(mine);
+    const others = shuffle(blanked.filter(e => e.verbId !== verb.id));
+    const chosen = [];
+    const used = new Set([verb.id]);
+    for (const o of others) {
+      if (used.has(o.verbId)) continue; // one sentence per verb, no accidental twins
+      used.add(o.verbId);
+      chosen.push(o);
+      if (chosen.length === 3) break;
+    }
+    if (chosen.length < 3) return null;
+    const options = shuffle([target, ...chosen]).map(e => ({
+      value: e.blankTranslit,
+      translit: e.blankTranslit,
+      arabic: e.blankArabic,
+      english: e.english || '',
+    }));
+    return {
+      type: 'inverse_mcq',
+      verb_info: target.verbInfo,
+      // The conjugated form the sentence actually uses — shown at the top of the card.
+      head_form: { translit: target.answerTranslit, arabic: target.answerArabic },
+      prompt_hint: 'Which sentence uses this verb?',
+      options,
+      answer: target.blankTranslit,
+      answer_english: target.english,
+      answer_fill: useArabic ? target.answerArabic : target.answerTranslit,
+      verbId: verb.id,
+    };
+  }, [blanked, blankedByVerb, useArabic]);
+
+  // Gap-fill (example verbs): read the sentence, pick the verb form for the blank.
+  const buildGapQ = useCallback((verb) => {
+    const mine = blankedByVerb.get(verb.id);
+    if (!mine?.length) return null;
+    const target = pick(mine);
+    const answer = useArabic ? target.answerArabic : target.answerTranslit;
+    if (!answer) return null;
+    const distract = [];
+    const seen = new Set([answer]);
+    for (const o of shuffle(blanked.filter(e => e.verbId !== verb.id))) {
+      const f = useArabic ? o.answerArabic : o.answerTranslit;
+      if (!f || seen.has(f)) continue;
+      seen.add(f);
+      distract.push(f);
+      if (distract.length === 3) break;
+    }
+    if (distract.length < 3) return null;
+    return {
+      type: 'gap_fill',
+      prompt: useArabic ? target.blankArabic : target.blankTranslit,
+      prompt_alt: useArabic ? target.blankTranslit : target.blankArabic,
+      options: shuffle([answer, ...distract]),
+      answer,
+      answer_english: target.english,
+      reveal: target.verbInfo,
+      verbId: verb.id,
+    };
+  }, [blanked, blankedByVerb, useArabic]);
+
+  // Pick a question type for this scheduled verb (weighted), falling back to
+  // conjugation MCQ when the chosen type can't be built for the verb.
+  const buildOfType = useCallback((t, item) => {
+    if (t === 'conjugation') return buildConjugationQ(item);
+    if (t === 'listening') return buildListeningQ(item.verb);
+    if (t === 'inverse_mcq') return buildInverseQ(item.verb);
+    if (t === 'gap_fill') return buildGapQ(item.verb);
+    return null;
+  }, [buildConjugationQ, buildListeningQ, buildInverseQ, buildGapQ]);
+
+  const buildSRSQuestionForItem = useCallback((item) => {
+    if (!item) return null;
+    // Forced type: honour the user's choice, falling back to conjugation MCQ when
+    // the type can't be built for this verb (inverse/gap only cover example verbs).
+    if (questionType !== 'mixed') {
+      return buildOfType(questionType, item) || buildConjugationQ(item);
+    }
+    // Mixed: conjugation weighted x2 (it drills the actual scheduled tense/person the
+    // FSRS card tracks); listening covers all verbs; inverse/gap need a blanked example.
+    const pool = ['conjugation', 'conjugation', 'listening'];
+    if (blankedByVerb.has(item.verb.id)) pool.push('inverse_mcq', 'gap_fill');
+    for (const t of shuffle(pool)) {
+      const q = buildOfType(t, item);
+      if (q) return q;
+    }
+    return buildConjugationQ(item); // guaranteed fallback
+  }, [questionType, buildOfType, buildConjugationQ, blankedByVerb]);
+
   const startSRS = useCallback(() => {
     const item = getNextSRSItem(filteredVerbs, null, { selectedPersons });
     if (!item) {
@@ -229,36 +304,37 @@ export default function Quiz({ verbs }) {
       setSrsQuestion(null);
       return;
     }
-    const q = buildSRSQuestion(item);
+    const q = buildSRSQuestionForItem(item);
     setSrsActive(true);
     setSrsItem(item);
     setSrsQuestion(q);
     setSelectedAnswer(null);
-    setConfidence(3);
     setSrsSubmitted(false);
     setSrsFeedback(null);
     setSrsScore(0);
     setSrsTotal(0);
     setLastItem(null);
     setRemedialState(null);
+    setSrsExampleSentence(null);
     // Initialize interleaving tracking
     setVerbSessionCounts({ [item.verb.id]: 1 });
     setCurrentVerbId(item.verb.id);
     setRecentTensesForVerb([item.tense]);
-  }, [filteredVerbs, selectedPersons, buildSRSQuestion]);
+  }, [filteredVerbs, selectedPersons, buildSRSQuestionForItem]);
 
-  const submitSRSAnswer = () => {
-    if (!selectedAnswer || !srsQuestion || !srsItem) return;
+  // Grade row is the submit: `grade` (1-4) sets the FSRS rating AND advances.
+  const submitSRSAnswer = (grade) => {
+    if (!selectedAnswer || !srsQuestion || !srsItem || srsSubmitted) return;
 
     const isCorrect = selectedAnswer === srsQuestion.answer;
-    const { isConfidentError } = mapConfidenceOutcome(confidence, isCorrect);
+    const { isConfidentError } = mapConfidenceOutcome(grade, isCorrect);
 
-    // Update FSRS state
+    // Update FSRS state (per-verb card, independent of question type)
     const card = getCard(srsItem.verb.id);
     const daysSince = card.last_review
       ? (new Date() - new Date(card.last_review)) / (1000 * 60 * 60 * 24)
       : 0;
-    const updatedCard = updateCard(card, daysSince, confidence, isCorrect);
+    const updatedCard = updateCard(card, daysSince, grade, isCorrect);
     saveCard(srsItem.verb.id, updatedCard);
 
     setSrsSubmitted(true);
@@ -266,33 +342,33 @@ export default function Quiz({ verbs }) {
     setSrsTotal(t => t + 1);
     if (isCorrect) setSrsScore(s => s + 1);
 
-    // Build filled sentence + English translation from quiz prompt parts
-    const correctForm = srsItem.verb.conjugations?.[srsQuestion.tense]?.forms
-      ?.find(f => f.person === srsQuestion.person);
-    if (correctForm && srsQuestion.parts) {
-      const filled = buildFilledSentence(srsQuestion.parts, correctForm.translit);
-      const english = buildEnglishSentence(srsQuestion.parts, srsItem.verb);
-      setSrsExampleSentence({ sentence: filled, english });
-    } else if (correctForm) {
-      // Fallback to old builder if parts not available
-      setSrsExampleSentence(buildExampleSentence({
-        tense: srsQuestion.tense,
-        person: srsQuestion.person,
-        correctTranslit: correctForm.translit,
-        verbEnglish: srsItem.verb.verb.english,
-        particle: srsQuestion.particle,
-      }));
-    }
-
-    // Trigger remedial path for confident errors
-    if (isConfidentError) {
-      setRemedialState({
-        verb: srsItem.verb,
-        tense: srsQuestion.tense,
-        person: srsQuestion.person,
-        wrongAnswer: selectedAnswer,
-        correctAnswer: srsQuestion.answer,
-      });
+    // Conjugation questions get a filled example sentence + English translation.
+    if (srsQuestion.type === 'conjugation') {
+      const correctForm = srsItem.verb.conjugations?.[srsQuestion.tense]?.forms
+        ?.find(f => f.person === srsQuestion.person);
+      if (correctForm && srsQuestion.parts) {
+        const filled = buildFilledSentence(srsQuestion.parts, correctForm.translit);
+        const english = buildEnglishSentence(srsQuestion.parts, srsItem.verb);
+        setSrsExampleSentence({ sentence: filled, english });
+      } else if (correctForm) {
+        setSrsExampleSentence(buildExampleSentence({
+          tense: srsQuestion.tense,
+          person: srsQuestion.person,
+          correctTranslit: correctForm.translit,
+          verbEnglish: srsItem.verb.verb.english,
+          particle: srsQuestion.particle,
+        }));
+      }
+      // Confident error → remedial drill (conjugation-only; needs tense/person)
+      if (isConfidentError) {
+        setRemedialState({
+          verb: srsItem.verb,
+          tense: srsQuestion.tense,
+          person: srsQuestion.person,
+          wrongAnswer: selectedAnswer,
+          correctAnswer: srsQuestion.answer,
+        });
+      }
     }
   };
 
@@ -333,11 +409,10 @@ export default function Quiz({ verbs }) {
       setRecentTensesForVerb([item.tense]);
     }
 
-    const q = buildSRSQuestion(item);
+    const q = buildSRSQuestionForItem(item);
     setSrsItem(item);
     setSrsQuestion(q);
     setSelectedAnswer(null);
-    setConfidence(3);
     setSrsSubmitted(false);
     setSrsFeedback(null);
     setSrsExampleSentence(null);
@@ -361,7 +436,7 @@ export default function Quiz({ verbs }) {
     });
     if (!item) return;
 
-    const q = buildSRSQuestion(item);
+    const q = buildSRSQuestionForItem(item);
     setSrsItem(item);
     setSrsQuestion(q);
     setVerbSessionCounts(prev => ({
@@ -371,7 +446,6 @@ export default function Quiz({ verbs }) {
     setCurrentVerbId(item.verb.id);
     setRecentTensesForVerb([item.tense]);
     setSelectedAnswer(null);
-    setConfidence(3);
     setSrsSubmitted(false);
     setSrsFeedback(null);
     setSrsExampleSentence(null);
@@ -384,399 +458,267 @@ export default function Quiz({ verbs }) {
     nextSRSQuestion();
   };
 
-  // Due count for display (uses filteredVerbs so counts reflect verb range)
-  const dueCount = srsMode ? getDueCountFromScheduler(filteredVerbs) : 0;
-  const newCount = srsMode ? getNewCount(filteredVerbs) : 0;
+  // Auto-play the audio when a listening question appears.
+  useEffect(() => {
+    if (srsActive && srsQuestion?.type === 'listening') {
+      speak(srsQuestion.audioArabic, { speaker: QUIZ_VOICE });
+    }
+    return () => stopSpeaking();
+  }, [srsQuestion, srsActive]);
 
-  // Setup screen
-  if (!questions && !srsActive) {
+  // Due / new counts for the setup screen
+  const dueCount = getDueCountFromScheduler(filteredVerbs);
+  const newCount = getNewCount(filteredVerbs);
+
+  // ---------------------------------------------------------------- Setup screen
+  if (!srsActive) {
     return (
-      <div className="page quiz-page">
-        <h2>Quiz Settings</h2>
-        <div className="quiz-setup">
-          {/* SRS Mode Toggle */}
-          <label className="toggle-label srs-toggle">
-            <input
-              type="checkbox"
-              checked={srsMode}
-              onChange={toggleSrsMode}
-            />
-            SRS Mode (spaced repetition)
+      <div className="sn-qz">
+        <div className="sn-qz-eyebrow">Set up your review</div>
+        <div className="sn-qz-head">
+          <h1 className="sn-qz-title" dir="rtl">اختبار</h1>
+          <span className="sn-qz-sub">Quiz</span>
+          <span className="sn-qz-target" aria-hidden="true" />
+        </div>
+
+        <fieldset className="sn-qz-fieldset">
+          <div className="sn-qz-fieldset-legend">Verb range</div>
+          <label className="sn-qz-radio">
+            <input type="radio" name="verbRange" value="essential"
+              checked={verbRange === 'essential'} onChange={() => updateVerbRange('essential')} />
+            Top 20 essentials
           </label>
-
-          {srsMode && (
-            <>
-              {/* Verb Range */}
-              <fieldset className="srs-fieldset">
-                <legend>Verb range</legend>
-                <label className="radio-label">
-                  <input type="radio" name="verbRange" value="essential"
-                    checked={verbRange === 'essential'} onChange={() => updateVerbRange('essential')} />
-                  Top 20 essentials
-                </label>
-                <label className="radio-label">
-                  <input type="radio" name="verbRange" value="topic"
-                    checked={verbRange === 'topic'} onChange={() => updateVerbRange('topic')} />
-                  Topic
-                  {verbRange === 'topic' && (
-                    <select value={selectedTopic} onChange={e => updateSelectedTopic(e.target.value)}
-                      className="topic-select">
-                      {TOPICS.map(t => {
-                        const count = verbs.filter(v => v.topic === t.key).length;
-                        return <option key={t.key} value={t.key}>{t.label} ({count})</option>;
-                      })}
-                    </select>
-                  )}
-                </label>
-                <label className="radio-label">
-                  <input type="radio" name="verbRange" value="full_tier"
-                    checked={verbRange === 'full_tier'} onChange={() => updateVerbRange('full_tier')} />
-                  Full tier
-                </label>
-              </fieldset>
-
-              {/* Questions per verb slider */}
-              <fieldset className="srs-fieldset">
-                <legend>Session</legend>
-                <label>
-                  Questions per verb: {maxQuestionsPerVerb}
-                  <input
-                    type="range"
-                    min={1}
-                    max={10}
-                    value={maxQuestionsPerVerb}
-                    onChange={e => updateMaxQuestionsPerVerb(+e.target.value)}
-                  />
-                  <div className="slider-labels">
-                    <span>1 max interleaving</span>
-                    <span>10 drill deeper</span>
-                  </div>
-                </label>
-              </fieldset>
-            </>
+          <label className="sn-qz-radio">
+            <input type="radio" name="verbRange" value="topic"
+              checked={verbRange === 'topic'} onChange={() => updateVerbRange('topic')} />
+            Topic
+          </label>
+          {verbRange === 'topic' && (
+            <select value={selectedTopic} onChange={e => updateSelectedTopic(e.target.value)}
+              className="sn-qz-select" style={{ marginTop: '8px' }}>
+              {TOPICS.map(t => {
+                const count = verbs.filter(v => v.topic === t.key).length;
+                return <option key={t.key} value={t.key}>{t.label} ({count})</option>;
+              })}
+            </select>
           )}
+          <label className="sn-qz-radio">
+            <input type="radio" name="verbRange" value="full_tier"
+              checked={verbRange === 'full_tier'} onChange={() => updateVerbRange('full_tier')} />
+            Full tier
+          </label>
+        </fieldset>
 
-          {!srsMode && (
-            <>
-              <label>
-                Quiz type
-                <div className="chip-group">
-                  {QUIZ_TYPES.map(t => (
-                    <button
-                      key={t.value}
-                      className={`chip ${quizType === t.value ? 'active' : ''}`}
-                      onClick={() => setQuizType(t.value)}
-                    >
-                      {t.label}
-                    </button>
-                  ))}
-                </div>
-              </label>
-            </>
-          )}
-
-          {(quizType === 'conjugation' || srsMode) && (
-            <>
-              {!srsMode && (
-                <label>
-                  Tense
-                  <div className="chip-group">
-                    {TENSE_OPTIONS.map(t => (
-                      <button
-                        key={t.value}
-                        className={`chip ${tense === t.value ? 'active' : ''}`}
-                        onClick={() => setTense(t.value)}
-                      >
-                        {t.label}
-                      </button>
-                    ))}
-                  </div>
-                </label>
-              )}
-
-              <label>
-                Subjects
-                <button
-                  className="subject-toggle-btn"
-                  onClick={() => setShowPersons(s => !s)}
-                >
-                  {selectedPersons.length === PERSONS.length
-                    ? 'All subjects'
-                    : `${selectedPersons.length} of ${PERSONS.length} selected`}
-                  <span className={`subject-arrow ${showPersons ? 'open' : ''}`}>&#9662;</span>
-                </button>
-                {showPersons && (
-                  <div className="chip-group person-chips">
-                    {PERSONS.map(p => (
-                      <button
-                        key={p}
-                        className={`chip ${selectedPersons.includes(p) ? 'active' : ''}`}
-                        onClick={() => togglePerson(p)}
-                      >
-                        {PERSON_LABELS[p]}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </label>
-            </>
-          )}
-
-          {srsMode && (
-            <div className="srs-stats-bar">
-              <span className="srs-stat">{dueCount} due</span>
-              <span className="srs-stat">{newCount} new</span>
-            </div>
-          )}
-
-          {!srsMode && (
-            <>
-              <label>
-                Questions: {numQuestions}
-                <input
-                  type="range"
-                  min={5}
-                  max={20}
-                  value={numQuestions}
-                  onChange={e => setNumQuestions(+e.target.value)}
-                />
-              </label>
-
-              <label className="toggle-label">
-                <input
-                  type="checkbox"
-                  checked={useArabic}
-                  onChange={e => setUseArabic(e.target.checked)}
-                />
-                Arabic script prompts
-              </label>
-            </>
-          )}
-
-          <button className="start-btn" onClick={srsMode ? startSRS : startQuiz}>
-            {srsMode ? 'Start SRS Review' : 'Start Quiz'}
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // --- SRS Active ---
-  if (srsActive) {
-    // Remedial sequence
-    if (remedialState) {
-      return (
-        <div className="page quiz-page">
-          <RemedialSequence
-            verb={remedialState.verb}
-            originalTense={remedialState.tense}
-            originalPerson={remedialState.person}
-            wrongAnswer={remedialState.wrongAnswer}
-            correctAnswer={remedialState.correctAnswer}
-            useArabic={useArabic}
-            onComplete={handleRemedialComplete}
+        <fieldset className="sn-qz-fieldset">
+          <div className="sn-qz-fieldset-legend">Session</div>
+          <div className="sn-qz-slider-head">
+            <span className="sn-qz-label" style={{ margin: 0 }}>Questions per verb</span>
+            <span className="sn-qz-slider-val">{maxQuestionsPerVerb}</span>
+          </div>
+          <input
+            type="range"
+            className="sn-range"
+            min={1}
+            max={10}
+            value={maxQuestionsPerVerb}
+            style={{ '--pct': `${((maxQuestionsPerVerb - 1) / 9) * 100}%` }}
+            onChange={e => updateMaxQuestionsPerVerb(+e.target.value)}
           />
-        </div>
-      );
-    }
+        </fieldset>
 
-    // No more items
-    if (!srsQuestion) {
-      return (
-        <div className="page quiz-page">
-          <div className="quiz-complete">
-            <h2>No verbs due for review</h2>
-            {srsTotal > 0 && (
-              <>
-                <div className="final-score">
-                  <span className="score-num">{srsScore}</span>
-                  <span className="score-denom">/ {srsTotal}</span>
-                </div>
-                <div className="score-pct">{Math.round((srsScore / srsTotal) * 100)}%</div>
-              </>
-            )}
-            <button className="start-btn" onClick={() => setSrsActive(false)}>Back to Settings</button>
-          </div>
+        <div className="sn-qz-group">
+          <div className="sn-qz-label">Question type</div>
+          <select className="sn-qz-select" value={questionType}
+            onChange={e => updateQuestionType(e.target.value)}>
+            {QUESTION_TYPES.map(t => (
+              <option key={t.value} value={t.value}>{t.label}</option>
+            ))}
+          </select>
+          {(questionType === 'inverse_mcq' || questionType === 'gap_fill') && (
+            <div className="sn-qz-note">Only example verbs support this type — others fall back to conjugation.</div>
+          )}
         </div>
-      );
-    }
 
-    return (
-      <div className="page quiz-page">
-        <div className="srs-progress-bar">
-          <span className="srs-stat">Score: {srsScore}/{srsTotal}</span>
-          <span className="srs-stat">{getDueCountFromScheduler(filteredVerbs)} due</span>
-          <button className="new-verb-btn" onClick={skipToNewVerb} title="Skip to a new verb">
-            &#x27F3; New verb
+        <div className="sn-qz-group">
+          <div className="sn-qz-label">Subjects</div>
+          <button className="sn-qz-dropdown" onClick={() => setShowPersons(s => !s)}>
+            <span className="sn-qz-dropdown-text">
+              {selectedPersons.length === PERSONS.length
+                ? 'All subjects'
+                : `${selectedPersons.length} of ${PERSONS.length} selected`}
+            </span>
+            <span className="sn-qz-dropdown-caret">▾</span>
           </button>
-        </div>
-
-        {srsQuestion.verb_info && (
-          <div className="verb-info-bar">
-            <span className="vi-translit">{srsQuestion.verb_info.translit}</span>
-            <span className="vi-arabic" dir="rtl">{srsQuestion.verb_info.arabic}</span>
-            <span className="vi-english">{srsQuestion.verb_info.english}</span>
-          </div>
-        )}
-
-        <div className="quiz-prompt">{srsQuestion.prompt}</div>
-
-        <div className="options">
-          {srsQuestion.options.map((opt, i) => (
-            <button
-              key={i}
-              className={`option-btn ${
-                srsSubmitted
-                  ? opt === srsQuestion.answer
-                    ? 'correct'
-                    : opt === selectedAnswer && !srsFeedback?.correct
-                      ? 'wrong'
-                      : ''
-                  : opt === selectedAnswer
-                    ? 'selected'
-                    : ''
-              }`}
-              onClick={() => !srsSubmitted && setSelectedAnswer(opt)}
-              disabled={srsSubmitted}
-            >
-              {opt}
-            </button>
-          ))}
-        </div>
-
-        {!srsSubmitted && (
-          <>
-            <ConfidenceSlider value={confidence} onChange={setConfidence} />
-            <button
-              className={`start-btn submit-btn ${selectedAnswer ? '' : 'disabled'}`}
-              onClick={submitSRSAnswer}
-              disabled={!selectedAnswer}
-            >
-              Submit Answer
-            </button>
-          </>
-        )}
-
-        {srsFeedback && !remedialState && (
-          <div className={`feedback ${srsFeedback.correct ? 'correct' : 'wrong'}`}>
-            <div className="feedback-header">
-              {srsFeedback.correct ? '✓ Correct!' : `✗ The answer was: ${srsFeedback.answer}`}
-              {srsFeedback.alt && <span className="feedback-alt"> = {srsFeedback.alt}</span>}
+          {showPersons && (
+            <div className="sn-qz-chips" style={{ marginTop: '10px' }}>
+              {PERSONS.map(p => (
+                <button
+                  key={p}
+                  className={`sn-qz-chip ${selectedPersons.includes(p) ? 'active' : ''}`}
+                  onClick={() => togglePerson(p)}
+                >
+                  {PERSON_LABELS[p]}
+                </button>
+              ))}
             </div>
-            {srsExampleSentence && (
-              <div className="example-sentence">
-                <p className="example-translit">
-                  {srsExampleSentence.sentence}
-                  <span className="speaker-icon disabled" title="Audio coming soon">🔊</span>
-                </p>
-                <p className="example-english">{srsExampleSentence.english}</p>
-              </div>
-            )}
-            <button className="next-btn" onClick={nextSRSQuestion}>Next Question</button>
-          </div>
-        )}
+          )}
+        </div>
+
+        <label className="sn-qz-toggle-row" style={{ borderBottom: 'none' }}>
+          <div className="sn-qz-toggle-text">Arabic-script prompts</div>
+          <span className="sn-switch">
+            <input type="checkbox" checked={useArabic} onChange={e => setUseArabic(e.target.checked)} />
+            <span className="sn-switch-track"><span className="sn-switch-knob" /></span>
+          </span>
+        </label>
+
+        <div className="sn-qz-stats">
+          <span className="st">{dueCount} due</span>
+          <span className="st">{newCount} new</span>
+        </div>
+
+        <button className="sn-qz-start" onClick={startSRS}>Start Review</button>
       </div>
     );
   }
 
-  // --- Free Practice Active ---
-  // Quiz complete
-  if (idx >= questions.length) {
-    const pct = Math.round((score / questions.length) * 100);
+  // ------------------------------------------------------------ Remedial sequence
+  if (remedialState) {
     return (
-      <div className="page quiz-page">
-        <Lightsaber level={level} maxLevel={questions.length} />
-        <div className="quiz-complete">
-          <h2>{level >= questions.length ? 'LIGHTSABER FULLY CHARGED!' : 'Quiz Complete!'}</h2>
-          <div className="final-score">
-            <span className="score-num">{score}</span>
-            <span className="score-denom">/ {questions.length}</span>
-          </div>
-          <div className="score-pct">{pct}%</div>
-          <button className="start-btn" onClick={() => setQuestions(null)}>New Quiz</button>
+      <div className="sn-qa">
+        <RemedialSequence
+          verb={remedialState.verb}
+          originalTense={remedialState.tense}
+          originalPerson={remedialState.person}
+          wrongAnswer={remedialState.wrongAnswer}
+          correctAnswer={remedialState.correctAnswer}
+          useArabic={useArabic}
+          onComplete={handleRemedialComplete}
+        />
+      </div>
+    );
+  }
+
+  // ----------------------------------------------------------------- No more items
+  if (!srsQuestion) {
+    return (
+      <div className="sn-qa">
+        <div className="sn-qa-done">
+          <h2 className="sn-qa-done-title">No verbs due for review</h2>
+          {srsTotal > 0 && (
+            <>
+              <div className="sn-qa-score">
+                <span className="sn-qa-score-num">{srsScore}</span>
+                <span className="sn-qa-score-denom">/ {srsTotal}</span>
+              </div>
+              <div className="sn-qa-score-pct">{Math.round((srsScore / srsTotal) * 100)}%</div>
+            </>
+          )}
+          <button className="sn-qz-start" onClick={() => setSrsActive(false)}>Back to Settings</button>
         </div>
       </div>
     );
   }
 
-  const q = questions[idx];
+  // ------------------------------------------------------------- Active question
+  const q = srsQuestion;
   const isListening = q.type === 'listening';
   const isInverse = q.type === 'inverse_mcq';
   const isGap = q.type === 'gap_fill';
+  const showVerb = q.verb_info && !isListening; // listening hides the verb until reveal
 
   return (
-    <div className="page quiz-page">
-      <Lightsaber level={level} maxLevel={questions.length} />
+    <div className="sn-qa">
+      <div className="sn-qa-bar">
+        <span className="sn-qa-stat">{srsScore}/{srsTotal}</span>
+        <span className="sn-qa-stat">{getDueCountFromScheduler(filteredVerbs)} due</span>
+        <button className="sn-qa-newverb" onClick={skipToNewVerb} title="Skip to a new verb">
+          &#x27F3; New verb
+        </button>
+      </div>
 
-      <div className="quiz-progress">Q{idx + 1} / {questions.length}</div>
-
-      {q.verb_info && (
-        <div className="verb-info-bar">
-          <span className="vi-translit">{q.verb_info.translit}</span>
-          <span className="vi-arabic" dir="rtl">{q.verb_info.arabic}</span>
-          <span className="vi-english">{q.verb_info.english}</span>
+      {showVerb && (
+        <div className="sn-qa-verb">
+          {isInverse ? (
+            <>
+              <span className="sn-qa-verb-ar" dir="rtl">{q.head_form.arabic}</span>
+              <span className="sn-qa-verb-tr">
+                {q.head_form.translit}
+                <span className="sn-qa-verb-head"> ({q.verb_info.translit})</span>
+              </span>
+              <span className="sn-qa-verb-en">{q.verb_info.english}</span>
+            </>
+          ) : (
+            <>
+              <span className="sn-qa-verb-ar" dir="rtl">{q.verb_info.arabic}</span>
+              <span className="sn-qa-verb-tr">{q.verb_info.translit}</span>
+              <span className="sn-qa-verb-en">{q.verb_info.english}</span>
+            </>
+          )}
         </div>
       )}
 
+      {/* --- Prompt (per type) --- */}
       {isListening && (
-        <div className="listen-block">
-          <button className="listen-play" onClick={() => speak(q.audioArabic, { speaker: QUIZ_VOICE })}>
-            🔊 Play
+        <div className="sn-qa-listen">
+          <button className="sn-qa-play" onClick={() => speak(q.audioArabic, { speaker: QUIZ_VOICE })}>
+            <span className="sn-qa-play-ico">►</span> Play
           </button>
-          <div className="listen-instr">Listen, then choose the meaning</div>
+          <div className="sn-qa-listen-hint">Listen, then choose the meaning</div>
         </div>
       )}
 
-      {isInverse && <div className="quiz-prompt-hint">{q.prompt_hint}</div>}
+      {isInverse && (
+        <div className="sn-qa-hint-row">
+          <div className="sn-qa-hint">{q.prompt_hint}</div>
+          <button className="sn-qa-en-toggle" onClick={toggleInverseEn}>
+            {showInverseEn ? 'Hide English' : 'Show English'}
+          </button>
+        </div>
+      )}
 
       {isGap && (
-        <>
-          <div className="quiz-prompt gap-prompt" dir={useArabic ? 'rtl' : 'ltr'}>{q.prompt}</div>
-          <div className="quiz-prompt-alt" dir={useArabic ? 'ltr' : 'rtl'}>{q.prompt_alt}</div>
-        </>
+        <div className="sn-qa-prompt sn-qa-prompt--gap" dir={useArabic ? 'rtl' : 'ltr'}>
+          {renderGapPrompt(q.prompt)}
+        </div>
+      )}
+      {isGap && (
+        <div className="sn-qa-prompt-alt" dir={useArabic ? 'ltr' : 'rtl'}>{q.prompt_alt}</div>
       )}
 
       {!isListening && !isInverse && !isGap && (
-        <>
-          <div className="quiz-prompt" dir={useArabic ? 'rtl' : 'ltr'}>{q.prompt}</div>
-          {q.prompt_english && <div className="quiz-prompt-en">{q.prompt_english}</div>}
-          {q.hint && <div className="quiz-hint">Hint: {q.hint}</div>}
-          {q.example && (
-            <div className="quiz-example">
-              <p dir="rtl">{q.example.arabic}</p>
-              {q.example.translit && <p className="quiz-example-translit">{q.example.translit}</p>}
-              <p>{q.example.english}</p>
-            </div>
-          )}
-        </>
+        <div className="sn-qa-prompt" dir={useArabic ? 'rtl' : 'ltr'}>{q.prompt}</div>
       )}
 
+      {/* --- Options --- */}
       {isInverse ? (
-        <div className="options options-sentences">
+        <div className="sn-qa-opts sn-qa-opts--sentence">
           {q.options.map((opt, i) => (
             <button
               key={i}
-              className={`option-btn sentence-opt ${
-                feedback ? (opt.value === q.answer ? 'correct' : feedback.correct ? '' : 'wrong') : ''
-              }`}
-              onClick={() => !feedback && handleAnswer(opt.value)}
-              disabled={!!feedback}
+              className={`sn-qa-opt sn-qa-opt--sentence ${optState(opt.value, q, selectedAnswer, srsSubmitted, srsFeedback)}`}
+              onClick={() => !srsSubmitted && setSelectedAnswer(opt.value)}
+              disabled={srsSubmitted}
             >
-              <span className="sentence-tr">{opt.translit}</span>
-              <span className="sentence-ar" dir="rtl">{opt.arabic}</span>
+              <span className="sn-qa-opt-main">
+                <span className="sn-qa-opt-tr">{opt.translit}</span>
+                <span className="sn-qa-opt-ar" dir="rtl">{opt.arabic}</span>
+              </span>
+              {showInverseEn && opt.english && (
+                <span className="sn-qa-opt-en">{opt.english}</span>
+              )}
             </button>
           ))}
         </div>
       ) : (
-        <div className="options">
+        <div className="sn-qa-opts">
           {q.options.map((opt, i) => (
             <button
               key={i}
-              className={`option-btn ${
-                feedback ? (opt === q.answer ? 'correct' : feedback.correct ? '' : 'wrong') : ''
-              }`}
-              onClick={() => !feedback && handleAnswer(opt)}
-              disabled={!!feedback}
+              className={`sn-qa-opt ${optState(opt, q, selectedAnswer, srsSubmitted, srsFeedback)}`}
+              onClick={() => !srsSubmitted && setSelectedAnswer(opt)}
+              disabled={srsSubmitted}
+              dir={isGap && useArabic ? 'rtl' : undefined}
             >
               {opt}
             </button>
@@ -784,52 +726,96 @@ export default function Quiz({ verbs }) {
         </div>
       )}
 
-      {feedback && (
-        <div className={`feedback ${feedback.correct ? 'correct' : 'wrong'}`}>
-          <div className="feedback-header">
-            {feedback.correct
-              ? '✓ Correct!'
+      {/* --- Grade row = submit (needs an answer selected first) --- */}
+      {!srsSubmitted && (
+        <>
+          <div className="sn-qa-grade-label">
+            {selectedAnswer ? 'Pick your confidence to submit' : 'Choose an answer first'}
+          </div>
+          <div className="sn-qa-grades">
+            {GRADES.map(g => (
+              <button
+                key={g.value}
+                className={`sn-qa-grade sn-qa-grade--${g.mod}`}
+                onClick={() => submitSRSAnswer(g.value)}
+                disabled={!selectedAnswer}
+              >
+                {g.label}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* --- Feedback / reveal --- */}
+      {srsFeedback && (
+        <div className={`sn-qa-fb ${srsFeedback.correct ? 'correct' : 'wrong'}`}>
+          <div className="sn-qa-fb-head">
+            {srsFeedback.correct
+              ? 'Correct'
               : isInverse
-                ? '✗ See the highlighted sentence'
-                : `✗ The answer was: ${feedback.answer}`}
-            {!isInverse && feedback.alt && <span className="feedback-alt"> = {feedback.alt}</span>}
+                ? 'See the highlighted sentence'
+                : `Answer: ${srsFeedback.answer}`}
+            {!isInverse && !srsFeedback.correct && srsFeedback.alt && (
+              <span className="sn-qa-fb-alt"> = {srsFeedback.alt}</span>
+            )}
           </div>
 
           {(isListening || isGap) && q.reveal && (
-            <div className="reveal-block verb-info-bar">
-              <span className="vi-translit">{q.reveal.translit}</span>
-              <span className="vi-arabic" dir="rtl">{q.reveal.arabic}</span>
-              <span className="vi-english">{q.reveal.english}</span>
+            <div className="sn-qa-verb sn-qa-verb--reveal">
+              <span className="sn-qa-verb-ar" dir="rtl">{q.reveal.arabic}</span>
+              <span className="sn-qa-verb-tr">{q.reveal.translit}</span>
+              <span className="sn-qa-verb-en">{q.reveal.english}</span>
             </div>
           )}
           {isListening && q.sentenceEnglish && (
-            <div className="reveal-sentence">
+            <div className="sn-qa-reveal">
               <p dir="rtl">{q.audioArabic}</p>
-              <p className="quiz-example-translit">{q.audioTranslit}</p>
-              <p>{q.sentenceEnglish}</p>
-              <button className="listen-replay" onClick={() => speak(q.audioArabic, { speaker: QUIZ_VOICE })}>🔊 Replay</button>
+              <p className="sn-qa-reveal-tr">{q.audioTranslit}</p>
+              <p className="sn-qa-reveal-en">{q.sentenceEnglish}</p>
+              <button className="sn-qa-replay" onClick={() => speak(q.audioArabic, { speaker: QUIZ_VOICE })}>
+                <span className="sn-qa-play-ico">►</span> Replay
+              </button>
             </div>
           )}
           {isInverse && (
-            <div className="reveal-sentence">
-              <p>{q.answer_english}</p>
-              <p className="reveal-fill">missing word: <b>{q.answer_fill}</b></p>
+            <div className="sn-qa-reveal">
+              <p className="sn-qa-reveal-en">{q.answer_english}</p>
             </div>
           )}
           {isGap && (
-            <div className="reveal-sentence">
-              <p>{q.answer_english}</p>
+            <div className="sn-qa-reveal">
+              <p className="sn-qa-reveal-en">{q.answer_english}</p>
             </div>
           )}
-          {!isListening && !isInverse && !isGap && exampleSentence && (
-            <div className="example-sentence">
-              <p className="example-translit">{exampleSentence.sentence}</p>
-              <p className="example-english">{exampleSentence.english}</p>
+          {q.type === 'conjugation' && srsExampleSentence && (
+            <div className="sn-qa-reveal">
+              <p className="sn-qa-reveal-tr">{srsExampleSentence.sentence}</p>
+              <p className="sn-qa-reveal-en">{srsExampleSentence.english}</p>
             </div>
           )}
-          <button className="next-btn" onClick={nextQuestion}>Next Question</button>
+
+          <button className="sn-qa-next" onClick={nextSRSQuestion}>Next Question</button>
         </div>
       )}
     </div>
   );
+}
+
+// Highlight the blanked slot in a gap-fill prompt.
+function renderGapPrompt(prompt) {
+  const parts = String(prompt).split(/(_{2,})/);
+  return parts.map((p, i) =>
+    /^_{2,}$/.test(p)
+      ? <span key={i} className="sn-qa-blank">{p}</span>
+      : <span key={i}>{p}</span>
+  );
+}
+
+// Option button state class: selection (pre-submit) → correct/wrong (post-submit).
+function optState(value, q, selectedAnswer, submitted, feedback) {
+  if (!submitted) return value === selectedAnswer ? 'selected' : '';
+  if (value === q.answer) return 'correct';
+  if (value === selectedAnswer && !feedback?.correct) return 'wrong';
+  return '';
 }

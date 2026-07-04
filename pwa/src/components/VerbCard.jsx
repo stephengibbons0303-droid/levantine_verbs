@@ -1,96 +1,43 @@
-import { useState } from 'react';
-import { PERSON_LABELS, TENSE_LABELS } from '../utils/constants';
+import PlayButton from './PlayButton';
 
-export default function VerbCard({ verb }) {
-  const [expanded, setExpanded] = useState(false);
+const tierColor = (d) => ({
+  A: 'var(--tier-a)',
+  B: 'var(--tier-b)',
+  BA: 'var(--tier-b)',
+  C: 'var(--tier-c)',
+  D: 'var(--tier-d)',
+  E: 'var(--tier-e)',
+}[d] || 'var(--text-muted)');
 
+export default function VerbCard({ verb, num, onOpen }) {
   return (
-    <div className="verb-card" onClick={() => setExpanded(!expanded)}>
-      <div className="verb-header">
-        <span className="verb-id">{verb.id}.</span>
-        <span className="verb-translit">{verb.verb.translit}</span>
-        <span className="verb-arabic" dir="rtl">{verb.verb.arabic}</span>
-        <span className="verb-english">{verb.verb.english}</span>
-      </div>
-      <div className="verb-meta">
-        {verb.classification && (
-          <>
-            <span className="badge">{verb.classification.measure}</span>
-            <span className="badge">{verb.classification.type}</span>
-          </>
-        )}
-        {verb.form && <span className="badge">{verb.form}</span>}
-        {verb.difficulty && (
-          <span
-            className="difficulty-badge"
-            style={{ background: { A: '#0c6', B: '#0af', BA: '#0af', C: '#f90', D: '#f44', E: '#a0a' }[verb.difficulty] || '#666' }}
-          >
-            {verb.difficulty}
-          </span>
-        )}
-      </div>
-
-      {expanded && (
-        <div className="verb-details" onClick={e => e.stopPropagation()}>
-          {["perfect", "bi_imperfect", "imperfect", "imperative"].map(tense => {
-            const conj = verb.conjugations?.[tense];
-            if (!conj?.forms?.length) return null;
-            return (
-              <div key={tense} className="tense-section">
-                <h4>{TENSE_LABELS[tense] || tense}</h4>
-                <table>
-                  <tbody>
-                    {conj.forms.map((f, i) => (
-                      <tr key={i}>
-                        <td className="person">{PERSON_LABELS[f.person] || f.person}</td>
-                        <td className="translit">{f.translit}</td>
-                        <td className="arabic" dir="rtl">{f.arabic}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            );
-          })}
-
-          {verb.active_participle?.forms && (
-            <div className="tense-section">
-              <h4>Active Participle</h4>
-              <table>
-                <tbody>
-                  {Object.entries(verb.active_participle.forms).map(([gender, f]) => (
-                    <tr key={gender}>
-                      <td className="person">{gender}</td>
-                      <td className="translit">{f.translit}</td>
-                      <td className="arabic" dir="rtl">{f.arabic}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {verb.examples?.length > 0 && (
-            <div className="tense-section">
-              <h4>Examples</h4>
-              {verb.examples.map((ex, i) => (
-                <div key={i} className="example">
-                  <p dir="rtl">{ex.arabic}</p>
-                  {ex.translit && <p className="example-translit">{ex.translit}</p>}
-                  <p className="example-english">{ex.english}</p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {verb.notes?.length > 0 && (
-            <div className="tense-section">
-              <h4>Notes</h4>
-              {verb.notes.map((n, i) => <p key={i} className="note">{n}</p>)}
-            </div>
-          )}
+    <div className="sn-row" onClick={() => onOpen?.(verb)}>
+      <span className="sn-row-num">{num ?? verb.id}</span>
+      <div className="sn-row-main">
+        <div className="sn-row-top">
+          <div className="sn-row-lead">
+            <span className="sn-row-ar" dir="rtl">{verb.verb.arabic}</span>
+            <span className="sn-row-tr">{verb.verb.translit}</span>
+          </div>
+          <span className="sn-row-gloss">{verb.verb.english}</span>
         </div>
-      )}
+        <div className="sn-row-bottom">
+          <div className="sn-badges">
+            {verb.classification && (
+              <>
+                <span className="sn-badge measure">{verb.classification.measure}</span>
+                <span className="sn-badge type">{verb.classification.type}</span>
+              </>
+            )}
+            {verb.difficulty && (
+              <span className="sn-badge tier" style={{ background: tierColor(verb.difficulty) }}>
+                {verb.difficulty}
+              </span>
+            )}
+          </div>
+          <PlayButton text={verb.verb.arabic} label="Hear this verb" />
+        </div>
+      </div>
     </div>
   );
 }
