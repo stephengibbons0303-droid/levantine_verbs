@@ -13,15 +13,19 @@ function VocabTable({ items }) {
     <div className="qr-entries">
       {items.map((item, i) => (
         <div key={i} className="qr-entry">
-          {item.arabic && (
-            <div className="qr-entry-top">
+          <div className="qr-entry-top">
+            {item.arabic ? (
               <span className="qr-entry-ar" dir="rtl">{item.arabic}</span>
+            ) : (
+              <span className="qr-entry-tr headword">{item.translit}</span>
+            )}
+            {item.arabic && (
               <PlayButton text={item.arabic} size="sm" label={`Hear ${item.translit}`} />
-            </div>
-          )}
+            )}
+          </div>
           <div className="qr-entry-sub">
-            <span className="qr-entry-tr">{item.translit}</span>
-            {item.english && <span className="qr-entry-sep">·</span>}
+            {item.arabic && <span className="qr-entry-tr">{item.translit}</span>}
+            {item.arabic && item.english && <span className="qr-entry-sep">·</span>}
             {item.english && <span className="qr-entry-en">{item.english}</span>}
           </div>
         </div>

@@ -989,6 +989,10 @@ body {
   font-size: 0.82rem;
   color: var(--translit);
 }
+.qr-entry-tr.headword {
+  font-size: 1rem;
+  line-height: 1.4;
+}
 .qr-entry-sep {
   color: var(--text-faint);
   font-size: 0.75rem;
