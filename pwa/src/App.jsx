@@ -10,8 +10,8 @@ import './App.css';
 const TABS = [
   { id: 'browse', label: 'Browse' },
   { id: 'quiz', label: 'Quiz' },
-  { id: 'srs', label: 'SRS' },
   { id: 'talk', label: 'Talk' },
+  { id: 'srs', label: 'FSRS' },
 ];
 
 // Geometric nav marks (Sanober) — colored via currentColor so active = red.
